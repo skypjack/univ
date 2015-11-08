@@ -1,0 +1,375 @@
+\documentclass[a4paper,10pt]{article}
+
+\usepackage[italian]{babel}
+\usepackage[latin1]{inputenc}
+
+\title{Gioco dell'otto}
+\author{Caini Michele, Giuntini Johnny}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\begin{center}
+Lo studio dell'intelligenza Artificiale tocca tre settori principali: Ricerca, Apprendimento e Rappresentazione dell'Informazione. L'articolo che segue rappresenta una breve ma dettagliata introduzione al gioco dell'otto, uno dei più rappresentativi problemi che si incontrano nel campo della Ricerca, con molti esempi, codice e dati significativi.
+\end{center}
+\end{abstract}
+
+\section{Introduzione}
+Il gioco dell'otto è uno dei primi e fondamentali problemi con cui lo studente/studioso di Intelligenza Artificile si scontra. Si può infatti immaginare lo studio della materia diviso in tre campi principali: Ricerca, Apprendimento, Rappresentazione dell'Informazione.\newline
+Proprio nel campo della Ricerca va a collocarsi l'analisi del gioco dell'otto, un ottimo esempio e terreno di studio per algoritmi quali Breadth First o Depth First, ma non solo, senza parlare poi della possibilità di testare nuove euristiche sempre più complesse e raffinate. Un'ottima possibilità per chiunque di analizzare un problema di cui si conosce già tanto e su cui si possono quindi portare avanti confronti e studi di ogni genere.
+
+Il lavoro svolto, che ha condotto a questo articolo, è inteso a fornire una panoramica di base degli algoritmi coinvolti per la risoluzione del problema, proponendo alcune metodologie di programmazione e sviluppo in codice C con un occhio particolare all'ottimizzazione e alle performance, e alle differenze che l'uso di un algoritmo piuttosto che un altro, di un'euristica piuttosto che un'altra comporta sull'esecuzione e risoluzione dei puzzle proposti.\newline
+Proprio per favorire una forte ottimizzazione che si riflettesse poi sulla performance del programma, abbiamo sviluppato algoritmi e strutture dati ad-hoc e introdotto una particolare configurazione ``goal'' che permettesse di creare codice più compatto e performante, sotto riportata in tabella 1.\newline
+\begin{table}[b]
+\begin{center}
+\begin{tabular}{c|c|c}
+0 & 1 & 2 \\
+\hline
+3 & 4 & 5 \\
+\hline
+6 & 7 & 8
+\end{tabular}
+\caption{Configurazione ``goal''}
+\end{center}
+\end{table}
+Infine, abbiamo creato alcuni file contenenti svariate configurazioni iniziali del puzzle, diverse dalla configurazione goal, e testato gli algoritmi studiati e le euristiche viste, oltre alle funzioni di peso utili per dare più o meno valore al livello di un determinato nodo o al costo associato al nodo stesso risultante dall'euristica applicata, di cui riportiamo i risultati per un confronto a posteriori e alcune osservazioni su quanto ottenuto.
+
+\section{Algoritmica}
+Facciamo adesso una breve ma dovuta panoramica sul codice sviluppato nelle sue varie componenti.
+\subsection{Strutture Dati}
+Le strutture dati create si potrebbero definire perfino ridondanti, nel senso che, per evitare di avere un'unica struttura omni-comprensiva che soddisfacesse tutte le richieste ma peccando in termini di prestazioni, si è pensato di dare vita a più strutture, ognuna votata ad un compito specifico e per tale compito concepita ed ottimizzata.\newline
+In particolare, abbiamo utilizzato una doppia coda, che potesse far fronte in modo efficiente alle richieste di algoritmi quali Breadth First, Depth First e IDA*, una bubble-coda, che potesse essere utile per l'algoritmo A* con la sua capacità di far salire (o scendere, dipende dai punti di vista) al suo interno gli elementi inseriti a seconda del loro peso, una struttura hash, per memorizzare i nodi già visitati ed evitare di visitarli più volte, una mappa, per tracciare il percorso fra un nodo e la radice. L'uso (o meglio, il non uso) di un heap al posto della bubble-coda è dovuto più che altro a considerazioni pratiche sul modo di operare di A* e un confronto sulla complessità delle funzioni relative alle due strutture dati e si può senza ombra di dubbio inter-scambiare le suddette strutture, se necessario.\newline
+Da segnalare, per i curiosi, il metodo di generazione dei marchi che identificano univocamente una determinata configurazione, utilizzati sia per l'inserimento e recupero nella struttura hash che per il mantenimento delle relazioni padre-figlio in map.
+\subsection{Euristiche e Funzioni Peso}
+Sono state sviluppate due tipologie di euristica, utilizzate con gli algoritmi di ricerca A* e IDA*, in particolare: la prima, molto semplice, basata sul conteggio del numero di caselle fuori posto; la seconda, leggermente più articolata, basata sugli offset fra la posizione attuale e la posizione goal di una determinata cella, detta anche euristica Manhattan.\newline
+In modo simile, sono presenti anche due tipi di funzioni per valutare il peso di una data euristica ad un dato livello, in particolare: la prima somma semplicemente al livello il fattore fornito dall'euristica utilizzata; la seconda, di contro, somma al livello lo stesso fattore ma diviso per il valore del livello stesso, di modo che col tempo l'influenza dell'euristica sul peso di un determinato nodo vada assottigliandosi.
+\subsection{Algoritmi di Ricerca}
+Gli algoritmi di ricerca proposti sono tutti, fondamentalmente, algoritmi su alberi. Infatti, lo spazio degli stati lo si può proprio vedere come un albero con radice la permutazione iniziale del puzzle che si dirama, attraverso i suoi nodi interni, tramite uno spostamento unitario della casella vuota, fino agli elementi foglia i quali, dal nostro punto di vista, rappresentano la configurazione goal. In particolare, abbiamo analizzato:
+\begin{itemize}
+ \item Breadth First (BF): il famoso algoritmo di ricerca in ampiezza, con una piccola variante, ovvero lo status di configurazione goal viene controllato prima che un dato elemento sia inserito nella coda di supporto anzichè all'atto della sua estrazione. Questo, pur storpiando un po' l'algoritmo originale, non impatta sull'esecuzione in modo negativo, bensì permette in taluni casi di risparmiare svariate espansioni di nodi intermedi, mentre in altri risulta solamente nell'anticipo di un controllo che sarebbe stato comunque effettuato.
+ \item Depth First (DF): In realtà, piuttosto che l'algoritmo originale, si è utilizzato una variante dell'algoritmo Iterative Depth First (IDF) con controllo anticipato, come precedentemente spiegato, per ottimizzarne l'esecuzione ed evitare di ``affondare'' la ricerca in modo sbilanciato.
+ \item A*: Utilizzando questo algoritmo si hanno quattro differenti esecuzioni indipendenti, ognuna con una differente funzione di peso dei valori dell'euristica e/o una differente funzione euristica stessa, fra quelle sopra riportate. Da notare che questo è reso possibile ed efficiente tramite un massiccio uso, in realtà in tutto il programma, di puntatori a funzione.
+ \item IDA*: La versione iterativa sui valori associati ad un dato nodo dall'algoritmo A*, con inserimento in coda in modalità DF, come sopra si hanno quattro differenti esecuzioni indipendenti l'una dall'altra.
+\end{itemize}
+\subsection{Moduli di supporto}
+Non può mancare una breve nota in merito ad alcune routine di supporto, per render merito ad alcune utili funzioni sviluppate; più di preciso si fa uso di:
+\begin{itemize}
+ \item Un parser molto semplice per la lettura da file delle configurazioni iniziali.
+ \item Una funzione di stampa a video della catena di spostamenti della casella vuota, per collegare la configurazione iniziale a quella finale, o goal.
+ \item Un modulo per generare su richiesta un set di configurazioni iniziali ``valide'', ovvero tali per cui si possa raggiungere, tramite spostamenti successivi, la configurazione goal indicata.
+\end{itemize}
+
+\section{Binari}
+L'eseguibile che risulta dalla compilazione dei sorgenti allegati è molto semplice da usare. Tramite l'opzione '-h' si ottiene una pagina di help, la quale spiega quali parametri usare e cosa comporta l'utilizzo di ognuno di essi. Come detto, si possono eseguire quattro tipi di ricerche, indipendentemente l'una dall'altra o durante la stessa esecuzione. Si ha inoltre il comodo parametro '-v' (verbose) che permette di stampare o meno a video la catena risolutiva dei puzzle per cui una soluzione esiste effettivamente, così da poter semplicemente analizzare i risultati ottenuti (intervallo di esecuzione, numero medio di nodi espansi, etc.) trascurando l'effettivo modo con cui questi vengono recuperati.
+
+I puzzle in ingresso al binario vengono passati tramite semplice file di testo, dove dovranno essere elencate le configurazioni iniziali (si ricordi che la configurazione finale, o goal, è fissata), una per ogni riga, come permutazione qualsiasi delle cifre da 0 a 8. Da notare che, se richiesto, lanciando l'eseguibile con l'opzione '-g' seguita da un valore intero, sarà generato un file (con nome ``puzzle'') nella directory locale, con un numero di configurazioni pari ad una potenza del 10 per ogni cifra del valore fornito (ad esempio, facendo seguire all'opzione '-g' il valore 57, due cifre, saranno generate 100 configurazioni casuali, ovvero dieci al quadrato).
+
+Di seguito, un esempio del programma in esecuzione, in modalità verbose:
+\begin{quote}
+\begin{verbatim}
+nlogn@blackcube ~/projects/8puzzle $ cat puzzle
+125340678
+125734608
+nlogn@blackcube ~/projects/8puzzle $ ./8puzzle -bv puzzle
+
+Breadth First Search
+
+[1] [2] [5] 
+[3] [4] [0] 
+[6] [7] [8] 
+
+[1] [2] [0] 
+[3] [4] [5] 
+[6] [7] [8] 
+
+[1] [0] [2] 
+[3] [4] [5] 
+[6] [7] [8] 
+
+[0] [1] [2] 
+[3] [4] [5] 
+[6] [7] [8] 
+
+Press any key to continue...
+
+Skip #2
+Average (node): 5.000000
+Average (solution): 3.000000
+Puzzles: 1/2
+
+Press any key to continue...
+
+nlogn@blackcube ~/projects/8puzzle $ 
+\end{verbatim}
+\end{quote}
+Come si può osservare, viene anche indicato il numero totale di puzzle risolti fra quelli proposti. Infatti, nel caso in cui determinate configurazioni non siano valide, ovvero risolvibili, come nel caso della seconda fornita in questo esempio, o quando l'esaurimento della memoria impedisca di arrivare alla soluzione, questo viene tenuto di conto e indicato durante l'esecuzione. Da sottolineare che la media dei nodi visitati è, essa stessa, riferita ai soli puzzle per cui una soluzione è stata individuata, e questo vale anche per il numero medio di spostamenti utili a raggiungere la configurazione goal.
+
+\section{Test}
+\subsection{Setup}
+Arrivati a questo punto, è interessante effettuare alcuni test tramite l'uso dei binari ottenuti ed effettuare alcune valutazioni in merito, per poter giudicare i differenti algoritmi di ricerca, di peso e l'euristiche proposte.
+
+In questa sede è giusto osservare che, pur essendo tutte configurazioni per cui esiste una soluzione, i casi di studio generati in modo casuale tramite l'apposito modulo sono, di per se, molto complessi e richiedono un alto carico e tempo computazionale. Basti osservare l'esempio riportato di seguito, scelto fra un gamma di esempi fatti creare appositamente dal programma stesso, come precedentemente spiegato, per rendersi conto di quanto detto:
+\begin{quote}
+\begin{verbatim}
+nlogn@blackcube ~/projects/8puzzle $ cat puzzle
+501743628
+nlogn@blackcube ~/projects/8puzzle $ ./8puzzle -b puzzle
+
+Breadth First Search
+Average (node): 28940.000000
+Average (solution): 23.000000
+Puzzles: 1/1
+Elapsed: 63.000000 seconds
+
+Press any key to continue...
+
+nlogn@blackcube ~/projects/8puzzle $ 
+\end{verbatim}
+\end{quote}
+Il numero di nodi espansi tocca, infatti, i 30000  per un puzzle che richiede poco più di 20 mosse per essere risolto. Inoltre, il tempo impiegato è di 60 secondi, per una catena risolutiva, come detto, in 23 passi, ma, in altri casi, è risultato essere di gran lunga superiore, sia per quanto riguarda i nodi visitati che il lasso di tempo impiegato per arrivare ad una soluzione che coinvolge, di fatto, poche decine di spostamenti.\newline
+Pertanto, il test è stato portato avanti su tre set di dati: il primo, di 50 elementi, ricavato ``a mano'' con piccoli spostamenti di una posizione alla volta della cella vuota, a partire dalla configurazione goal; il secondo, generato in maniera del tutto simile al primo ma introducendo 15 elementi (su 50) tali per cui una soluzione non sia individuabile; il terzo, di soli 10 elementi, generato eseguendo il binario ottenuto, contenente configurazioni più ``complesse''. Tutti i set sono riportati in appendice al documento.
+\subsection{Analisi preliminare}
+Durante i test iniziali fatti per verificare il corretto funzionamento del programma e ricavare i primi dati utili, è stato notato come pesare l'influenza della funzione euristica a seconda del livello a cui il nodo si presenta non influiva in modo benefico sui risultati. Infatti, questa operazione, che sembrava potesse apportare benefici e una più veloce convergenza della configurazione goal, ``distrae'' in realtà l'algoritmo portandolo ad espandere nodi errati.\newline
+Per fare un esempio (ovviamente, la conclusione è tratta da un'analisi più approfondita di un semplice, singolo esempio), si consideri la configurazione iniziale: 017258346. Essa si traduce nei risultati sotto riportati, per la ricerca A*.
+\begin{quote}
+\begin{verbatim}
+A*/STD WFunc/STD Heu - Search
+Average (node): 2038.000000
+Average (solution): 20.000000
+Puzzles: 1/1
+Elapsed: 0.000000 seconds
+
+A*/RevLvl WFunc/STD Heu - Search
+Average (node): 40551.000000
+Average (solution): 30.000000
+Puzzles: 1/1
+Elapsed: 196.000000 seconds
+
+A*/STD WFunc/Man Heu - Search
+Average (node): 277.000000
+Average (solution): 20.000000
+Puzzles: 1/1
+Elapsed: 0.000000 seconds
+
+A*/RevLvl WFunc/Man Heu - Search
+Average (node): 51325.000000
+Average (solution): 22.000000
+Puzzles: 1/1
+Elapsed: 314.000000 seconds
+\end{verbatim}
+\end{quote}
+Dati analoghi si ottengono con l'algoritmo IDA* e con configurazioni più ``complesse'' il divario fra l'intervallo impiegato per trovare una soluzione pesando e non l'euristica associata aumenta drasticamente. Si può notare che, indipendentemente dall'euristica utilizzata, pesarne l'influenza durante la valutazione dei nodi porta ad un peggioramento delle prestazioni considerevole. Alla luce di quanto esposto si è deciso di inibire l'utilizzo di tale tecnica e limitarci ad utilizzare euristiche diverse ma mai pesate.
+\subsection{Complessità}
+In questa sede, prima di procedere con il recupero e l'analisi dei risultati, è utile e giusto dire che il lavoro è stato portato avanti su set di dati notevolmente ridotti e questo ha forse influito (anche se riteniamo che lo abbia fatto in minima parte) su quanto ottenuto.
+
+Bisogna però dire che, in prima analisi, era stato tentato di eseguire gli algoritmi su set di dati, generati casualmente tramite l'apposito modulo, rispettivamente di 10000, 1000 e 500 configurazioni diverse, ma purtroppo per problemi tecnici nessuna di queste operazioni è stata portata a termine. In particolare, abbiamo riscontrato la possibilità di ricavare dati utili sfruttando algoritmi come A* e in particolare IDA* con euristica Manhattan, ma ci siamo dovuti ``arrendere'' davanti a IDF e soprattutto BF dopo interminabili ore di esecuzione senza terminare.\newline
+Un esempio di risultati ottenuti con IDA* su 1000 configurazioni è il seguente:
+\begin{quote}
+\begin{verbatim}
+IDA*/STD WFunc/Man Heu - Search
+Average (node): 3150.340000
+Average (solution): 24.510000
+Puzzles: 1000/1000
+Elapsed: 4269.000000 seconds
+
+A*/RevLvl WFunc/Man Heu - Search
+Average (node): 489.720000
+Average (solution): 23.200000
+Puzzles: 1000/1000
+Elapsed: 34.000000 seconds
+\end{verbatim}
+\end{quote}
+Avendo riscontrato, in fase di debug, che il codice era perfettamente funzionante, si è giunti alla conclusione che il limite fosse proprio legato alle capacità della macchina utilizzata e allo scarso tempo a disposizione per poter aspettare che tutti i puzzle proposti venissero infine risolti.
+
+Di fatto, per ottenere risultati provenienti da uno stesso set di dati e quindi quanto più significativi, si è infine scelto di scartare anche quanto ottenuto dagli algoritmi più veloci su tali insiemi di configurazioni e ripiegare, come spiegato precedentemente, sui tre set proposti anche in appendice.
+\subsection{Risultati}
+Una volta preparati i set di dati e fatte le dovute osservazioni, abbiamo lasciato che i vari algoritmi ``digerissero'' i problemi proposti per avere informazioni interessanti sul loro effettivo funzionamento.
+
+I primi riscontri confermavano quanto visto anche dalla teoria, ovvero la relativa lentezza dell'algoritmo BF, seguito poi da DF (in questo caso in modalità iterativa) e i risultati nettamente migliori che si hanno sfruttando l'algoritmo A* ma soprattutto IDA*. Ancora, si è potuto apprezzare, come anticipato anche in questo caso dagli studi fatti, quanto una euristica più precisa migliori sensibilmente l'accuratezza e velocità di risoluzione degli algoritmi A* e IDA*, entrambi molto più efficienti nei casi di utilizzo dell'euristica Manhattan.
+In particolare, abbiamo ottenuto i dati riportati nelle tre tabelle proposte.
+\begin{table}[p]
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Alg} & \textbf{Avg Node} & \textbf{Avg Solution} & \textbf{Time (seconds)} \\
+\hline
+BF & 24208.60 & 16.78 & 1091 \\
+IDF & 7888.64 & 19.82 & 238 \\
+A*-Std & 3298.16 & 16.78 & 19 \\
+A*-Man & 361.88 & 16.90 & 0 \\
+IDA*-Std & 1134.52 & 17.94 & 4 \\
+IDA*-Man & 269.72 & 17.54 & 1 \\
+\hline
+\end{tabular}
+\caption{puzzle.0 (50/50)}
+\end{center}
+\end{table}
+\begin{table}[p]
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Alg} & \textbf{Avg Node} & \textbf{Avg Solution} & \textbf{Time (seconds)} \\
+\hline
+BF & 18104.71 & 16.34 & 2849 \\
+IDF & 13587.20 & 21.31 & 2508 \\
+A*-Std & 10270.23 & 16.34 & 851 \\
+A*-Man & 295.31 & 16.40 & 0 \\
+IDA*-Std & 3875.26 & 17.89 & 109 \\
+IDA*-Man & 203.31 & 16.46 & 0 \\
+\hline
+\end{tabular}
+\caption{puzzle.1 (35/50)}
+\end{center}
+\end{table}
+\begin{table}[p]
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Alg} & \textbf{Avg Node} & \textbf{Avg Solution} & \textbf{Time (seconds)} \\
+\hline
+BF & 26984.00 & 22.70 & 1552 \\
+IDF & 17363.30 & 30.90 & 1550 \\
+A*-Std & 15464.40 & 22.70 & 525 \\
+A*-Man & 1298.50 & 22.70 & 1 \\
+IDA*-Std & 4168.20 & 24.90 & 26 \\
+IDA*-Man & 572.00 & 23.70 & 0 \\
+\hline
+\end{tabular}
+\caption{puzzle.2 (10/10)}
+\end{center}
+\end{table}
+
+Volendo commentare, seppur brevemente, i risultati ottenuti, rifacendosi a quanto già detto in precedenza, si osserva per ogni singolo attributo riportato quanto segue:
+\begin{itemize}
+ \item Numero medio di nodi espansi: Questo valore è caratteristico degli algoritmi proposti e ha una forte incidenza anche sul tempo di esecuzione. In particolare, si ha una decisa diminuzione del valore già riguardo a IDF nei confronti di BF, ma si ottiene un taglio netto passando ad algoritmi quali A* e IDA* (quest'ultimo, decisamente il migliore da questo punto di vista) e utilizzando euristiche più precise, come l'euristica Manhattan.
+ \item Lunghezza media della soluzione: Non necessariamente ogni algoritmo giunge alla soluzione a lunghezza minima, anche se accontentarsi di soluzioni ``peggiori'' spesso porta ad ottenere risultati più velocemente. Per come opera, BF raggiunge e propone sempre la soluzione più breve, ma come detto a scapito del tempo impiegato per ricavarla, mentre negli altri casi, come emerge dai risultati ottenuti, non sempre la soluzione trovata è quella più breve, pur non discostando molto da essa, in realtà, nel numero di passi.
+ \item Tempo impiegato: Discende direttamente dal numero di nodi espansi, se si trascura la complessità dei singoli algoritmi, e lo si può pensare proporzionale ad essi (non sarà proprio così, ma si può accettarla come valida approssimazione). Si rispecchia quindi in questo valore quanto detto poco sopra, ovvero la ``pesantezza'' di algoritmi quali BF e IDF messa in evidenza da proposte più snelle come A* e IDA*, favorite anche dall'uso di euristiche sempre più precise.
+\end{itemize}
+
+Ovviamente, i risultati ottenuti, come ci aspettavamo, concordano con quanto emerso dallo studio teorico e si può quindi procedere, attraverso questi dati, al calcolo di alcuni altri valori che possano dare un quadro completo e più approfondito del problema analizzato.
+
+\section{Misure di Prestazione}
+Con i dati ricavati si possono adesso calcolare alcune misure interessanti. Prima di tutto, fondiamo le informazioni in nostro possesso in un'unica tabella che ci possa dare una visione di insieme sui 110 esempi analizzati (tabella 5), tralasciando per un momento il tempo impiegato per la risoluzione.
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Alg} & \textbf{Avg Node} & \textbf{Avg Solution} \\
+\hline
+BF & 23099.10 & 18.61 \\
+IDF & 12946,38 & 24.01 \\
+A*-Std & 9677,60 & 18.61 \\
+A*-Man & 651,90 & 18.67 \\
+IDA*-Std & 3059.33 & 20.24 \\
+IDA*-Man & 348.34 & 19.23 \\
+\hline
+\end{tabular}
+\caption{Tabella Riassuntiva}
+\end{center}
+\end{table}
+
+Dalla tabella ottenuta, si può ancora una volta ricavare quanto detto fin'ora sulla bontà dei singoli algoritmi e delle diverse euristiche.\newline
+Volendo invece introdurre un concetto nuovo, si può parlare del fattore di penetranza, definito come:
+\begin{equation}
+ P = \frac{L}{T}
+\end{equation}
+Dove sia:
+\begin{itemize}
+ \item L : Lunghezza media del cammino.
+ \item T : Numero totale di nodi generati.
+\end{itemize}
+Si intuisce che, dove il generatore di successione sia ottimo, ovvero tale da generare un nodo per ogni singolo passo, si avrà P pari ad 1, ma questa è un'eventualità assai remota!!\newline
+Un altro parametro interessante che andremo ad osservare è il fattore di ramificazione B, tale per cui:
+\begin{equation}
+T = \frac{B}{B - 1}\left( B^{L} - 1\right) 
+\end{equation}
+Esso rappresenta il numero \textit{costante} di successori che dovrebbe essere posseduto da ciascun nodo, dedotto a partire da un albero di profondità uguale alla lunghezza del cammino e avente un numero di nodi pari al numero di nodi generati. Come intuibile dall'espressione sopra, non è facilmente ricavabile e nel nostro caso lo si è ottenuto tramite approssimazioni successive, sfruttando poche righe di codice scritte ad-hoc per tale compito.
+
+Per gli algoritmi proposti, i parametri riportati presentano i valori indicati, calcolati non per il singolo puzzle ma sui valori medi, riportati in tabella 5.
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Alg} & \textbf{P} & \textbf{B} \\
+\hline
+BF & 0.0008 & 1.63 \\
+IDF & 0,0019 & 1.40 \\
+A*-Std & 0.0019 & 1.54 \\
+A*-Man & 0.0286 & 1.31 \\
+IDA*-Std & 0.0066 & 1.39 \\
+IDA*-Man & 0.0552 & 1.24 \\
+\hline
+\end{tabular}
+\caption{Parametri}
+\end{center}
+\end{table}
+Intuitivamente, la penetranza è più marcata negli algoritmi A* e IDA* e soprattutto utilizzando un'euristica più precisa come, appunto, l'euristica Manhattan, mentre va via via assottigliandosi (si è approssimato a ben quattro cifre decimali per non perdere completamente l'informazione) con algoritmi più primitivi ed euristiche meno efficienti. La stessa cosa si può dire per il fattore di ramificazione che, laddove il numero di nodi espansi è minore e la lunghezza della soluzione all'incirca costante, tende a far spiccare fra gli altri gli algoritmi più performanti.
+
+Inutile dire che i risultati sono orientativamente gli stessi che dalla teoria sapevamo doverci aspettare.
+
+\section{Riflessioni}
+Nel corso dell'esperimento, procedendo al recupero dei dati sensibili,ci siamo soffermati su un aspetto che, dal nostro punto di vista, è risultato abbastanza significante e ci ha permesso di affrontare una problematica non incontrata nello studio teorico.
+
+Limiteremo la discussione agli algoritmi BF e IDF, ma la cosa può essere allargata anche ad altri fra quelli utilizzati.
+
+In particolare, direttamente dalla definizione di ammissibilità (e ottimalità) relativa agli algoritmi di ricerca, ci aspettavamo che, per ovvi motivi, i due algoritmi BF e IDF fornissero una lunghezza della soluzione uguale per qualsiasi configurazione in ingresso e, date N configurazioni, la stessa lunghezza media. Questo, in realtà, abbiamo riscontrato non avvenire in tutti i casi, nonostante i due algoritmi fossero per definizione entrambi ammissibili nonchè ottimali.\newline
+In merito, abbiamo sviluppato una teoria che potesse spiegare questa apparente stranezza.
+
+Ricordando che entambi, e non uno solo di essi, operano in quella che abbiamo definito modalità prefissa (ovvero, lo status di configurazione goal è controllato prima dell'inserimento di un nodo nella coda e non all'atto della sua estrazione), si deve ricercare la spiegazione altrove. Abbiamo allora analizzato il modus operandi dei due algoritmi e va detto che l'albero di ricerca viene analizzato, dato un determinato livello, da destra a sinistra in un caso e nel verso opposto nell'altro caso. Questo è uno dei tasselli per spiegare il tutto. Va detto poi che, nel caso di IDF, si ha potenzialmente un diverso albero per ogni iterazione dell'algoritmo. A questo punto, basti pensare che la ricerca *DF (sia nel caso iterativo che non) è ``sbilanciata'' su uno dei lati dell'albero di ricerca, per l'appunto opera in profondità piuttosto che in larghezza, e che per evitare di espandere due volte lo stesso nodo si tiene memoria dei nodi già visitati con una tabella hash e codici di marchio appositi.\newline
+Alla luce di quanto detto, si consideri l'ipotetico nodo X come radice di un sottoalbero contenente il nodo goal e appartenente al versante opposto di ricerca rispetto a quello ``preferito'' inizialmente dall'algoritmo IDF (sia esso destro o sinistro, poco importa). Se il nodo goal è sufficientemente distante dal suddetto nodo X, è possibile per come opera l'algoritmo IDF che incrementando il valore di profondità, iterazione dopo iterazione, si incontri lo stesso nodo X sul versante opposto rispetto a quello dove lo si incontrava precedentemente e ad un livello di gran lunga superiore, il che ci porterà ad ignorarlo, procedendo, quando lo incontreremo nuovamente nella sua posizione ``originale'', perchè già presente nell'hash.\newline
+Di fatto, se un'altra soluzione più vicina non esiste, tutto ciò non consiste altro che in una traslazione della soluzione stessa (cioè del sotto-albero che contiene il nodo goal e ha come radice il nodo X di cui sopra) di tot livelli e quindi di un conseguente allungamento del procedimento risolutivo, dalla configurazione iniziale alla configurazione goal. Questo, ovviamente, porta ad una soluzione che in parte è diversa da quella precedentemente trovata con l'algoritmo BF e presenta un numero di passi maggiore, ma è e resta la soluzione più vicina alla radice e a costo minore che tale algoritmo permette di ottenere.\newline
+Questa, senza la presunzione che sia corretta, è la spiegazione che abbiamo dato all'apparente anomalia, dopo avere anche rivisto l'intero codice e confermato e appurato la correttezza negli algoritmi e nell'esecuzione, tramite debug.
+
+\section{Conclusioni}
+L'esperimento fatto, come approccio al problema della ricerca nello studio della Intelligenza Artificiale, ci ha permesso di osservare sotto svariati aspetti la questione e analizzarla a fondo.\newline
+Inizialmente, inutile negare che, come futuri ingegneri informatici, ci siamo divertiti a sviluppare del codice che potesse riportare su macchina il problema, per poterlo affrontare in modo più veloce, efficiente e, perchè no, con meno fatica (calcolare a mano la soluzione di un determinato puzzle a volte può essere davvero frustrante!!).\newline
+Una volta fatto questo primo passo, che di per se rappresenta, paradossalmente, forse lo scoglio maggiore, è stato interessante testare il tutto e ricavare dati utili, come il numero medio di nodi per la soluzione, il numero medio di nodi espansi e il tempo di esecuzione per la risoluzione dei puzzle.\newline
+Forse, però, la cosa più importante e l'aspetto più interessante dell'esperimento è stato il poter ``toccare con mano'' quanto visto a lezione, quanto studiato e saputo dalla teoria; utile e istruttivo riscontrare nella realtà dei fatti l'efficenza o meno di un determinato algoritmo, l'accuratezza o meno di una data euristica che si rispecchia sul tempo di esecuzione, e via dicendo.\newline
+Come, ovviamente, era attendibile, non ci aspettavamo di ricavare dati radicalmente diversi da quelli che si possono trovare come indicativi sui libri di testo, ma di contro si è potuto verificare ``sul campo'' la bontà di tali informazioni ricavando, di fatto, valori che si discostano di poco da quelli attesi (questo, ovviamente, discende dal numero e dalla tipologia di configurazioni diverse analizzate) e portare avanti su di essi alcune riflessioni.
+
+\newpage
+
+\appendix
+
+\section{Configurazioni di Test}
+\subsection{puzzle.0}
+\begin{table}[ht]
+\begin{tabular}{c|c|c|c|c}
+102345678 & 120345678 & 125340678 & 125348670 & 125348607 \\
+125348067 & 125048367 & 125408367 & 105428367 & 015428367 \\
+415028367 & 415208367 & 415280367 & 410285367 & 401285367 \\
+041285367 & 241085367 & 241805367 & 241850367 & 241857360 \\
+241857306 & 241807356 & 201847356 & 021847356 & 821047356 \\
+821347056 & 821347506 & 821347560 & 821340567 & 820341567 \\
+802341567 & 082341567 & 382041567 & 382401567 & 302481567 \\
+320481567 & 321480567 & 321487560 & 321487506 & 321487056 \\
+321087456 & 021387456 & 201387456 & 210387456 & 217380456 \\
+217308456 & 217358406 & 217358046 & 217058346 & 017258346
+\end{tabular}
+\end{table}
+\subsection{puzzle.1}
+\begin{table}[ht]
+\begin{tabular}{c|c|c|c|c}
+312045678 & 312645078 & 312645708 & 312605748 & 302615748 \\
+320615748 & 325610748 & 325618740 & 325618704 & 325608714 \\
+325068714 & 025368714 & 205368714 & 250368714 & 258360714 \\
+258306714 & 258036714 & 258736014 & 258736104 & 258706134 \\
+258076134 & 058276134 & 508276134 & 578206134 & 578026134 \\
+078526134 & 708526134 & 780526134 & 786520134 & 786524130 \\
+786524103 & 786504123 & 786540123 & 786543120 & 786543102 \\
+768543012 & 768043512 & 068743512 & 608743512 & 648703512 \\
+648730512 & 648732510 & 648732501 & 648732051 & 648032751 \\
+648302751 & 648320751 & 640328751 & 604328751 & 064328751
+\end{tabular}
+\end{table}
+\subsection{puzzle.2}
+\begin{table}[ht]
+\begin{tabular}{c|c|c|c|c}
+174086235 & 874250631 & 516408237 & 063182754 & 860253174 \\
+786012354 & 765830214 & 345612078 & 068371425 & 807245136
+\end{tabular}
+\end{table}
+
+\end{document}
