@@ -1,0 +1,3 @@
+% \pgfdeclareimage[height=2.4cm]{alice}{img/alice}
+\pgfdeclareimage[height=2.5cm]{resolgs}{img/resolgs}
+\pgfdeclareimage[height=2.5cm]{vdiv}{img/vdiv}

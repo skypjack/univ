@@ -1,0 +1,616 @@
+% <<<------------------------>>>
+
+\section{Introduzione}
+
+\subsection{Metodi di risoluzione simbolica}
+
+%% SLIDE
+
+\begin{frame}
+ \frametitle{Panoramica}
+
+ L'analisi simbolica come tecnica formale per lo studio di circuiti elettrici:
+ \begin{itemize}
+  \item Affonda le proprie radici in ambito accademico, dove nasce e si sviluppa
+  \item Penetra nel modello industriale, affiancandosi ad altri strumenti già presenti
+ \end{itemize}
+
+ \begin{columns}
+  \column<2->{0.45\textwidth}
+   \begin{block}{Vantaggi}
+     \begin{itemize}
+      \item Studio simbolico di un circuito
+      \item Sintesi numerica a posteriori
+     \end{itemize}
+   \end{block}
+  \column<3->{0.45\textwidth}
+   \begin{block}{Svantaggi}
+     \begin{itemize}
+      \item Numero componenti utilizzabili
+      \item Complessità computazionale
+     \end{itemize}
+   \end{block}
+ \end{columns}
+
+ \vspace{\stretch{1}}
+ \begin{block}<4->{Idea}
+  \begin{itemize}
+   \item Spostarsi dall'ambito circuitale allo spazio dei grafi
+   \item Sfruttare algoritmi specifici per \textit{risolvere} il circuito attraverso la sua immagine
+   \item Ricavare una soluzione che sia \textit{valida} all'interno dello spazio di partenza
+  \end{itemize}
+ \end{block}
+
+\end{frame}
+
+% <<<------------------------>>>
+
+\section{Teoria}
+
+\subsection{Sintesi circuitale}
+
+%% SLIDE
+
+\begin{frame}
+ \frametitle{Componenti elementari}
+
+ \begin{columns}[T]
+  \column{0.3\textwidth}
+   \begin{overprint}
+    \onslide<1>
+     \begin{table}
+      \centering
+      \begin{tabular}{l}
+       \rowcolor{blue!20}
+       \footnotesize Componente\\ \\
+       \pgfuseimage{resistor}\\
+       \pgfuseimage{capacitor}\\
+       \pgfuseimage{inductor}
+      \end{tabular}
+     \end{table}
+    \onslide<2>
+     \begin{table}
+      \centering
+      \begin{tabular}{l}
+       \rowcolor{blue!20}
+       \footnotesize Componente\\ \\
+       \pgfuseimage{nullor}
+      \end{tabular}
+     \end{table}
+    \onslide<3>
+     \begin{table}
+      \centering
+      \begin{tabular}{l}
+       \rowcolor{blue!20}
+       \footnotesize Componente\\ \\
+       \pgfuseimage{opampl}
+      \end{tabular}
+     \end{table}
+    \onslide<4>
+     \begin{table}
+      \centering
+      \begin{tabular}{l}
+       \rowcolor{blue!20}
+       \footnotesize Componente\\ \\
+       \pgfuseimage{vccs}
+      \end{tabular}
+     \end{table}
+   \end{overprint}
+  \column{0.1\textwidth}
+   \begin{pgfpicture}{0cm}{0cm}{1.2cm}{1cm}
+    \pgfsetstartarrow{\pgfarrowsingle}
+    \pgfsetendarrow{\pgfarrowsingle}
+    \pgfxycurve(0,0.5)(0.4,0.75)(0.8,0.75)(1.2,0.5)
+   \end{pgfpicture}
+  \column{0.5\textwidth}
+   \begin{overprint}
+    \onslide<1>
+     \begin{table}
+      \centering
+      \begin{tabular}{cc}
+       \rowcolor{blue!20}
+       \footnotesize Grafo in corrente & \footnotesize Grafo in tensione\\ &\\
+       \pgfuseimage{ijedge} & \pgfuseimage{jiedge}
+      \end{tabular}
+     \end{table}
+    \onslide<2>
+     \begin{table}
+      \centering
+      \begin{tabular}{cc}
+       \rowcolor{blue!20}
+       \footnotesize Grafo in corrente & \footnotesize Grafo in tensione\\ &\\
+       \pgfuseimage{nullorgi} & \pgfuseimage{nullorgv}
+      \end{tabular}
+     \end{table}
+    \onslide<3>
+     \begin{table}
+      \centering
+      \begin{tabular}{cc}
+       \rowcolor{blue!20}
+       \footnotesize Grafo in corrente & \footnotesize Grafo in tensione\\ &\\
+       \pgfuseimage{nullorgi} & \pgfuseimage{nullorgv}
+      \end{tabular}
+     \end{table}
+    \onslide<4>
+     \begin{table}
+      \centering
+      \begin{tabular}{cc}
+       \rowcolor{blue!20}
+       \footnotesize Grafo in corrente & \footnotesize Grafo in tensione\\ &\\
+       \pgfuseimage{vccsgi} & \pgfuseimage{vccsgv}
+      \end{tabular}
+     \end{table}
+   \end{overprint}
+ \end{columns}
+ \bigskip
+
+ \begin{itemize}
+  \item<1-> Una manciata di componenti rappresentano il nucleo del processo di sintesi
+  \item<2-> La loro immagine nello spazio dei grafi è semplice e immediata
+  \item<3-> Concorrono ad aggiungere archi e nodi in numero equivalente fra i due grafi
+  \item<4-> Risulta necessario memorizzare gli archi nell'ordine di inserimento, associando loro le informazioni utili relative al singolo componente da cui derivano
+ \end{itemize}
+
+\end{frame}
+
+%% SLIDE
+
+\begin{frame}
+ \frametitle{Componenti composti}
+
+ \begin{itemize}
+  \item<1-> Attraverso i componenti elementari se ne possono generare di più complessi
+  \item<2-> I generatori controllati sfruttano ad esempio transconduttanze e nullori
+  \item<3-> Ipotizzando l'esistenza di un generatore fittizio e regolando opportunamente i parametri di controllo, generatori di corrente e tensione non controllati possono venire a dipendere da esso
+  \item<4-> Componendo ulteriormente si ottengono altri elementi derivati\\ (i.e. trasformatore ideale)
+ \end{itemize}
+
+ \bigskip
+ \begin{columns}[T]
+  \column{0.25\textwidth}
+   \begin{overprint}
+    \onslide<1>
+     \begin{table}
+      \centering
+      \begin{tabular}{l}
+       \rowcolor{blue!20}
+       \footnotesize Componente\\ \\
+       \pgfuseimage{cccs}
+      \end{tabular}
+     \end{table}
+    \onslide<2>
+     \begin{table}
+      \centering
+      \begin{tabular}{l}
+       \rowcolor{blue!20}
+       \footnotesize Componente\\ \\
+       \pgfuseimage{ccvs}
+      \end{tabular}
+     \end{table}
+    \onslide<3>
+     \begin{table}
+      \centering
+      \begin{tabular}{l}
+       \rowcolor{blue!20}
+       \footnotesize Componente\\ \\
+       \pgfuseimage{vcvs}
+      \end{tabular}
+     \end{table}
+    \onslide<4>
+     \begin{table}
+      \centering
+      \begin{tabular}{l}
+       \rowcolor{blue!20}
+       \footnotesize Componente\\ \\
+       \pgfuseimage{transformer}
+      \end{tabular}
+     \end{table}
+   \end{overprint}
+  \column{0.1\textwidth}
+   \begin{pgfpicture}{0cm}{0cm}{1.2cm}{1cm}
+    \pgfsetstartarrow{\pgfarrowsingle}
+    \pgfsetendarrow{\pgfarrowsingle}
+    \pgfxycurve(0,0.5)(0.4,0.75)(0.8,0.75)(1.2,0.5)
+   \end{pgfpicture}
+  \column{0.55\textwidth}
+   \begin{overprint}
+    \onslide<1>
+     \begin{table}
+      \centering
+      \begin{tabular}{l}
+       \rowcolor{blue!20}
+       \footnotesize Circuito equivalente\\ \\
+       \pgfuseimage{cccseq}
+      \end{tabular}
+     \end{table}
+    \onslide<2>
+     \begin{table}
+      \centering
+      \begin{tabular}{l}
+       \rowcolor{blue!20}
+       \footnotesize Circuito equivalente\\ \\
+       \pgfuseimage{ccvseq}
+      \end{tabular}
+     \end{table}
+    \onslide<3>
+     \begin{table}
+      \centering
+      \begin{tabular}{l}
+       \rowcolor{blue!20}
+       \footnotesize Circuito equivalente\\ \\
+       \pgfuseimage{vcvseq}
+      \end{tabular}
+     \end{table}
+    \onslide<4>
+     \begin{table}
+      \centering
+      \begin{tabular}{l}
+       \rowcolor{blue!20}
+       \footnotesize Circuito equivalente\\ \\
+       \pgfuseimage{transformereq}
+      \end{tabular}
+     \end{table}
+   \end{overprint}
+ \end{columns}
+
+\end{frame}
+
+% <<<------------------------>>>
+
+\subsection{Metodo dei due grafi}
+
+%% SLIDE
+
+\begin{frame}
+ \frametitle{Ricerca degli alberi di copertura comuni}
+
+ \begin{block}{Definizione}
+  Siano $gI^L$ e $gV^L$ due differenti multiinsiemi di $M$ archi ciascuno, definiti entrambi su uno spazio di vertici di dimensione $N$.\\
+  Siano inoltre $R^{gI^L}$ e $R^{gV^L}$ relazioni d'ordine stretto per $gI^L$ e $gV^L$, ovvero valga per gli archi dei due insiemi rispettivamente una corrispondenza biunivoca con $\mathbb{N}$.
+
+  \bigskip
+  \uncover<2->{Allora vale:}
+  \begin{itemize}
+   \item<2-> $gI^L$ e $gV^L$ definiscono due grafi $gI$ e $gV$ aventi entrambi $N$ nodi e $M$ archi
+   \item<3-> Un albero di copertura comune è un insieme di $N-1$ indici $I^T$ tali che, sfruttando gli ordinamenti indotti sui due multiinsiemi, gli archi individuati descrivono per ognuno di essi un albero di copertura nel grafo corrispondente
+   \item<4-> Un insieme $I^E$ di $N-1$ indici tale da individuare un albero soltanto su uno dei due grafi non definisce un albero di copertura comune
+  \end{itemize}
+ \end{block}
+
+ \begin{alertblock}<5->{Nota}
+  La sintesi circuitale genera liste che soddisfano tutte le richieste di cui sopra.
+ \end{alertblock}
+
+\end{frame}
+
+%% SLIDE
+
+\begin{frame}
+ \frametitle{Algoritmo di Grimbleby e Metodo di Schach}
+
+ \begin{columns}[T]
+  \column{0.45\textwidth}
+   \begin{block}{Algoritmo di Grimbleby}
+    \begin{itemize}
+     \item<2-> Tecnica per la ricerca di \alert<2-2>{tutti gli alberi di copertura comuni} fra due grafi
+     \item<3-> Basato su un \alert<3-3>{metodo inefficiente} di ricerca per \alert<3-3>{singolo albero} di copertura comune
+     \item<4-> Costruisce nel caso peggiore \alert<4-4>{tutti i potenziali alberi} di copertura comuni ai due grafi
+    \end{itemize}
+   \end{block}
+  \column{0.45\textwidth}
+   \begin{block}{Metodo di Schach (aka MRT)}
+    \begin{itemize}
+     \item<5-> Migliora le performance di un fattore che oscilla fra \alert<5-5>{$350\%$} e \alert<5-5>{$26.000\%$}
+     \item<6-> Sfrutta un \alert<6-6>{metodo più efficiente} di ricerca per \alert<6-6>{singolo albero} di copertura comune
+     \item<7-> Fa uso di \alert<7-7>{ponti} per ridurre il numero di potenziali alberi di copertura comuni generati
+    \end{itemize}
+   \end{block}
+ \end{columns}
+ \bigskip
+
+\end{frame}
+
+% <<<------------------------>>>
+
+\subsection{Rappresentazione simbolica}
+
+%% SLIDE
+
+\begin{frame}
+ \frametitle{Circuiti $RCg_m$}
+
+ Dato un circuito $RCg_m$, si ha l'insieme degli alberi di copertura comuni:
+  $$ T = \{ T_1\ldots T_k \}~\mid~ T_i \in \{0\ldots M - 1\}^{N-1} $$
+ Il determinante della matrice delle ammettenze ai nodi è calcolato come:
+  $$
+  \begin{array}{c}
+  \Delta =
+    \sum_{i = 1}^k{
+      \varepsilon_i\ast\left(\begin{array}{c}
+	prodotto~ammettenze~presenti~su~T_i
+      \end{array}\right)
+    }\\ \\
+  \varepsilon_i = \left( det\left[ m\{ A_i \}\right]\right)\ast\left( det\left[ m\{ A_v\}\right]\right)~\in~\left[ 0,\pm 1\right]
+  \end{array}
+  $$
+ Dove $m\{ A_i\}$ e $m\{ A_v\}$ rappresentano le matrici d'incidenza relative alla proiezione sui grafi in tensione e in corrente dell'albero di copertura comune in esame.
+
+\end{frame}
+
+%% SLIDE
+
+\begin{frame}
+ \frametitle{Estensione del modello}
+
+ \begin{itemize}
+  \item Circuiti contenenti componenti con rappresentazione impedenza
+    \begin{itemize}
+     \item Preso un generico albero $T$ su un grafo $G$, si definisce coalbero di $T$ la foresta $T^,$ composta da tutti e soli gli archi non presenti in $T$
+     \item Matrice $\Delta$ ottenuta come:
+      $$
+      \begin{array}{c}
+      \Delta =
+	\sum_{i=1}^n{
+	  \varepsilon_i\ast\left(\begin{array}{c}
+	    prodotto~ammettenze~presenti~su~T_i\\ \boldsymbol{e~impedenze~presenti~su~T'_i}
+	  \end{array}\right)
+	}\\ \\
+      \varepsilon_i = \left( det\left[ m\{ A_i \}\right]\right)\ast\left( det\left[ m\{ A_v\}\right]\right)~\in~\left[ 0,\pm 1\right]
+      \end{array}
+      $$
+    \end{itemize}
+  \item Nullori e generatori controllati non di tipo transconduttanza
+    \begin{itemize}
+     \item Generatori controllati non di tipo transconduttanza vengono espressi tramite modelli equivalenti (circuiti $RCg_m$ e nullori)
+     \item Non potendo collassare i nodi nei grafi in corrente e in tensione, il nullore impone di forzare in ogni albero di copertura comune archi posti fra i nodi stessi
+    \end{itemize}
+ \end{itemize}
+
+\end{frame}
+
+%% SLIDE
+
+\begin{frame}
+ \frametitle{Metodo del circuito modificato}
+
+ Eccitando i nodi $i$/$0$ e ricavando parametri fra i nodi $j$/$0$, avremo:
+  $$
+   \begin{array}{c}
+    Z_{in} = \frac{V_i}{I_i} = \frac{\Delta_{ii}}{\Delta}~\qquad~
+    \frac{V_o}{I_{in}} = \frac{V_j}{I_i} = \frac{\Delta_{ij}}{\Delta}~\qquad~
+    \frac{V_o}{V_{in}} = \frac{V_j}{V_i} = \frac{\Delta_{ij}}{\Delta_{ii}}
+    \\ \\
+    \begin{array}{c}
+      \Delta = determinante~matrice~ammettenze~ai~nodi\\
+      \Delta_{ij} = ij_{esimo}~cofattore~matrice~ammettenze~ai~nodi
+    \end{array}
+   \end{array}
+  $$
+
+ \begin{center}
+  \begin{overprint}
+   \onslide<1>{\pgfuseimage<1>{circbase}}
+   \onslide<2>{\pgfuseimage<2>{circmod}}
+  \end{overprint}
+ \end{center}
+
+ \uncover<2->{
+  Per il circuito modificato si ottiene una separazione netta dei parametri, ovvero:
+   $$ \Delta ' = \Delta + y'\Delta_{ii} + g'\Delta_{ij}$$
+ }
+
+\end{frame}
+
+% <<<------------------------>>>
+
+\subsection{Esempio}
+
+%% SLIDE
+
+\begin{frame}
+ \frametitle{Esempio}
+
+ Esempio d'analisi di un semplice circuito \alert<1>{divisore di tensione}.
+
+ \begin{center}
+  \begin{overprint}
+   \onslide<1>{\pgfuseimage<1>{resol}}
+   \onslide<2>{\pgfuseimage<2>{resoldip}}
+   \onslide<3>{\pgfuseimage<3>{resoleq}}
+   \onslide<4>{\pgfuseimage<4>{resolmod}}
+   \onslide<5->{\pgfuseimage<5->{resolgs}}
+  \end{overprint}
+ \end{center}
+
+ \begin{itemize}
+  \item<2-> Tutti i generatori indipendenti vengono a dipendere da un generatore fittizio
+  \item<3-> Eventuali elementi composti vengono rimpiazzati da modelli equivalenti
+  \item<4-> Viene aggiunta la circuiteria d'ingresso per il circuito modificato
+  \item<5-> Ha luogo la sintesi del circuito in forma di grafi in tensione e in corrente
+  \item<6-> Si ricavano gli alberi di copertura comuni e quindi la formula di trasferimento
+ \end{itemize}
+
+\end{frame}
+
+% <<<------------------------>>>
+
+\section{Pratica}
+
+\subsection{Strumenti}
+
+%% SLIDE
+
+\begin{frame}
+ \frametitle{Framework}
+
+ Alcuni degli strumenti principali utilizzati nello sviluppo di QSapecNG.
+
+ \begin{block}<2->{Boost C++ Libraries}
+  \begin{itemize}
+   \item ... one of the most highly regarded and expertly designed C++ library projects in the world \begin{footnotesize}(Herb Sutter, Andrei Alexandrescu)\end{footnotesize}
+   \item The Boost libraries
+    \begin{itemize}
+     \item Have tests suites.
+     \item Have documentation.
+     \item  Have been tested on multiple systems.
+     \item Are peer-reviewed.
+    \end{itemize}
+    That said, it is usually a really dumb idea to go and reinvent a wheel that boost already offers. \begin{footnotesize}(Bjarne Stroustrup)\end{footnotesize}
+  \end{itemize}
+ \end{block}
+
+ \begin{block}<3->{Qt Framework}
+  Librerie per lo sviluppo grafico, per il web, per il multimediale, per le basi dati e tanto altro, un framework stabile e completo, corredato di svariati strumenti di supporto.
+ \end{block}
+
+\end{frame}
+
+% <<<------------------------>>>
+
+\subsection{Note di programmazione}
+
+%% SLIDE
+
+\begin{frame}
+ \frametitle{Note di programmazione}
+
+ QSapecNG sfrutta al meglio le potenzialità del C++ fondendole con le più flessibili metodologie di programmazione:
+
+ \begin{itemize}
+  \item<2-> Tecniche di programmazione generica (MRT e Boost Graph Library)
+  \item<3-> Design Pattern
+    \begin{itemize}
+     \item Observer (modello signal/slot)
+     \item Builder (modelli di trasformazione dati)
+     \item Monostate (centralizzazione della configurazione)
+     \item Facade (algoritmo per la ricerca degli alberi comuni)
+     \item Template Method (\textit{IoC-based}, funzioni d'analisi applicabili)
+    \end{itemize}
+  \item<4-> Separazione backend/frontend (SapecNG/QSapecNG)
+  \item<5-> Super (\textbf{S}calabile, \textbf{U}sabile, \textbf{P}ortabile, \textbf{E}volvibile, \textbf{R}iusabile)
+    \begin{itemize}
+     \item Usabilità (ambiente intuitivo e personalizzabile)
+     \item Scalabilità (modello multi-threading e ambiente di disegno)
+     \item Evolvibilità (design modulare e abbattimento dell'accoppiamento)
+     \item Riusabilità (programmazione generica, separazione backend/frontend)
+     \item Efficienza e prestazioni (sfruttamento risorse, modello multi-threading)
+     \item Manutenibilità e riparabilità (pattern e modelli ereditati dalle librerie)
+     \item Portabilità (software multipiattaforma - Microsoft Windows, sistemi Unix-like)
+    \end{itemize}
+ \end{itemize}
+
+\end{frame}
+
+%% SLIDE
+
+\begin{frame}
+ \frametitle{Cenni}
+
+ \begin{columns}[T]
+  \column{0.45\textwidth}
+
+   \begin{block}{Framework}
+    \begin{itemize}
+     \item Boost C++ Libraries
+      \begin{itemize}
+       \item Boost Graph Library
+       \item Property Tree
+       \item Property Map
+       \item \ldots
+      \end{itemize}
+     \item Qt Framework
+    \end{itemize}
+   \end{block}
+
+   \begin{block}{Programmazione generica}
+   \end{block}
+
+  \column{0.45\textwidth}
+
+   \begin{block}{Design pattern}
+    \begin{itemize}
+     \item Observer
+     \item Builder
+     \item Monostate
+     \item Facade
+     \item Template Method
+    \end{itemize}
+   \end{block}
+
+   \begin{block}{Caratteristiche}
+    \begin{itemize}
+     \item \textbf{S}calabile
+     \item \textbf{U}sabile
+     \item \textbf{P}ortabile
+     \item \textbf{E}volvibile
+     \item \textbf{R}iusabile
+    \end{itemize}
+   \end{block}
+
+ \end{columns}
+
+\end{frame}
+
+% <<<------------------------>>>
+
+\section{Conclusioni}
+
+\subsection{Conclusioni}
+
+%% SLIDE
+
+\begin{frame}
+ \frametitle{Conclusioni}
+
+ SapecNG e QSapecNG sono soggetti principalmente a:
+ \begin{itemize}
+  \item Interesse interdisciplinare dal punto di vista teorico:
+    \begin{itemize}
+     \item Ambito elettrotecnico (i.e. analisi circuitale simbolica o semi-simbolica)
+     \item Ambito informatico (i.e. teoria dei grafi, design di sistemi CAD)
+    \end{itemize}
+  \item Interesse trasversale fra campi apparentemente distanti:
+    \begin{itemize}
+     \item Mondo accademico (i.e. studio degli aspetti teorici, uso per scopi didattici)
+     \item Modello industriale (i.e. applicabilità dell'analisi simbolica)
+    \end{itemize}
+ \end{itemize}
+
+ \bigskip
+
+ \begin{block}<2->{Il lavoro di tesi}
+  Ha realizzato uno strumento effettivamente fruibile:
+  \begin{itemize}
+   \item Scaturito da studi e approfondimenti in merito agli aspetti teorici
+   \item Con radici che affondano nell'ambito dell'elettrotecnica e dell'informatica
+   \item In grado di dare una risposta alle necessità pratiche del modello industriale
+   \item Capace di abbracciare richieste teoriche e didattiche del mondo accademico
+  \end{itemize}
+ \end{block}
+
+\end{frame}
+
+% <<<------------------------>>>
+
+\section{Ringraziamenti}
+
+\subsection{Ringraziamenti}
+
+%% SLIDE
+
+\begin{frame}
+ \frametitle{Ringraziamenti}
+
+ \begin{block}{Dedicato a...}
+  \bigskip
+  \begin{center}
+    \Large
+    Ing. D'Errico Damiano.\\
+    \medskip
+    \normalsize
+    Addio, o meglio arrivederci.\\
+  \end{center}
+  \bigskip
+ \end{block}
+
+\end{frame}

@@ -1,0 +1,25 @@
+\chapter{Conclusioni}
+
+Gli studi riguardanti l'analisi simbolica nascono e si sviluppano inizialmente in ambito accademico, dove trovano terreno fertile per quanto riguarda anche la loro applicazione. Le teorie ad essi collegate attraversano lo spazio dell'analisi matriciale, relegando la loro effettiva applicabilità a piccoli problemi modello, per sfociare col tempo nello spazio dei grafi da cui, sposandosi con la crescente potenza computazionale delle macchine che li eseguono, nascono algoritmi performanti e in grado di attirare l'attenzione di studiosi e non solo. L'ovvia conseguenza consiste nell'interesse del mondo industriale che vede nell'analisi simbolica uno strumento da accostare a quelli già esistenti per scopi specifici, ottenendo così una visione d'insieme più chiara per quanto riguarda i propri progetti.
+
+Questo strumento è quindi soggetto ad un interesse interdisciplinare in ambito teorico (per esempio, ha attinto dal campo dell'elettronica e dell'informatica), oltre ad essere oggetto di un interesse trasversale fra diversi ambiti apparentemente distanti fra loro, come quello del mondo accademico e quello del modello industriale.
+
+L'uso che tanto gli studenti delle scuole medie superiori quanto gli universitari ne possono fare, così come il vantaggio che uno sviluppatore hardware può trarne, è indubbio. La sola limitazione è data dal ridotto parco di elementi effettivamente sfruttabile a tale scopo, il che può rappresentare un freno alle possibilità di utilizzo. Ciò nonostante, basti pensare che i primi studi si erano concentrati sui soli componenti di tipo ammettenza, per poi estendere l'analisi agli elementi di tipo impedenza e quindi trovare soluzioni e modelli alternativi per generatori, generatori controllati, amplificatore operazionale e così via. L'obiettivo è quindi, col tempo, quello di estendere sempre più il fronte della circuiteria analizzabile in modo simbolico, rendendo questa pratica maggiormente fruibile in tutti i settori su cui si affaccia.
+
+\section{Sviluppi futuri}
+Per quanto riguarda il software sviluppato, esso mette in campo tutto il necessario per svolgere le procedure di analisi simbolica, separando nettamente la parte operativa dall'interfaccia utente, così che se ne possa usufruire anche in altro modo (ad esempio, sviluppando interfacce specifiche per altri ambienti o sistemi).
+
+\paragraph{}
+Sulla base della struttura già presente, pensata fin da principio per essere estesa e adatta allo scopo a tutti i livelli, uno dei primi passi necessari sarà quello di ampliare il parco procedure per l'analisi delle funzioni di trasferimento. In quest'ottica, potrebbe essere interessante abbracciare l'ipotesi di un'analisi parametrica, così da poter ospitare in un unico grafico più curve relative ad un determinato circuito, offrendo la possibilità di un confronto e un'analisi maggiormente specifica.
+
+Un altro concetto interessante da approfondire è quello dei sottocircuiti, uno strumento che permette di lasciare all'utente la libertà di sviluppare propri componenti personalizzati da inserire in circuiti più ampi e da riutilizzare nel tempo. Molti simulatori di diverso genere, già presenti nel panorama informatico, propongono questa opzione, che non ha esistato a mostrarsi in tutta la sua versatilità. Questa innovazione potrebbe ripercuotersi anche nella stesura di un pacchetto di componenti distribuito col software, per permettere all'utente finale di attingere ad un gruppo di elementi già sviluppati.
+
+Sfociando nella parte più teorica che sta dietro al software, una delle evoluzioni più importanti sarebbe quella della traduzione di quei componenti, ad oggi non trattabili, nella forma di coppia di grafi in tensione e in corrente. Questo permetterebbe un'immediata inclusione di essi all'interno dell'ambiente di disegno e quindi una immediata fruibilità, poiché per come è stato concepito l'intero software è già predisposto per accogliere facilmente nuovi elementi in futuro.
+
+\paragraph{}
+Con questa breve carrellata di alcuni degli spunti più interessanti che potrebbero muovere lo sviluppo futuro di QSapecNG, è necessario sottolineare che autore e relatori del lavoro di tesi hanno deciso di mettere a disposizione della comunità il codice sviluppato, così che questo possa essere studiato e ad esso possano essere apportati miglioramenti di ogni genere. La direzione presa rappresenta un'opportunità di crescita per QSapecNG, offrendo la possibilità di farsi conoscere nell'ambiente e di venire incontro alle necessità del singolo con l'apporto di tutti.
+
+
+\section{Il software QSapecNG}
+QSapecNG è rilasciato sotto licenza GPLv3 e, insieme al codice, verrà presto reso disponibile al pubblico nella sua prima release stabile. Essendo il progetto nato in seno all'Università di Firenze, verranno sfruttati in linea di massima i canali di quest'ultima per rendere disponibile quanto realizzato; l'indirizzo di riferimento (lo stesso che ha presentato al pubblico SapWin e SapecNG) sarà:\\
+\url{http://www.cirlab.unifi.it/}

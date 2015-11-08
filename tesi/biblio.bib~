@@ -1,0 +1,368 @@
+@book{Vlach,
+ author = {Vlach, Jiri and Singhal, Kishore},
+ title = {Computer Methods for Circuit Analysis and Design},
+ year = {1983},
+ publisher = {John Wiley \& Sons, Inc.},
+ address = {New York, NY, USA}
+ }
+
+@ARTICLE{Schach,
+author={Schach, S.R.},
+journal={Electronics Letters},
+title={Comment on Algorithm for Finding the Common Spanning Trees of Two Graphs},
+year={1982},
+volume={18},
+pages={988 -989}
+}
+
+@ARTICLE{MRT,
+author={Schach, S.R.},
+journal={Electronics Letters},
+title={Efficient algorithm for common spanning tree problem},
+year={1983},
+month={28},
+volume={19},
+number={9},
+pages={346 -347}
+}
+
+@ARTICLE{Grimbleby,
+author={Grimbleby, J.B.},
+journal={Electronics Letters},
+title={Algorithm for finding the common spanning trees of two graphs},
+year={1981},
+month={25},
+volume={17},
+number={13},
+pages={470 -471}
+}
+
+@article{JenkinsTraub,
+ title = {A Three-Stage Algorithm for Real Polynomials Using Quadratic Iteration},
+ author = {Jenkins, M. A. and Traub, J. F.},
+ journal = {SIAM Journal on Numerical Analysis},
+ volume = {7},
+ number = {4},
+ pages = {545--566},
+ url = {http://www.jstor.org/stable/2949376},
+ year = {1970},
+ publisher = {Society for Industrial and Applied Mathematics},    
+ copyright = {Copyright © 1970 Society for Industrial and Applied Mathematics}
+}
+
+ @misc{STL,
+    title = {Standard Template Library Programmer's Guide},
+    howpublished={\url{http://www.sgi.com/tech/stl/}}
+}
+
+ @misc{Boost,
+    title = {Boost C++ Libraries},
+    howpublished={\url{http://www.boost.org/}}
+}
+
+ @misc{Qt,
+    title = {Qt - Cross-platform application and UI framework},
+     howpublished={\url{http://qt.nokia.com/}}
+}
+
+@book{BGL,
+ title = {The Boost Graph Library: User Guide and Reference Manual (C++ In-Depth Series)},
+ author = {Siek, Jeremy and Lee, Lie-Quan and Lumsdaine, Andrew},
+ year = {2001},
+ publisher = {Addison-Wesley Professional}
+ }
+ 
+ @book{QtGui,
+ title = {C++ GUI Programming with Qt 4},
+ author = {Blanchette, Jasmin and Summerfield, Mark},
+ year = {2008},
+ publisher = {Prentice Hall}
+ }
+ 
+ @MISC{GoF,
+    author = {Erich Gamma and Richard Helm and Ralph Johnson and John Vlissides},
+    title = {Design Patterns: Abstraction and Reuse of Object-Oriented Design},
+    year = {1993}
+}
+
+@article{NonAdmittance,
+ author = {Rodanski, B. S.},
+ title = {Modification of the Two-Graph Method for Symbolic Analysis of Circuits with Non-Admittance Elements},
+ journal = {Proceedings of the International Conference on Signals and Electronic Systems},
+ year = {2002},
+ month={September},
+ pages={249-254}
+}
+
+ @misc{Wikipedia,
+    title = {Wikipedia: The Free Encyclopedia},
+     howpublished={\url{htpp://en.wikipedia.org}}
+}
+
+@book{GraphTheory,
+ author = {Christofides, Nicos},
+ title = {Graph theory: An algorithmic approach (Computer science and applied mathematics)},
+ year = {1975},
+ isbn = {0121743500},
+ publisher = {Academic Press, Inc.},
+ address = {Orlando, FL, USA}
+ }
+ 
+ @ARTICLE{Minty,
+author={ Minty, G.},
+journal={Circuit Theory, IEEE Transactions on},
+title={A Simple Algorithm for Listing All the Trees of a Graph},
+year={1965},
+month={Mar},
+volume={12},
+number={1},
+pages={ 120 - 120}
+}
+
+@article{ReadTarjan,
+  author = {R. C. Read and R. E. Tarjan},
+  journal = {Networks},
+  title = {Bounds on Backtrack Algorithms for listing Cycles, Paths, and Spanning Trees},
+  year = 1975
+}
+
+@ARTICLE{Percival1,
+author={Percival, W.S.},
+journal={Electrical Engineers, Journal of the Institution of},
+title={The solution of passive electrical networks by means of mathematical trees},
+year={1953},
+month={May},
+volume={1953},
+number={5},
+pages={214}
+}
+
+@ARTICLE{Percival2,
+author={Percival, W.S.},
+journal={Proceedings of the IEE - Part IV: Institution Monographs},
+title={Improved Matrix and Determinant Methods for Solving Networks},
+year={1954},
+month={August},
+volume={101},
+number={7},
+pages={258 -265}
+}
+
+@ARTICLE{Percival3,
+author={Percival, W.S.},
+journal={Proceedings of the IEE - Part C: Monographs},
+title={The graphs of active networks},
+year={1955},
+month={September},
+volume={102},
+number={2},
+pages={270 -278}
+}
+
+ @misc{sapwin,
+    title = {SapWin: Symbolic Analysis Program for Window},
+     howpublished={\url{http://cirlab.det.unifi.it/Sapwin/}}
+}
+
+ @misc{couenne,
+    title = {Couenne, an exact solver for nonconvex MINLPs},
+     howpublished={\url{https://projects.coin-or.org/Couenne/}}
+}
+
+ @misc{neos,
+    title = {NEOS, Server for Optimization},
+     howpublished={\url{http://neos.mcs.anl.gov/}}
+}
+
+@book{conopt,
+    author = {Boyd, Stephen and Vandenberghe, Lieven},
+    day = {08},
+    howpublished = {Hardcover},
+    month = {March},
+    publisher = {Cambridge University Press},
+    title = {Convex Optimization},
+    year = {2004}
+}
+
+@book{ampl,
+    author = {Fourer, Robert and Gay, David M. and Kernighan, Brian W.},
+    day = {12},
+    howpublished = {Hardcover},
+    month = {November},
+    publisher = {{Duxbury Press}},
+    title = {AMPL: A Modeling Language for Mathematical Programming},
+    year = {2002}
+}
+
+@article{neosserver,
+author = {Joseph Czyzyk and Michael P. Mesnier and Jorge J. Moré},
+title = {The NEOS Server},
+journal ={Computing in Science and Engineering},
+volume = {5},
+year = {1998},
+pages = {68-75},
+publisher = {IEEE Computer Society},
+address = {Los Alamitos, CA, USA},
+web = {http://neos.mcs.anl.gov/}
+}
+
+@book{CppCodStd,
+ author = {Sutter, Herb and Alexandrescu, Andrei},
+ title = {C++ Coding Standards: 101 Rules, Guidelines, and Best Practices (C++ in Depth Series)},
+ year = {2004},
+ publisher = {Addison-Wesley Professional}
+ }
+
+@book{Stroustrup,
+    author = {Stroustrup, Bjarne},
+    day = {11},
+    edition = {3},
+    month = {February},
+    publisher = {Addison-Wesley Professional},
+    title = {The C++ Programming Language: Special Edition},
+    year = {2000}
+}
+
+@MISC{StroustrupCpp,
+    author = {Bjarne Stroustrup},
+    title = {Abstraction, libraries, and efficiency in C++}
+}
+
+@book{EffectiveCpp,
+  author = {Scott Meyers},
+  publisher = {Addison-Wesley Professional},
+  title = {Effective C++: 55 Specific Ways to Improve Your Programs and Designs (3rd Edition)},
+  year = 2005
+}
+
+@ARTICLE{huelsman1,
+author={Huelsman, L.P.},
+journal={Education, IEEE Transactions on},
+title={Symbolic analysis-a tool for teaching undergraduate circuit theory},
+year={1996},
+month={May},
+volume={39},
+number={2},
+pages={243 -250}
+}
+
+@ARTICLE{huelsman2,
+author={Huelsman, L.P.},
+journal={IEEE Circuits and Devices Magazine},
+title={SAPWIN, Symbolic Analysis Program for Windows - PC Programs for Engineers},
+year={1996},
+month={Mar},
+volume={6},
+number={2},
+pages={4 -6}
+}
+
+@INPROCEEDINGS{SAPEC,
+author={Liberatore, A. and Manetti, S.},
+booktitle={Circuits and Systems, 1988., IEEE International Symposium on},
+title={SAPEC - a personal computer program for the symbolic analysis of electric circuits},
+year={1988},
+month={7-9},
+volume={},
+number={},
+pages={897 -900 vol.1},
+}
+
+@ARTICLE{IEEESapWin,
+author={Luchetta, A. and Manetti, S. and Reatti, A.},
+journal={Education, IEEE Transactions on},
+title={SAPWIN-a symbolic simulator as a support in electrical engineering education},
+year={2001},
+month={May},
+volume={44},
+number={2},
+pages={9 pp.},
+}
+
+@article{Cengelci,
+author={Cengelci, E.},
+journal={Power Electronics Technology Magazine},
+title={Software Makes Transfer Functions More Manageable},
+year={2008},
+month={June},
+volume={},
+number={},
+pages={14 -21},
+}
+
+@ARTICLE{Manetti1,
+author={Manetti, S.},
+journal={Circuits, Devices and Systems, IEE Proceedings G},
+title={New approach to automatic symbolic analysis of electric circuits},
+year={1991},
+month={feb},
+volume={138},
+number={1},
+pages={22 -28},
+}
+
+@ARTICLE{Manetti2,
+author={Fedi, G. and Manetti, S. and Piccirilli, M.C. and Starzyk, J.},
+journal={Circuits and Systems I: Fundamental Theory and Applications, IEEE Transactions on},
+title={Determination of an optimum set of testable components in the fault diagnosis of analog linear circuits},
+year={1999},
+month={jul},
+volume={46},
+number={7},
+pages={779 -787},
+}
+
+@INPROCEEDINGS{iDesign,
+author={Liberatore, A. and Luchetta, A. and Manetti, S. and Piccirilli, M.C.},
+booktitle={Circuits and Systems, 1995. ISCAS '95., 1995 IEEE International Symposium on},
+title={A new symbolic program package for the interactive design of analog circuits},
+year={1995},
+month={30},
+volume={3},
+number={},
+pages={2209 -2212 vol.3},
+}
+
+@INPROCEEDINGS{fault1,
+author={Fedi, G. and Liberatore, A. and Luchetta, A. and Manetti, S. and Piccirilli, M.C.},
+booktitle={Circuits and Systems, 1996. ISCAS '96., 'Connecting the World'., 1996 IEEE International Symposium on},
+title={A symbolic approach to the fault location in analog circuits},
+year={1996},
+month={12-15},
+volume={4},
+number={},
+pages={810 -813 vol.4},
+}
+
+@INPROCEEDINGS{fault2,
+author={Catelani, M. and Fedi, G. and Giraldi, S. and Luchetta, A. and Manetti, S. and Piccirilli, M.C.},
+booktitle={Instrumentation and Measurement Technology Conference, 1996. IMTC-96. Conference Proceedings. 'Quality Measurements: The Indispensable Bridge between Theory and Reality'., IEEE},
+title={A new symbolic approach to the fault diagnosis of analog circuits },
+year={1996},
+month={},
+volume={2},
+number={},
+pages={1182 -1189 vol.2},
+}
+
+@INPROCEEDINGS{testability1,
+author={Catelani, M. and Fedi, G. and Luchetta, A. and Manetti, S. and Marini, M. and Piccirilli, M.C.},
+booktitle={Electrotechnical Conference, 1996. MELECON '96., 8th Mediterranean},
+title={A new symbolic approach for testability measurement of analog networks},
+year={1996},
+month={13-16},
+volume={1},
+number={},
+pages={517 -520 vol.1},
+}
+
+@ARTICLE{testability2,
+author={Fedi, G. and Luchetta, A. and Manetti, S. and Piccirilli, M.C.},
+journal={Instrumentation and Measurement, IEEE Transactions on},
+title={A new symbolic method for analog circuit testability evaluation},
+year={1998},
+month={apr},
+volume={47},
+number={2},
+pages={554 -565},
+}

@@ -1,0 +1,89 @@
+\select@language {italian}
+\vspace {-\cftbeforepartskip }
+\contentsline {part}{i\hspace {1em}\spacedlowsmallcaps {Introduzione}}{7}{part.1}
+\contentsline {chapter}{\numberline {1}\spacedlowsmallcaps {Metodi di Risoluzione Simbolica}}{11}{chapter.1}
+\contentsline {section}{\numberline {1.1}Motivazioni}{11}{section.1.1}
+\contentsline {paragraph}{}{12}{figure.1.1}
+\contentsline {paragraph}{}{12}{figure.1.1}
+\contentsline {paragraph}{}{13}{figure.1.1}
+\contentsline {section}{\numberline {1.2}Cenni storici}{13}{section.1.2}
+\contentsline {paragraph}{}{14}{section.1.2}
+\contentsline {section}{\numberline {1.3}Da Sapec a QSapecNG, attraverso SapWin}{14}{section.1.3}
+\contentsline {section}{\numberline {1.4}Scopo del lavoro di tesi}{15}{section.1.4}
+\contentsline {part}{ii\hspace {1em}\spacedlowsmallcaps {Dalla Teoria\ldots }}{17}{part.2}
+\contentsline {chapter}{\numberline {2}\spacedlowsmallcaps {Elementi circuitali e grafi I/V}}{21}{chapter.2}
+\contentsline {paragraph}{}{21}{chapter.2}
+\contentsline {paragraph}{Grafi e circuiti}{21}{chapter.2}
+\contentsline {paragraph}{}{22}{chapter.2}
+\contentsline {paragraph}{Nullatore, noratore e nullore}{23}{table.2.1}
+\contentsline {paragraph}{Generatori controllati e non}{24}{figure.2.3}
+\contentsline {paragraph}{}{27}{figure.2.7}
+\contentsline {paragraph}{}{28}{figure.2.8}
+\contentsline {paragraph}{Conclusione}{29}{figure.2.10}
+\contentsline {chapter}{\numberline {3}\spacedlowsmallcaps {Metodo dei due grafi}}{31}{chapter.3}
+\contentsline {section}{\numberline {3.1}Teoria}{31}{section.3.1}
+\contentsline {paragraph}{}{31}{section.3.1}
+\contentsline {paragraph}{}{32}{section.3.1}
+\contentsline {paragraph}{}{32}{figure.3.11}
+\contentsline {section}{\numberline {3.2}Il metodo di Grimbleby}{32}{section.3.2}
+\contentsline {paragraph}{}{33}{section.3.2}
+\contentsline {paragraph}{}{33}{Item.7}
+\contentsline {paragraph}{}{35}{Item.7}
+\contentsline {section}{\numberline {3.3}Il metodo di Schach}{35}{section.3.3}
+\contentsline {paragraph}{}{36}{section.3.3}
+\contentsline {paragraph}{}{36}{lstnumber.3.1.39}
+\contentsline {chapter}{\numberline {4}\spacedlowsmallcaps {Rappresentazione simbolica}}{39}{chapter.4}
+\contentsline {paragraph}{Circuiti $RCg_m$}{39}{chapter.4}
+\contentsline {paragraph}{}{40}{chapter.4}
+\contentsline {paragraph}{Componenti con rappresentazione impedenza}{40}{chapter.4}
+\contentsline {paragraph}{Circuiti contenenti nullori e generatori controllati non di tipo transcoduttanza}{41}{chapter.4}
+\contentsline {paragraph}{Metodo del circuito modificato}{41}{chapter.4}
+\contentsline {chapter}{\numberline {5}\spacedlowsmallcaps {Esempio: divisore di tensione}}{43}{chapter.5}
+\contentsline {paragraph}{}{45}{figure.5.13}
+\contentsline {paragraph}{}{46}{Item.13}
+\contentsline {part}{iii\hspace {1em}\spacedlowsmallcaps {\ldots alla Pratica}}{47}{part.3}
+\contentsline {chapter}{\numberline {6}\spacedlowsmallcaps {Framework}}{51}{chapter.6}
+\contentsline {section}{\numberline {6.1}Boost C++ Libraries}{51}{section.6.1}
+\contentsline {paragraph}{BGL: The Boost Graph Library}{52}{section.6.1}
+\contentsline {section}{\numberline {6.2}Qt}{53}{section.6.2}
+\contentsline {chapter}{\numberline {7}\spacedlowsmallcaps {Software Design}}{57}{chapter.7}
+\contentsline {section}{\numberline {7.1}MRT: Tecniche di Programmazione Generica}{57}{section.7.1}
+\contentsline {paragraph}{Concept}{57}{section.7.1}
+\contentsline {paragraph}{Traits}{58}{section.7.1}
+\contentsline {paragraph}{Tag Dispatching}{58}{section.7.1}
+\contentsline {paragraph}{}{58}{section.7.1}
+\contentsline {paragraph}{}{58}{section.7.1}
+\contentsline {paragraph}{}{62}{Item.15}
+\contentsline {paragraph}{}{63}{lstnumber.7.2.24}
+\contentsline {section}{\numberline {7.2}Qt e il modello signal/slot}{63}{section.7.2}
+\contentsline {section}{\numberline {7.3}Design Patterns}{64}{section.7.3}
+\contentsline {paragraph}{Pattern Monostate}{64}{section.7.3}
+\contentsline {paragraph}{Pattern Builder}{67}{lstnumber.7.5.54}
+\contentsline {paragraph}{Pattern Template Method}{71}{lstnumber.7.7.10}
+\contentsline {chapter}{\numberline {8}\spacedlowsmallcaps {Note di Programmazione}}{73}{chapter.8}
+\contentsline {section}{\numberline {8.1}Separazione backend/frontend}{73}{section.8.1}
+\contentsline {section}{\numberline {8.2}SUPER: Scalabile, Usabile, Portabile, Evolvibile, Riusabile}{74}{section.8.2}
+\contentsline {part}{iv\hspace {1em}\spacedlowsmallcaps {Conclusioni}}{77}{part.4}
+\contentsline {chapter}{\numberline {9}\spacedlowsmallcaps {Conclusioni}}{81}{chapter.9}
+\contentsline {section}{\numberline {9.1}Sviluppi futuri}{81}{section.9.1}
+\contentsline {paragraph}{}{81}{section.9.1}
+\contentsline {paragraph}{}{82}{section.9.1}
+\contentsline {section}{\numberline {9.2}Il software QSapecNG}{82}{section.9.2}
+\contentsline {part}{v\hspace {1em}\spacedlowsmallcaps {Appendici}}{83}{part.5}
+\contentsline {chapter}{\numberline {A}\spacedlowsmallcaps {Generazione schema da netlist}}{85}{appendix.A}
+\contentsline {paragraph}{L'ambiente di disegno}{85}{lstnumber.A.1.8}
+\contentsline {paragraph}{Il modello}{86}{figure.A.20}
+\contentsline {paragraph}{Prove sperimentali}{90}{lstnumber.A.2.31}
+\contentsline {paragraph}{Divisore di tensione}{90}{lstnumber.A.2.31}
+\contentsline {paragraph}{Circuito RLC}{92}{figure.A.22}
+\contentsline {paragraph}{Amplificatore invertente}{93}{figure.A.23}
+\contentsline {paragraph}{Modello di amplificatore operazionale}{93}{figure.A.24}
+\contentsline {paragraph}{Conclusioni}{94}{figure.A.25}
+\contentsline {chapter}{\numberline {B}\spacedlowsmallcaps {Il software QSapecNG}}{95}{appendix.B}
+\contentsline {paragraph}{}{95}{appendix.B}
+\contentsline {paragraph}{}{96}{figure.B.30}
+\contentsline {part}{vi\hspace {1em}\spacedlowsmallcaps {Bibliografia}}{103}{part.6}
+\contentsline {part}{vii\hspace {1em}\spacedlowsmallcaps {Ringraziamenti}}{105}{part.7}
+\contentsline {paragraph}{}{108}{part.7}
+\contentsline {paragraph}{}{108}{part.7}
+\contentsline {paragraph}{}{108}{part.7}

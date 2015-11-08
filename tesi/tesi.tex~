@@ -1,0 +1,150 @@
+\documentclass[10pt,a4paper,cleardoubleempty]{scrbook}
+
+
+\usepackage{natbib}
+\usepackage[italian]{babel}
+\usepackage{classicthesis-ldpkg}
+\usepackage[parts,linedheaders,pdfspacing,subfig,beramono,
+  eulerchapternumbers,eulermath,dottedtoc,listings]{classicthesis}
+\usepackage{lipsum}
+\usepackage{epigraph}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{gensymb}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{array}
+
+
+\hyphenation{back-end front-end SapWin SapecNG Sapec QSapecNG}
+
+\newcolumntype{i}{>{\centering\arraybackslash} m{.25\linewidth} }
+
+\lstdefinelanguage{pseudocode}
+  { morekeywords={se, allora, altrimenti, procedura, inizio, fine} }
+
+
+\areaset[5mm]{312pt}{699pt}
+
+\title{\begin{huge}\bfseries QSapecNG\end{huge}}
+\author{Michele Caini}
+
+
+
+\begin{document}
+
+\include{title}
+
+\cleardoublepage
+\null\vspace{\stretch{1}}\begin{flushright}
+\setlength{\epigraphwidth}{21em}
+\epigraph{
+Ardo dal desiderio di spiegare, e la mia massima soddisfazione è prendere qualcosa di ragionevolmente intricato e renderlo chiaro passo dopo passo.\\
+È il modo più facile per chiarire le cose a me stesso.
+}{Civiltà extraterrestri\\ Isaac Asimov}
+\end{flushright}\vspace{\stretch{2}}\null
+
+\cleardoublepage
+\tableofcontents
+
+
+\cleardoublepage
+\part{Introduzione}
+
+\thispagestyle{empty}
+\null\vspace{\stretch{1}}
+\begin{flushright}
+\setlength{\epigraphwidth}{21em}
+\epigraph{
+\footnotesize{``Mi avete detto qual'è la prima regola della saggezza'' dissi. ''E la seconda, quale sarebbe ? ``\\
+''A questo si può rispondere'' disse. ''Ce ne sono cinque in tutto. Fa tutte le domande che devi fare e non rispondere mai a nessuna. Volgi tutto quello che senti a tuo vantaggio. Portati sempre dietro il necessario per le riparazioni. Svolta a sinistra ogni volta che puoi. Non adoperare mai per primo il freno davanti``.\\
+''Sono regole interessanti`` dissi asciutto.}
+}{\footnotesize{Il terzo poliziotto\\ Flann O'Brien}}
+\end{flushright}\vspace{\stretch{2}}\null
+
+\include{capitoli/ris_simbolica}
+
+
+\cleardoublepage
+\part{Dalla Teoria\ldots}
+
+\thispagestyle{empty}
+\null\vspace{\stretch{1}}\begin{flushright}
+\setlength{\epigraphwidth}{21em}
+\epigraph{
+\footnotesize{Questo è il fatto. E il fatto è la cosa più ostinata del mondo.}
+}{\footnotesize{Il Maestro e Margherita\\ Michail Afanas'evi\u{c} Bulgakov}}
+\end{flushright}\vspace{\stretch{2}}\null
+
+\include{capitoli/elementi}
+\include{capitoli/due_grafi}
+\include{capitoli/rapp_simbolica}
+\include{capitoli/esempio}
+
+
+\cleardoublepage
+\part{\ldots alla Pratica}
+
+\thispagestyle{empty}
+\null\vspace{\stretch{1}}
+\begin{flushright}
+\setlength{\epigraphwidth}{21em}
+\epigraph{
+\footnotesize{''Quarantadue!'' $[[$\ldots$]]$ ''Questo è tutto ciò che sai dire dopo un lavoro di sette milioni e mezzo di anni{?}``}
+}{\footnotesize{Guida galattica per autostoppisti\\ Douglas Adams}}
+\end{flushright}\vspace{\stretch{2}}\null
+
+\include{capitoli/frameworks}
+\include{capitoli/software_design}
+\include{capitoli/note}
+
+
+\cleardoublepage
+\part{Conclusioni}
+
+\thispagestyle{empty}
+\null\vspace{\stretch{1}}
+\begin{flushright}
+\setlength{\epigraphwidth}{21em}
+\epigraph{
+\footnotesize{Ha due importanti vantaggi $[[$\ldots$]]$. Uno, costa un po' meno; due, ha stampate in copertina, a grandi caratteri che ispirano fiducia, le parole \textsc{non fatevi prendere dal panico}.}
+}{\footnotesize{Guida galattica per autostoppisti\\ Douglas Adams}}
+\end{flushright}\vspace{\stretch{2}}\null
+
+\include{capitoli/conclusioni}
+
+
+\appendix
+
+\cleardoublepage
+\part{Appendici}
+\include{appendici/netlistmaker}
+\include{appendici/qsapecng}
+
+
+\nocite{*}
+\cleardoublepage
+\part{Bibliografia}
+\bibliography{biblio}{}
+\bibliographystyle{plain}
+
+
+\cleardoublepage
+\part{Ringraziamenti}
+
+\thispagestyle{empty}
+\null\vspace{\stretch{1}}
+\begin{flushright}
+\setlength{\epigraphwidth}{21em}
+\epigraph{
+\footnotesize{Il grazie è abituale sulle labbra di chi non si sente padrone di nulla e comprende che nulla di ciò che ha è suo.}
+}{\footnotesize{Oreste Benzi}}
+\end{flushright}\vspace{\stretch{2}}\null
+
+\include{thanks}
+
+
+\end{document}

@@ -1,0 +1,146 @@
+\documentclass[10pt,compress]{beamer}
+
+\usepackage[italian]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{colortbl}
+\usepackage{gensymb}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{lmodern}
+\usepackage{color}
+\usepackage{array}
+\usepackage{pgf}
+
+\newcolumntype{s}{>{\centering\arraybackslash} m{.25\linewidth}}
+\newcolumntype{l}{>{\centering\arraybackslash} m{.75\linewidth}}
+
+
+% titolo breve
+\title[Simulatore Circuitale QSapecNG]
+% titolo esteso
+ {\textbf{Il Simulatore Circuitale QSapecNG}}
+% logo
+\titlegraphic{\qsapecng}
+% sotto-titolo breve
+\subtitle[Qt-based Symbolic Analysis Program for Electric Circuits]
+% sotto-titolo esteso
+ {\textit{Qt-based Symbolic Analysis Program for Electric Circuits\\ New Generation}}
+% autore
+\author{\footnotesize\hfill\; Relatore: Luchetta Antonio\hfill Relatore: Manetti Stefano\hfill\;\\\small \textbf{Candidato: Caini Michele}}
+% data
+\date{9 Luglio 2010}
+% università (breve)
+\institute[Università degli Studi di Firenze, Facoltà di Ingegneria]
+% università (esteso)
+ {Università degli Studi di Firenze, Facoltà di Ingegneria\\ Corso di Laurea Specialistica in Ingegneria Informatica}
+% corso di laurea
+\newcommand{\cdl}{Corso di Laurea Specialistica in Ingegneria Informatica}
+
+
+
+\newcommand{\insertcdl}{\cdl}
+\newcommand{\titleheadline}{
+ \leavevmode%
+ \hbox{%
+ \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.25ex,dp=1ex,right]{section in head/foot}%
+   \usebeamerfont{section in head/foot}\insertshortsubtitle\hspace*{2ex}
+ \end{beamercolorbox}%
+ \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.25ex,dp=1ex,left]{subsection in head/foot}%
+   \usebeamerfont{subsection in head/foot}\hspace*{2ex}\insertshorttitle
+ \end{beamercolorbox}}%
+ \vskip0pt%
+}
+\newcommand{\titlefootline}{
+ \leavevmode%
+ \hbox{%
+ \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.25ex,dp=1ex,right]{section in head/foot}%
+   \usebeamerfont{section in head/foot}\insertshortinstitute\hspace*{2ex}
+ \end{beamercolorbox}%
+ \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.25ex,dp=1ex,left]{subsection in head/foot}%
+   \usebeamerfont{subsection in head/foot}\hspace*{2ex}\insertcdl
+ \end{beamercolorbox}}%
+ \vskip0pt%
+}
+\newcommand{\footline}{
+ \leavevmode%
+ \hbox{%
+ \begin{beamercolorbox}[wd=\paperwidth,ht=2.25ex,dp=1ex,center]{section in head/foot}%
+   \usebeamerfont{section in head/foot}\inserttitle
+ \end{beamercolorbox}}%
+ \vskip0pt%
+}
+\newcommand{\bgunifi}{
+ \begin{minipage}{\paperwidth}
+  \centering\vspace{0.32\paperheight}
+  \pgfuseimage{salomone}
+ \end{minipage}
+}
+
+\pgfdeclareimage[height=3cm]{salomone}{img/salomone}
+\pgfdeclareimage[height=2cm]{qsapecng}{img/qsapecng}
+\newcommand{\qsapecng}{\pgfuseimage{qsapecng}}
+
+\usecolortheme{default}
+\usefonttheme{professionalfonts}
+\usefonttheme[onlymath]{serif}
+\useinnertheme{rectangles}
+\useoutertheme{infolines}
+
+\setbeamercovered{dynamic}
+\setbeamertemplate{footline}{\footline}
+\setbeamertemplate{blocks}[rounded][shadow=true]
+\setbeamercolor{titlelike}{fg=white,bg=blue!35}
+\setbeamerfont{normal text}{size=\normalsize}
+\setbeamercolor{normal text}{fg=black}
+\setbeamerfont{alerted text}{size=\normalsize}
+\setbeamercolor{alerted text}{fg=blue}
+\setbeamercolor{structure}{fg=blue!20}
+\setbeamercolor{palette primary}{fg=black,bg=blue!20}
+\setbeamercolor{palette secondary}{fg=black,bg=blue!25}
+\setbeamercolor{palette tertiary}{fg=black,bg=blue!30}
+\setbeamercolor{palette quaternary}{fg=black,bg=blue!35}
+\setbeamercolor{item projected}{fg=black,bg=blue!20}
+\setbeamerfont{block title}{size=\normalsize}
+\setbeamercolor{block title}{fg=black,bg=blue!20}
+\setbeamerfont{block body}{size=\normalsize}
+\setbeamercolor{block body}{fg=black,bg=blue!10}
+\setbeamerfont{block title alerted}{size=\normalsize}
+\setbeamercolor{block title alerted}{fg=black,bg=blue!50}
+\setbeamerfont{block body alerted}{size=\normalsize}
+\setbeamercolor{block body alerted}{fg=black,bg=blue!20}
+
+
+%\AtBeginSection[]{
+% \frame{
+%  \setbeamercolor{structure}{fg=black}
+%  \frametitle{Sommario}
+%  \tableofcontents[current]
+% }		
+%}
+
+\include{img}
+
+\begin{document}
+
+{
+\setbeamertemplate{headline}{\titleheadline}
+\setbeamertemplate{footline}{\titlefootline}
+\setbeamertemplate{background}{\bgunifi}
+\setbeamercolor{titlelike}{fg=black,bg=}
+\begin{frame}
+\titlepage
+\end{frame}
+}
+
+%{
+%\setbeamercolor{structure}{fg=black}
+%\begin{frame}
+% \frametitle{Sommario}
+% \tableofcontents
+%\end{frame}
+%}
+
+\include{slide}
+
+\end{document}
