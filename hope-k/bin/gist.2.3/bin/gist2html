@@ -1,0 +1,279 @@
+#! /usr/bin/perl
+# -* perl *-
+# FILE: gist2html
+# AUTHOR: William Stafford Noble
+# CREATE DATE: 12/23/02
+# PROJECT: GIST
+# DESCRIPTION: Convert an output file from Gist into HTML format.
+# $Id: gist2html.in,v 1.1 2004/05/07 18:48:41 noble Exp $
+
+$usage = "USAGE: gist2html [options] <file>
+
+  Converts a given Gist file into HTML format.  The Gist file must
+  have been produced using \"compute-weights,\" \"classify\",
+  \"kernel-pca\" or \"project.\" The HTMLized version of the Gist file
+  is printed to standard output.
+
+  Note that the program can optionally read from standard input if the
+  <file> parameter is given as a hyphen (\"-\").
+
+  Options:
+
+   -sort   Sort the rows by discriminant value.
+";
+
+
+
+# Parse the command line.
+if (scalar(@ARGV) < 1) {
+  print(STDERR $usage);
+  exit(1);
+}
+
+my $sort = 0;
+while (scalar(@ARGV) > 1) {
+  my $next_arg = shift @ARGV;
+  if ($next_arg eq "-sort") {
+    $sort = 1;
+  } else {
+    die("Invalid option ($next_arg).");
+  }
+}
+($infile) = @ARGV;
+
+# Open the file for reading.
+open($infile, "<$infile") || die("Can't open $infile.");
+
+# Read the Gist header.
+($program, $version, $titles, @parameters) = &read_gist_header($infile);
+
+# Read the Gist data.
+@data = &read_gist_data($infile);
+
+# Print the HTML header.
+&print_html_header($program, $version);
+
+# Print the data section.
+&print_gist_data($titles, $sort, @data);
+
+# Print the parameters.
+&print_gist_parameters(@parameters);
+
+# Print the explanation.
+&print_gist_explanation($program);
+
+# Print the HTML footer.
+&print_html_footer();
+
+
+##############################################################################
+# Read the header of a Gist file.
+sub read_gist_header {
+  my($infile) = @_;
+  my($program, $version, $titles, @parameters);
+
+  while ($line = <$infile>) {
+    chomp($line);
+
+    next if $line =~ /(time|host)\=/; # this line causes problems for the parser, todo fix it!
+
+    # Split the line into words.
+    @words = split(' ', $line);
+    
+    # Check for special words.
+    if ($words[0] ne "#") {
+      $titles = $line;
+      last;
+    } elsif (!defined($words[1])) {
+      next;
+    } elsif ($words[1] eq "Generated") {
+      $program = $words[3];
+    } elsif ($words[1] eq "Gist,") {
+      $version = $words[3];
+    } elsif ($words[1] eq "For") {
+      next;
+    } else {
+      shift(@words);
+      push(@parameters, @words);
+    }
+  }
+
+  # Make sure everything is OK.
+  if (!defined($program)) {
+    die("Program name not found.\n");
+  } elsif (!defined($version)) {
+    die("Version number not found.\n");
+  } elsif (!defined($titles)) {
+    die("Premature end of file.\n");
+  }
+
+  return($program, $version, $titles, @parameters);
+}
+
+##############################################################################
+# Read the data section of a Gist file.
+sub read_gist_data {
+  my($infile) = @_;
+  my(@data);
+  
+  @data = <$infile>;
+  return(@data);
+}
+
+##############################################################################
+# Print the HTML header.
+sub print_html_header {
+  my($program, $version) = @_;
+
+  print("<HTML>
+<TITLE>
+Gist $version: $program output
+</TITLE>
+<BODY bgcolor=\"#FFFFFF\">
+<blockquote>
+<P>
+<A HREF=\"#Parameters\">Parameters</A>
+<A HREF=\"#Results\">Results</A>
+<A HREF=\"#Explanation\">Explanation</A></P>
+<H1>Gist $version: $program output</H1>
+<P>For additional information, go to <A HREF=\"http://svm.sdsc.edu\">svm.sdsc.edu</A>. To return to your results page, use the 'back' button on your web browser.</P>");
+}
+
+
+##############################################################################
+# Print the Gist parameter list.
+sub print_gist_parameters {
+  my(@parameters) = @_;
+  my($param, $value);
+
+  print("<hr><P>
+<A HREF=\"#Parameters\">Parameters</A>
+<A HREF=\"#Results\">Results</A>
+<A HREF=\"#Explanation\">Explanation</A></P>\n");
+
+  print("<A NAME=Parameters><h2>Parameters for this run</h2>\n");
+  print("<TABLE  style=\"background-color:#CCCCCC\" BORDER=\"0\">\n");
+  print("<tr style=\"background-color:#EEEEEE\"> <td style=\"padding-left:20px\"><B>Parameter</B></td> <TD><B>Value</B></td> \n");
+  print("<td style=\"padding-left:20px;\"><B>Parameter</B></td> <td><B>Value</B></td> </tr>\n");
+
+  $first_column = 1;
+  foreach $parameter (@parameters) {
+    ($param, $value) = split('=', $parameter);
+    if (!defined($param) || !defined($value)) {
+#      die("Invalid parameter ($parameter).");
+      next;
+    }
+
+    if ($param =~ /_file/) {
+      $value =~ s/.*\///; # remove path.
+    }
+
+    if ($first_column) {
+      print("<TR style=\"background-color:#EEEEEE\">");
+    }
+
+    print("<TD style=\"padding-left:20px\">$param</TD><TD style=\"font-style:italic\">$value</TD>");
+
+    if ($first_column) {
+#      print("<TD>&nbsp;</TD>\n");
+      $first_column = 0;
+    } else {
+      print("</TR>\n");
+      $first_column = 1;
+    }
+  }
+  
+  print("</TABLE>\n");
+}
+
+##############################################################################
+# Print one row of a table.
+sub print_table_row {
+  my($line, $dotitles) = @_;
+  my @words = split("\t", $line);
+
+  if ($dotitles) {
+    shift @words;
+    $line = join("</b></th><th><b>", @words);
+    print("<tr style=\"background-color:#EEEEEE\"><th>Example</th><th>$line</th></th>\n");
+  } else {
+    $line = join("</TD><TD>", @words);
+    print("<TR style=\"background-color:#EEEEEE\"><TD>$line</TD></TR>\n");
+  }
+}
+
+##############################################################################
+# Print the data portion of the HTML output.
+sub print_gist_data {
+  my($titles, $sort, @data) = @_;
+
+  print("<hr><h2>Results</h2>\n");
+  print("<A NAME=Results>\n");
+  print("<TABLE   style=\"background-color:#CCCCCC\" BORDER=\"0\" BORDER=\"0\">\n");
+  &print_table_row($titles, 1);
+
+  # sort on the last column, which is the discriminant.
+  if ($sort) {
+    my %class;
+    my @results;
+    my $i =0;
+    foreach (@data) {
+      chomp;
+      @row = split /\t/, $_;
+      push @results,  [($row[$#row], $_)];
+      $i++;
+    }
+    @data = sort {
+      $b->[0] <=> $a->[0];
+    } @results;
+    my @finally;
+    foreach $dat (@data) {
+      &print_table_row($dat->[1]);
+    }
+
+  } else {
+    foreach $dat (@data) {
+      &print_table_row($dat);
+    }
+  }
+
+  print("</TABLE>\n");
+}
+
+##############################################################################
+# Print a user-level explanation of the output file format.
+sub print_gist_explanation {
+  my($program) = @_;
+
+  print("<BR><BR><BR><hr>
+<A NAME=Explanation>\n
+<h2>Explanation:</h2>
+<h3>Results table:</h3>
+<ul>
+<li>Example: The name you provided for this sample</li>
+<li>Class (training results only): The class membership you provided for this sample.</li>
+<li>Weight (training results only): The 'importance' of this example in setting the location of the decision boundary (which is the maximum margin
+hyperplane). Examples with non-zero weights are support vectors.</li>
+<li>train_classification (training results only) or classification: The predicted class of this example, or, for training, the
+location of this example with respect to the decision boundary. In training, if it differs from the Class, a training error is counted.</li>
+<li>train_discriminant (training results only) or discriminant (test results): How far this example is from the decision boundary. Larger values
+correspond to greater 'certainty' that the sample belongs in the predicted class.</li>
+</ul>
+
+<h3>Parameters table:</h3>
+<p>The parameters section lists the settings that were used for the SVM run.</p>
+
+<hr>
+
+<P>
+<A HREF=\"#Parameters\">Parameters</A>
+<A HREF=\"#Results\">Results</A>
+<A HREF=\"#Explanation\">Explanation</A></P>\n");
+
+}
+
+##############################################################################
+# Print the HTML footer.
+sub print_html_footer {
+  print("</blockquote></BODY></HTML>\n");
+}

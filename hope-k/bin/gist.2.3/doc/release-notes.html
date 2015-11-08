@@ -1,0 +1,312 @@
+ <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+FILE: release-notes.html
+AUTHOR: William Stafford Noble
+CREATE DATE: 01/16/2001
+PROJECT: SVM
+REVISION: $Revision: 1.7 $
+-->
+<head>
+<TITLE>Gist version 2.2</TITLE>
+</head>
+<BODY BGCOLOR="white">
+<CENTER><H1>Release notes</H1></CENTER>
+<BLOCKQUOTE>
+
+<b>Gist Release 2.3</b>, March 22, 2006
+
+<ul>
+
+<li>
+Add the <code>-algorithm lin</code> option to
+<code>gist-sigmoid</code>.
+
+<li>
+Fixed the diffusion kernel in <code>gist-kernel</code>.
+
+<li>
+Added the <code>int-dim</code>, <code>simple-diffusion</code> and
+<code>modav</code> operations to <code>gist-matrix</code>.
+
+</ul>
+
+<b>Gist Release 2.2</b>, Sep 20, 2005
+
+<ul>
+<li>
+Added the <code>-hyperplane</code> option to 'gist-train-svm' and
+added the corresponding 'gist-fast-classify' program.
+
+<li>
+Added the <code>gist-kernel</code> program.
+
+</ul>
+
+<B>Gist Release 2.1</B>, May 3 2004
+<ul>
+<li>
+
+The main difference between 2.1 and 2.0.9 is the renaming of the
+executables.  This means that 'compute-weights' is now
+'gist-train-svm' and 'classify' is 'gist-classify'. The new executable
+names are documented <a href="index.html">here</a>.
+
+
+</ul>
+
+<B>Gist Release 2.0.9</B>, May 3 2004 <ul> <li>The Gist system is now
+built from code using the GNU build system. This should make it easier
+for users on diverse systems use or adapt our code. 
+
+  <li>Minor changes to code to allow compilation on Windows (Cygwin)
+and Macintosh OSX. Binaries for these platforms have been added to the
+distribution options.
+
+  <li> Added <CODE>-precision</CODE> option to control the number of
+  digits after the decimal point in output files.
+  
+  <li> Included more informative error messages when trying to do
+  feature selection on data that has too few positive or negative
+  training examples.
+
+  <li> Fixed a minor bug in the <CODE>-widthfactor</CODE> option to
+  compute-weights and kernel-pca.  Previously, contrary to what the
+  documentation said, the width factor F was applied after squaring
+  the width w in the radial basis kernel.  This has been fixed, so
+  that F is multiplied by w prior to squaring.
+
+  <li> Added the <CODE>-width</CODE> option to compute-weights and
+  kernel-pca, allowing the user to set the radial basis width
+  directly.
+
+  <LI> gist-rfe now retains the sign on the feature weights, so that
+  you can tell whether the feature occurs more frequently in the
+  positive or negative class.
+      
+</ul>
+
+<B>Gist Release 2.0.8</B>, January 6, 2004
+<ul>
+  
+  <li>classify: Bugs fixed in matrix dimension tests for "self-train"
+and "self-test" matrices.
+      
+  <li>compute-weights: When <code>-kernelout</code> is selected, the
+  diagonal factor for the 2-norm soft margin is no longer added. This
+  change makes it possible to use compute-weights to generate kernel
+  matrices that can be modified externally, and then re-entered for
+  training using the <code>-matrix</code> option.
+
+  <li>fselect: The <code>-threshold</code> option has been renamed to
+  <code>-fthreshold</code> to agree with compute-weights.
+      
+</ul>
+
+<B>Gist Release 2.0.7</B>, December 16, 2003
+<ul>
+
+  <li>Changed the default value of 'maxiter' (maximum number of
+  iterations during training) to 'no limit', from the previous default
+  of 10000.  This prevents early termination of jobs that take many
+  iterations. Users who want iteration or time limits should set the
+  <code>-maxiter</code> or <code>-maxtime</code> options for
+  <code>compute-weights</code>.
+  
+  <li>Fixed minor bug in the array shuffling routine that caused arrays
+  to be non-uniformly shuffled.
+
+  <li>Default precision and width in rdb-matrix increased from 5/3 to
+  8/5. This reduces problems caused by loss of precision during
+  manipulation of files.
+      
+  <li>Added a Perl script, <CODE>gist-rfe</CODE> to do SVM recursive
+  feature elimination.
+
+ </ul>
+
+ <p><B>Gist Release 2.0.6</B> was not released.</p>
+ 
+ <B>Gist Release 2.0.5</B>, April 30, 2003
+ <ul>
+   
+   <li>compute-weights: Fixed bug in 2-norm soft margin implementation
+   that caused incorrect use of the diagonal factors in some cases. In
+   particular, training errors could be mis-reported in some cases,
+   and hold-one-out cross-validation could yield incorrect results in
+   some situations.  This only affects applications where the 2-norm
+   soft margin was used (that is, with a 'diagonal factor').
+       
+   <li> score-svm-results: Uninitialized variable bug fixed.
+
+ </ul>
+ 
+ <B>Gist Release 2.0.4</B>, April 3, 2003
+ <ul>
+
+   <li>classify: Fixed bug that caused failure when using a non-square
+   test kernel matrix.
+
+   <li>classify: Using a training kernel matrix for 'classify' when
+   not needed causes a warning to be issued.
+
+   <li>Got rid of dependency on system utilities 'hostname' and
+   'date'; UTIL_PATH is no longer needed.
+
+</ul>
+ 
+<B>Gist Release 2.0.3</B>, February 20, 2003
+<ul>
+
+  <li>Modification of how system utilities are found; there is a
+  UTIL_PATH define that can now be set in the makefile if 'hostname'
+  and 'date' are not in the user's path.
+
+  <li>Documentation improvements.
+</ul>
+ 
+<B>Gist Release 2.0.2</B>, October 11, 2002
+
+<UL>
+
+<LI>
+Modify fit-sigmoid so that it takes three inputs: a training set of
+predictions for fitting the sigmoid, the corresponding labels, and a
+test set of predictions that are to be converted to probabilities.
+Note that, for the curve fit to be valid, the sigmoid training set
+should be distinct from the set used to train the SVM.
+
+<LI>Fixed bug in normal approximation to Mann-Whitney U test p-value
+calculation.
+
+</UL>
+
+<B>Gist Release 2.0.1</B>, August 14, 2002
+
+<UL>
+<LI>
+Modify compute-weights so that the default parameters are reasonable:
+use a 2-norm soft margin with a diagonal factor of 0.1; turn
+normalization on; use a constant factor of 10.
+</UL>
+
+
+<B>Gist Release 2.0</B>, July 24, 2002
+
+<UL>
+<LI>
+Rename the entire package.
+
+<LI>
+Add <CODE>kernel-pca</CODE>, <CODE>project</CODE>,
+<CODE>fit-sigmoid</CODE>, <CODE>fselect</CODE> and
+<CODE>score-svm-results</CODE> programs.
+
+<LI>
+Add many feature selection options to <CODE>compute-weights</CODE>.
+
+<LI>
+Add many options to <CODE>rdb-matrix</CODE>.
+
+<LI>
+Improve I/O error checking.
+
+<LI>
+Generalize label file format to allow multiple classes in one file.
+
+</UL>
+
+<B>svm Release 1.2</B>, August 21, 2001
+
+<UL>
+
+<LI>
+Add <CODE>-rdb</CODE> option to <CODE>compute-weights</CODE> and
+<CODE>classify</CODE>, and make the default behavior to not expect or
+produce RDB format lines.
+
+<LI>
+Fix bug in shuffling routine used in selecting order of evaluation of
+examples during training and hold-one-out testing.  This change will
+not affect the output of the program, but may affect the speed of
+convergence.
+
+<LI>
+Add <CODE>-maxiter</CODE> option to <CODE>compute-weights</CODE>.
+
+<LI>
+Add <CODE>-holdout</CODE> option to <CODE>compute-weights</CODE>.
+
+<LI>
+Scale precision of weights output depending upon convergence
+threshold.
+
+<LI>
+Add <CODE>-initial</CODE> option to <CODE>compute-weights</CODE>.
+
+</UL>
+
+<B>svm Release 1.1</B>, July, 2000.
+
+<UL>
+
+<LI>
+Add <CODE>-adddiag</CODE> option to <CODE>compute-weights</CODE>.
+
+<LI>
+Add <CODE>-zeromean</CODE> and <CODE>-varone</CODE> options to
+<CODE>compute-weights</CODE>.
+
+<LI>
+Add a secondary optimization of only the support vectors.
+
+<LI>
+Make the convergence threshold depend upon the number of examples.
+
+</UL>
+
+<B>svm Release 1.0</B>, September 23, 1999.
+
+<UL>
+
+<LI>
+Fix bug in weight update routine.
+
+<LI>
+Include median kernel value in diagonal factor heuristic.
+
+<LI>
+Add the constant factor back in after diagonalizing.
+
+<LI>
+Fix bug in the way polynomialization was done.
+
+</UL>
+
+<B>svm Release 0.95</B>, August 30, 1999.
+
+<UL>
+
+<LI>
+Change the normalization routines to operate on the kernel, rather than
+the data.  This makes the normalization appropriate for any kernel.
+
+<LI>
+Generalize the radial kernel to work as a transformation of any kernel
+function.
+
+<LI>
+Remove the covariance kernel and the sigmoid kernel.
+
+<LI>
+Switch the way polynomialization works.  It is now A(K +
+B))<SUP>C</SUP>, rather than ((AK) + B)<SUP>C</SUP>.
+
+</UL>
+
+<B>svm Release 0.9</B>, August 16, 1999.
+
+</BLOCKQUOTE>
+
+</BODY>
+</HTML>

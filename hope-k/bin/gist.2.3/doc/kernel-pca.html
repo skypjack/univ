@@ -1,0 +1,154 @@
+ <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+FILE: kernel-pca.html
+AUTHOR: William Stafford Noble
+CREATE DATE: 7/15/99
+PROJECT: SVM
+REVISION: $Revision: 1.1 $
+-->
+<HEAD>
+<TITLE>gist-kpca</TITLE>
+</head>
+<BODY BGCOLOR=white>
+<CENTER><H1>gist-kpca</H1></CENTER>
+
+<BLOCKQUOTE>
+
+<P><B>Description:</B> Compute kernel-based eigenvectors for a set of
+training examples.</P>
+
+<P><B>Usage:</B> gist-kpca [options] -train &lt;filename&gt;</P>
+
+<P><B>Input:</B> 
+<UL> 
+<LI> -train &lt;filename&gt; - a tab-delimited, labeled file of
+training examples.  The first column contains labels, and the
+remaining columns containing real-valued features.
+</UL>
+
+<P><B>Output:</B> A tab-delimited matrix in which each column
+corresponds to an eigenvector.  Eigenvectors are normalized so that
+the dot product of the eigenvector with itself equals the reciprocal
+of the corresponding eigenvalue.  In the output, the eigenvectors are
+sorted by increasing magnitude.</P>
+
+<P><B>Options:</B>
+
+<UL>
+
+<LI> -zeromean - Subtract from each element in the input data the mean
+of the elements in that row, giving the row a mean of zero.
+
+<LI> -varone - Divide each element in the input data by the standard
+deviation of the elements in that row, giving the row a variance of
+one.
+
+</UL>
+
+
+<p>By default, the base kernel function is a dot product.  In this
+case, the kernel-pca will give the same results as a 'standard'
+principal component analysis. If desired, this kernel can be modified
+using the following options.  The operations occur in the order listed
+below.</p>
+
+<UL>
+
+<LI> -nocenter - PCA requires a centered matrix, in which the sum of
+each column is zero.  This centering operation can be performed in
+kernel space, and is done by default.  The <CODE>-nocenter</CODE>
+option disables this operation.  This option is only useful in
+conjunction with the <CODE>-kernelout</CODE> operation, to produce an
+intermediate matrix.</li>
+
+<LI> -adddiag &lt;value&gt; - Add the given value to the diagonal of
+the kernel matrix.</li>
+
+<LI> -nonormalize - Do not normalize the kernel matrix.  By default,
+the matrix is normalized by dividing K(x,y) by sqrt(K(x,x) * K(y,y)).</li>
+
+<LI> -constant &lt;value&gt; - Add a given constant to the kernel.
+The default constant is 10.</li>
+
+<LI> -coefficient &lt;value&gt; - Multiply the kernel by a given
+coefficient.  The default coefficient is 1.</li>
+
+<LI> -power &lt;value&gt; - Raise the kernel to a given power.  The
+default power is 1.</li>
+
+<LI> -radial - Convert the kernel to a radial basis function.  If K is
+the base kernel, this option creates a kernel of the form
+exp[(-D(x,y)<SUP>2</SUP>)/(2 w<SUP>2</SUP>)], where w is the width of
+the kernel (see below) and D(x,y) is the distance between x and y,
+defined as D(x,y) = sqrt[K(x,x)<SUP>2</SUP> - 2 K(x,y) +
+K(y,y)<SUP>2</SUP>].</li>
+
+<LI> -widthfactor &lt;value&gt; - The width w of the radial basis
+kernel is set using a heuristic: it is the median of the distance from
+each training point to the nearest training point.  This option
+specifies a multiplicative factor to be applied to that width.  The
+default is a width factor of 1.</li>
+
+<LI> -width &lt;value&gt; - Directly set the width w of the radial
+basis kernel.  If set, this option overrides the -widthfactor
+option.</LI>
+
+</ul>
+
+
+   <p>If the supplied kernel functions are insufficient, the user can
+supply as input a precalculated kernel matrix using the following option</p>
+
+ <ul>
+    
+<LI> -matrix - By default, the base kernel function is a dot product.
+This option allows that function to be replaced by an arbitrary
+function supplied by the user (for many commonly used kernels, see the
+options listed above).  If supplied, the software reads kernel values,
+rather than raw feature data, from the file specified by
+<code>-train</code>.  The matrix must be an n+1 by n+1 tab-delimited
+matrix, where n is the number of training examples.  The first row and
+column contain data labels.  The matrix entry for row x, column y,
+contains the kernel value K(x,y).</li>
+    
+    </ul>
+
+
+<p>The remaining options (except for -rdb) affect the output of the software.</p>
+
+      <ul>
+<LI> -numeigens &lt;value&gt; - Include in the output at most the
+specified number of eigenvectors (subject to the next constraint).
+By default, all are included.
+
+<LI> -eigenthresh &lt;value&gt; - Include in the output only
+eigenvectors whose corresponding eigenvalues are greater than the
+specified value.  Default value is zero (all eigenvectors).
+
+<LI> -eigenvalues &lt;file&gt; - Create a file with the given name and
+store the eigenvalues there as a space-separated array of numbers.
+
+<LI> -rdb - Allow the program to read and create <A
+HREF="http://www.cse.ucsc.edu/research/compbio/rdb/index.html">RDB</A>
+formatted files, which contain an additional format line after the
+first line of text.
+
+<LI> -kernelout - Compute and print the kernel matrix to stdout.  Do
+not compute the eigenvectors.
+
+<LI> -notime - Do not include timing information in the output header.
+
+<li> -precision &lt;value&gt; - Number of digits after the decimal
+place in the output file.  The default is 6.
+
+<LI> -verbose 1|2|3|4|5 - Set the verbosity level of the output to
+stderr.  The default level is 2.
+</UL>
+
+</BLOCKQUOTE>
+
+<HR>
+<A HREF="index.html">Gist</A>
+</BODY>
+</HTML>

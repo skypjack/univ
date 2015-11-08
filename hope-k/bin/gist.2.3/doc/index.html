@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+
+	<head>
+		<!--
+FILE: index.html
+AUTHOR: William Stafford Noble
+CREATE DATE: 7/15/99
+PROJECT: SVM
+REVISION: $Revision: 1.6 $
+-->
+		<title>Gist 2.3</title>
+	</head>
+
+	<body bgcolor="#FFFFFF">
+		<blockquote>
+			<img src="gist-logo.gif" alt="gist" />
+			<p>Gist contains software tools for support vector machine classification and for kernel principal components analysis. The SVM portion of Gist is available via an interactive web server at <a href="http://svm.sdsc.edu">http://svm.sdsc.edu</a>. The <b>Gist</b> package contains the following programs:</p>
+			<ul>
+				<li><a href="compute-weights.html">gist-train-svm</a> trains a support vector machine based upon a given set of labeled training examples, permitting feature selection and leave-one-out cross-validation,</li>
+				<li><a href="classify.html">gist-classify</a> applies a trained support vector machine to unlabeled data to produce predicted binary classifications.</li>
+
+<li>
+<a href="gist-fast-classify.html">gist-fast-classify</a> does the same
+thing as <code>gist-classify</code>, but uses less time and memory.
+However, this program only works in conjunction with a linear kernel
+function.</li>
+
+
+				<li><a href="kernel-pca.html">gist-kpca</a> performs kernel principal components analysis on a given data set, and</li>
+				<li><a href="project.html">gist-project</a> projects a data set onto the components discovered by gist-kpca.</li>
+			</ul>
+			<p><strong>Note</strong> that with version 2.1, the names of the programs in Gist have changed. If you need to use executables with the old names, version 2.0.9 is also available.</p>
+			<p>If you have problems with or questions about Gist, please first read the <a href="svm-faq.html">FAQ page</a>.</p>
+			<p>In addition to the primary programs, the following auxiliary programs are included:</p>
+			<ul>
+				<li><a href="fselect.html">gist-fselect</a> performs linear feature selection on a given data set, using binary classification labels,</li>
+				<li><a href="rdb-matrix.html">gist-matrix</a> performs basic manipulations of matrices,</li>
+				<li><a href="score-svm-results.html">gist-score-svm</a> computes performance statistics from the outputs of <code>gist-train-svm</code> and <code>gist-classify</code>,</li>
+				<li><a href="gist-rfe.html">gist-rfe</a> performs SVM recursive feature elimination on a given data set,</li>
+				<li><a href="fit-sigmoid.html">gist-sigmoid</a> converts the discriminant values produced by <code>gist-train-svm</code> into probabilities, and</li>
+				<li><a href="gist2html.html">gist2html</a> converts an output file from one of the Gist programs into HTML format.</li>
+
+<li>
+<a href="gist-kernel.html">gist-kernel</a> computes a square kernel
+matrix from a given data file, using a user-specified list of kernel
+transformations.</li>
+
+			</ul>
+			<p>The current version of Gist is 2.3</p>
+			<p>Gist is written in ANSI C. Source code, as well as some pre-compiled versions for popular platforms (Linux, Cygwin) can be <a href="download.html">downloaded</a> here. Here are some <a href="install.html">installation instructions</a> and <a href="release-notes.html">release notes</a>. Once you have installed the software, you can try <a href="example.html">this example</a>.</p>
+			<p>A list of <a href="citing.html">publications</a> that used Gist is available.</p>
+			<p>Please read the <a href="copyright.html">Copyright notice/License agreement</a>.</p>
+			<p>The Gist software was written by <a href="http://www.gs.washington.edu/~noble">William Stafford Noble</a> in the Department of Computer Science at Columbia University and by <a href="http://microarray.genomecenter.columbia.edu/pavlidis">Paul Pavlidis</a> in the Columbia Genome Center.</p>
+		</blockquote>
+	</body>
+
+</html>

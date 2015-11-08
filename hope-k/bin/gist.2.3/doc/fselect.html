@@ -1,0 +1,152 @@
+ <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+FILE: fselect.html
+AUTHOR: William Stafford Noble
+CREATE DATE: 10/17/2000
+PROJECT: SVM
+REVISION: $Revision: 1.1 $
+-->
+<HEAD>
+<TITLE>gist-fselect</TITLE>
+</head>
+<BODY BGCOLOR=white>
+<CENTER><H1>gist-fselect</H1></CENTER>
+
+<BLOCKQUOTE>
+
+<P><B>Description:</B> Select features from a given data set based
+upon a specified measure of feature quality. Usually you will also
+want to set the threshold for the measure you select using the
+-fthreshold option.</p>
+
+<P><B>Usage:</B> gist-fselect [options] &lt;labels&gt; &lt;primary&gt;
+&lt;secondary&gt;
+
+<P><B>Input:</B> 
+<UL> 
+
+<LI> &lt;labels&gt; - a multi-column, tab-delimited file of
+classification labels.  This file must contain exactly the same number
+of lines as the training data file.  The first column contains labels,
+which must appear in the same order as in the primary data file
+(though this is not checked for by the program).  The second and
+subsequent columns contain binary classifications for each label (1
+for positive examples, -1 or 0 for negatives). The classification
+column used from this file is the first one by default; subsequent
+columns can be used by invoking the -useclassnumber option described
+below.
+
+<LI> &lt;primary&gt; - a tab-delimited matrix file containing strings
+in the first row and column, and floating point values in the rest of
+the matrix.  Each row in the primary data file corresponds to one row
+in the label file.
+
+<LI> &lt;secondary&gt; - similar to &lt;primary&gt;.  The two files
+must have the same number of features but may have different numbers
+of rows.
+</UL>
+
+
+<P><B>Output:</B> Chooses a subset of features from the primary data
+matrix using a given quality metric.  Writes to standard output a
+version of the secondary data matrix in which low-quality columns have
+been removed.</P>
+
+<P><B>Options:</B>
+
+<UL>
+
+
+<LI>
+-metric fisher|ttest|welch|mannwhitney|sam|tnom - Specify the
+metric used to evaluate individual features.
+<UL>
+<LI>
+The Fisher criterion score is (m<SUB>1</SUB> -
+m<SUB>2</SUB>)<SUP>2</SUP> / (v<SUB>1</SUB> + v<SUB>2</SUB>), where
+m<SUB>i</SUB> and v<SUB>i</SUB> are the mean and variance of the given
+feature in class i.
+<LI>
+The standard t-test is |m<SUB>1</SUB> - m<SUB>2</SUB>| /
+sqrt((v/n<SUB>1</SUB>) + (v/n<SUB>2</SUB>)), where n<SUB>i</SUB> is
+the number of examples in class i, and v is the pooled variance across
+both classes.  The score is reported as a negative log<SUB>10</SUB>
+p-value.
+<LI>
+Welch's approximate t-test is |m<SUB>1</SUB> - m<SUB>2</SUB>| /
+sqrt((v<SUB>1</SUB>/n<SUB>1</SUB>) + (v<SUB>2</SUB>/n<SUB>2</SUB>)).
+The score is reported as a negative log<SUB>10</SUB> p-value.
+<LI>
+The Mann-Whitney test is a nonparametric test.  The Student's t-test
+is used to break ties.  The score is reported as a negative
+log<SUB>10</SUB> p-value.
+
+<LI>
+The SAM metric is adapted from the "Signficance analysis of
+microarrays" method developed by Tusher et al (Proc Natl Acad Sci U S
+A 2001 Apr 24;98(9):5116-21). SAM uses the calculation method
+described in detail in the SAM user manual (Chu et al.). Our
+implementation of SAM is currently only partial, in that it only
+calculates the raw statistic for ranking genes, without calculation of
+error rates at particular score cutoffs.
+
+<!--, while SAMF
+implements a faster heuristic method which is described in a tech
+report "Microarrays and their use in a comparative experiment" (Efron
+et al.). SAMF is about five times faster than SAM, and results in a
+significant speed up during hold-one-out cross-validation experiments.
+-->
+<LI>
+The threshold number of misclassifications (tnom) method is adapted
+from "Tissue Classification of Gene Expression Profiles" (Ben-dor et
+al., Journal of Computational Biology 7 pp 559-583 (200)). It is a
+nonparametric method based on "decision stumps". Our implementation of
+tnom is currently only partial in that only raw scores, not p-values,
+are calculated. This provides a ranking of the genes but cannot be
+used to determine error rates.
+</UL>
+By default, features are scored using the Fisher criterion score.
+
+<LI>
+-scores &lt;file&gt; - Write to the given file a two-column matrix
+containing the computed quality scores for each feature.  The score is
+the Fisher score or the negative log<SUB>10</SUB> of the t-test
+p-value.
+
+<LI>
+-useclassnumber &lt;value&gt; - If the class file contains multiple
+classes, use the class indicated by this number. The first column of
+class labels is column 1. If this option is omitted, the first column
+of classifications is used.
+
+<LI>
+-threshtype percent|number|value - Select different means of setting
+the feature selection threshold.  The "percent" option chooses the top
+n% of the features.  The "number" option chooses the top n features.
+The "value" option chooses features that score above n.  The default
+setting is "percent".
+
+<LI>
+-fthreshold &lt;value&gt; - Set the threshold for feature selection.
+The default setting depends upon the threshold type: for "percent" and
+"number", the default is 10; for "value" it is 1.
+
+<LI>
+-rdb - Allow the program to read and create <A
+HREF="http://www.cse.ucsc.edu/research/compbio/rdb/index.html">RDB</A>
+formatted files, which contain an additional format line after the
+first line of text.
+
+<LI>
+-verbose 1|2|3|4|5 - Set the verbosity level of the output to stderr.
+The default level is 2.
+
+</UL>
+
+</BLOCKQUOTE>
+
+<HR>
+<A HREF="index.html">Gist</A>
+</BODY>
+</HTML>

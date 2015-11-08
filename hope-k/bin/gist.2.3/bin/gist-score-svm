@@ -1,0 +1,371 @@
+#! /usr/bin/perl
+# -* perl *-
+# FILE: gist-score-svm
+# AUTHOR: William Stafford Noble
+# PROJECT: SVM
+# DESCRIPTION: Score the results of an SVM prediction.
+# COPYRIGHT: 2001-2, Columbia University
+
+$usage = "USAGE: gist-score-svm [options] <weights>
+
+    Options:  -rdb   The input file is in RDB format (i.e., it contains
+                     a format line after the title line).
+
+              -test <truth> <predictions>
+                     Compute performance with respect to the given test set.
+
+              -roc <file>
+                     Store the ROC curve in an external file.
+\n";
+
+# Boolean: Do the input files contain an RDB format line?
+$format_line = 0;
+
+# Filename for ROC output.
+$roc_file = "";
+
+# Is there a test set, and if so, is it external or hold-one-out?
+# Legal values are "none", "external" and "holdout".
+$test_type = "none"; 
+
+# Read the command line.
+if (scalar(@ARGV) < 1) {
+  print(STDERR $usage);
+  exit(0);
+}
+while (scalar(@ARGV) > 1) {
+  $next_arg = shift(@ARGV);
+  if ($next_arg eq "-rdb") {
+    $format_line = 1;
+  } elsif ($next_arg eq "-test") {
+    $test_type = "external";
+    $truth_file = shift(@ARGV);
+    $predict_file = shift(@ARGV);
+  } elsif ($next_arg eq "-roc") {
+    $roc_file = shift(@ARGV);
+  } else {
+    print(STDERR "Illegal option ($next_arg).\n\n$usage");
+    exit(1);
+  }
+}
+if (scalar(@ARGV) != 1) {
+  print(STDERR $usage);
+  exit(1);
+}
+($weights) = @ARGV;
+
+
+#### Read the weights file. #####
+
+# Open the input file
+open($weights,"<$weights") || die("Can't open $weights.");
+
+# Skip comment and labels.
+$first_char = "#";
+while ($first_char eq "#") {
+  $line = <$weights>;
+  chomp($line);
+  $first_char = substr($line, 0, 1);
+
+  # See if this line contains constraint info.
+  ($hash, $pos_string, $neg_string, $constraint) = split(' ', $line);
+  undef($hash); # Avoid -w warning.
+  undef($neg_string);
+  ($label, $value) = split('=', $pos_string);
+  if (defined($label) && ($label eq "positive_constraint")) {
+    $pos_constraint = $value;
+    ($label, $neg_constraint) = split('=', $pos_string);
+    ($label, $constrain_weights) = split('=', $constraint);
+  }
+}
+if (!defined($constrain_weights)) {
+  die("No constraints found in weights file header.");
+} elsif ($constrain_weights eq "false") {
+  $pos_constraint = 0;
+  $neg_constraint = 0;
+} elsif ($constrain_weights eq "true") {
+  print(STDERR 
+	"Found weight constraints [-$neg_constraint, $pos_constraint].\n");
+} else {
+  die("No constraints found in weights file header.");
+}
+
+# Skip format line.
+if ($format_line) {
+  $line = <$weights>;
+}
+
+# Initialize the counters for the bounded weights.
+$neg_bounded = 0;
+$pos_bounded = 0;
+
+# Read the data line by line.
+$i_line = 0;
+while ($line = <$weights>) {
+  chomp($line);
+
+  # Parse the line.
+  ($train_labels[$i_line],
+   $train_classes[$i_line],
+   $weights[$i_line],
+   $train_predicts[$i_line],
+   $train_discrims[$i_line],
+   $test_predicts[$i_line],
+   $test_discrims[$i_line],
+   $test_probs[$i_line]) = split('	', $line);
+  undef($train_labels[$i_line]); # Avoid -w warning.
+
+  # Do we have hold-out info?
+  if (defined($test_predicts[$i_line])) {
+    $test_type = "holdout";
+    
+    # Do we have probabilities?  If so, use those instead.
+    if (defined($test_probs[$i_line])) {
+      $test_discrims[$i_line] = $test_probs[$i_line];
+      if ($test_probs[$i_line] > 0.5) {
+	$test_predicts[$i_line] = 1;
+      } else {
+	$test_predicts[$i_line] = -1;
+      }
+    }
+  }
+
+  # Increment the relevant counters.
+  if ($train_classes[$i_line] == 1) {
+    $num_pos++;
+    if (abs($weights[$i_line]) > 0) {
+      $pos_support++;
+      if (($pos_constraint > 0) && 
+	  (abs($weights[$i_line]) >= $pos_constraint)) {
+	$pos_bounded++;
+      }
+    }
+  } elsif ($train_classes[$i_line] == -1) {
+    $num_neg++;
+    if (abs($weights[$i_line]) > 0) {
+      $neg_support++;
+      if (($neg_constraint > 0) &&
+	  (abs($weights[$i_line]) >= $neg_constraint)) {
+	$neg_bounded++;
+      }
+    }
+  } else {
+    die("Invalid class ($train_classes[$i_line]).");
+  }
+  $i_line++;
+}
+$num_train = $i_line;
+close($weights);
+
+#### Read the test set files. ####
+if ($test_type eq "external") {
+
+  ($num_test, @test_classes) = &read_one_column($truth_file, 1);
+  ($num_predict, @test_predicts) = &read_one_column($predict_file, 1);
+  ($num_predict, @test_discrims) = &read_one_column($predict_file, 2);
+
+  if($num_test != $num_predict){
+    die("Different numbers of rows in label ($num_test) and prediction ($num_predict) files\n");
+  }
+
+} elsif ($test_type eq "holdout") {
+  $num_test = $num_train;
+  @test_classes = @train_classes;
+}
+
+#### Compute the various statistics. ####
+($train_fp, $train_fn, $train_tp, $train_tn)
+    = &compute_errors($num_train, @train_classes, @train_predicts);
+$train_roc = &compute_roc($num_train, "", $train_fp, $train_tp,
+			  @train_classes, @train_discrims);
+if ($test_type ne "none") {
+  ($test_fp, $test_fn, $test_tp, $test_tn)
+      = &compute_errors($num_test, @test_classes, @test_predicts);
+  $test_roc = &compute_roc($num_test, $roc_file, $test_fp, $test_tp, 
+			   @test_classes, @test_discrims);
+}
+
+#### Print the results ####
+printf("Number of training examples: %d (%d positive, %d negative)\n",
+	 $num_train, $num_pos, $num_neg);
+printf("Number of support vectors: %d (%d positive, %d negative) %.3g%%\n",
+	 $pos_support + $neg_support, $pos_support,
+	 $neg_support, 100 * (($pos_support + $neg_support) / $num_train));
+if ($constrain_weights eq "true") {
+  printf("Number of bounded support vectors: ");
+  printf("%d (%d positive, %d negative) %.3g%%\n",
+	   $pos_bounded + $neg_bounded, $pos_bounded,
+	   $neg_bounded, 100 * (($pos_bounded + $neg_bounded) / $num_train));
+}
+printf("Training results: FP=%d FN=%d TP=%d TN=%d\n",
+	 $train_fp, $train_fn, $train_tp, $train_tn);
+printf("Training ROC: %7.5f\n", $train_roc);
+if ($test_type ne "none") {
+  printf("Test results: FP=%d FN=%d TP=%d TN=%d\n",
+	   $test_fp, $test_fn, $test_tp, $test_tn);
+  printf("Test ROC: %7.5f\n", $test_roc);
+}
+
+##############################################################################
+# Compute false positive and false negatives for a given set of predictions.
+##############################################################################
+sub compute_errors {
+  my($num_examples, @classes_and_predicts) = @_;
+  my($fp, $fn, $tp, $tn);
+  $fp = 0;
+  $fn = 0;
+  $tp = 0;
+  $tn = 0;
+
+  # There must be a better way.
+  for ($i_example = 0; $i_example < $num_examples; $i_example++) {
+    $classes[$i_example] = $classes_and_predicts[$i_example];
+    $predicts[$i_example] = $classes_and_predicts[$num_examples + $i_example];
+  }
+
+  for ($i_example = 0; $i_example < $num_examples; $i_example++) {
+    if ($classes[$i_example] == 1) {
+      if ($predicts[$i_example] == 1) {
+	$tp++;
+      } elsif ($predicts[$i_example] == -1) {
+	$fn++;
+      } else {
+	die("Invalid prediction ($predicts[$i_example]) at example $i_example.");
+      }
+    } elsif ($classes[$i_example] == -1) {
+      if ($predicts[$i_example] == 1) {
+	$fp++;
+      } elsif ($predicts[$i_example] == -1) {
+	$tn++;
+      } else {
+	die("Invalid prediction ($predicts[$i_example]) at example $i_example.");
+      }
+    } else {
+      die("Invalid class ($classes[$i_example]) at example $i_example.");
+    }
+  }
+  return(($fp, $fn, $tp, $tn));
+}
+
+##############################################################################
+# Compute ROC score.
+##############################################################################
+sub compute_roc {
+  my($num_examples, $roc_file, $given_fp, $given_tp, 
+     @classes_and_discrims) = @_;
+  my(@labeled_discriminants, @sorted_labeled_discriminants, @sorted_labels);
+  my($area, $tp, $fp, $discrim, $prev_tp, $prev_fp);
+
+  # Pair each discriminant with its label.
+  for ($i_example = 0; $i_example < $num_examples; $i_example++) {
+    $labeled_discriminants[$i_example] = $classes_and_discrims[$i_example]
+	. " " . $classes_and_discrims[$num_examples + $i_example];
+    # Add a random number for breaking ties.
+    $labeled_discriminants[$i_example] .= " " . rand();
+  }
+
+  # Sort the resulting strings by their labels.
+  @sorted_labeled_discriminants = sort by_discriminant @labeled_discriminants;
+
+  # Extract just the labels.
+  for ($i_example = 0; $i_example < $num_examples; $i_example++) {
+    ($sorted_labels[$i_example], $discrim) 
+	= split(' ', $sorted_labeled_discriminants[$i_example]);
+  }
+  
+  # Open the ROC output file.
+  if ($roc_file ne "") {
+    open($roc_file, ">$roc_file") || die("Can't open $roc_file");
+    printf($roc_file "# %d %d\n", $given_fp, $given_tp);
+  }
+
+  # Compute the area under the curve.
+  $area = 0;
+  $tp = 0;
+  $fp = 0;
+  $prev_tp = 0;
+  $prev_fp = 0;
+  if ($roc_file ne "") {
+    print($roc_file "$fp $tp\n");
+  }
+  for ($i_example = 0; $i_example < $num_examples; $i_example++) {
+    $label = $sorted_labels[$i_example];
+
+    # Read the label and increment the counter.
+    if ($label == 1) {
+      $tp++;
+    } elsif ($label == -1) {
+      $fp++;
+
+      # Add the area of this bar.
+      $area += $tp;
+
+    } else {
+      die("Invalid label ($label).");
+    }
+
+    # Add an entry to the ROC plot.
+    if ($roc_file ne "") {
+      print($roc_file "$fp $tp\n");
+    }
+  }
+
+  if ($roc_file ne "") {
+    close($roc_file);
+  }
+
+  # Divide by the total area to get the ROC.
+  if ($tp == 0 || $fp == 0) {
+    print STDERR "Warning, no true positives or false positives!\n";
+    $roc = 0;
+  } else {
+    $roc = $area / ($tp * $fp);
+  }
+
+  return $roc;
+}
+
+sub by_discriminant {
+  ($a_label, $a_discriminant, $a_tie_breaker) = split(' ', $a);
+  ($b_label, $b_discriminant, $b_tie_breaker) = split(' ', $b);
+  undef($a_label); # Avoid -w warning.
+  undef($b_label); 
+  if ($a_discriminant < $b_discriminant) {
+    return(1);
+  } elsif ($a_discriminant > $b_discriminant) {
+    return(-1);
+  } else {
+    return($a_tie_breaker <=> $b_tie_breaker);
+  }
+}
+  
+
+##############################################################################
+# Take a file and a column index, returns the array of values from that column
+############################################################################## 
+sub read_one_column{
+  my($file_name,$column_index) = @_;
+  my($num_values,@column_value);
+
+  open($file_name,"<$file_name") || die("Cannot open $file_name.");
+
+  # Skip comments at the start of the file and first line.
+  while($file_line = <$file_name>) {
+    if (substr($file_line,0,1) ne "#") {
+      last;
+    }
+  }
+
+  # Read the data from the file.
+  $i_line = 0;
+  while($file_line = <$file_name>) {
+    chomp($file_line);
+    @temp = split('\t',$file_line);
+    $column_value[$i_line] = $temp[$column_index];
+    $i_line++;
+  }
+  close($file_name);
+    
+  $num_values = $i_line;
+  return($num_values, @column_value);
+}

@@ -1,0 +1,337 @@
+%% SLIDE
+
+\section{Introduzione}
+
+\subsection{Panoramica}
+
+\begin{frame}
+ \frametitle{Problemi di classificazione binaria}
+ Ogni istanza del dataset è caratterizzata da
+ \begin{itemize}
+  \item Dato caratteristico del problema: nella trattazione più semplice possiamo pensare a vettori di numeri reali, nei casi più complessi possono essere tipi di dato strutturato
+  \item Etichetta di classificazione binaria, del tipo +1 / -1
+ \end{itemize}
+ \begin{block}<2->{Obiettivo} 
+  Essere in grado di assegnare etichette a nuove istanze del problema
+ \end{block}
+ \begin{block}<2->{Ostacoli principali}
+  \begin{itemize}
+   \item In letteratura si distinguono due componenti di errore
+    \begin{itemize}
+     \item \textbf{Errore di stima} (\textit{overfitting})\\ Troppa fiducia sui dati conosciuti, incapacità di generalizzare
+     \item \textbf{Errore di approssimazione} (\textit{underfitting})\\ Troppa generalità, incapacità di discrimare tra istanza e istanza
+    \end{itemize}
+  \end{itemize}
+ \end{block}
+\end{frame}
+
+\begin{frame}
+ \frametitle{Algoritmi risolutivi}
+ Diversi approcci possibili
+ \begin{itemize}
+  \item Discriminant e Generative Model: basati su considerazioni probabilistiche
+  \item Decision Function: a partire da spazio ipotesi e dataset ottenere la migliore funzione discriminante tra esempi positivi e negativi
+  \begin{itemize}
+   \item Soluzione semplice: percettrone, dati linearmente separabili
+   \item Evoluzione: metodi kernel, macchine a vettori di supporto
+  \end{itemize}
+ \end{itemize}
+ \begin{block}<2->{Perchè Kernel Methods ?}
+  \begin{itemize}
+   \item Nozione di similarità definibile su qualsiasi tipo di dato
+   \item Flessibilità su dati non linearmente separabili
+   \item Indipendenza da algoritmo di apprendimento usato (ammesso sia \textit{kernel-based})
+  \end{itemize}
+ \end{block}
+\end{frame}
+
+\begin{frame}
+ \frametitle{Macchine a vettori di supporto - SVM}
+ Algoritmo di classificazione, perfettamente integrabile con approccio kernel
+ \begin{block}{SVM}
+  \begin{itemize}
+   \item Generalizzazione iperpiano massimo margine: problema di ottimizzazione quadratico di tipo convesso
+   \item Idea \textit{margine soft}: capacità di generalizzare, risposta migliore in presenza di rumorosità dei dati
+   \item Kernel utilizzabile come plug-in
+   \item Disponibili varie implementazioni (es. SVMGist)
+  \end{itemize}
+ \end{block}	
+\end{frame}
+
+\begin{frame}
+ \frametitle{Classificazione su NCI Dataset}
+ \begin{itemize}
+  \item Reso pubblicamente disponibile dal National Cancer Istitute
+  \item Capacità di circa 70000 composti di inibire tumori su 60 linee cellulari umane
+  \item Dati riferiti al parametro di concentrazione GI50 (inibizione crescita 50\%)
+  \item Per ogni linea cellulare, ogni istanza è caratterizzata da
+   \begin{itemize}
+    \item Molecola composta da atomi e legami tra atomi: possono essere visti come grafi, etichettati su nodi ed archi
+    \item Capacità di inibizione o meno da parte della molecola (+1, -1)
+   \end{itemize}
+  \item Dataset ben bilanciato (esempi positivi e negativi circa 50\% l'uno)
+ \end{itemize}
+ \begin{block}<2->{Scopo}
+  Fissata la linea cellulare, essere in grado di prevedere l'effetto più o meno inibitorio delle molecole sulla malattia
+ \end{block}
+\end{frame}
+
+\begin{frame}
+ \frametitle{Bilanciamento dataset}
+ \begin{center}
+  \pgfuseimage{bilanciamento}
+ \end{center}
+\end{frame}
+
+
+\section{Kernel fra grafi}
+
+\subsection{Metodologie}
+
+\begin{frame}
+ \frametitle{Kernel fra molecole: diverse soluzioni}
+ Poiché le istanze del problema sono delle molecole, ai fini della classificazione è necessario definire una misura di somiglianza fra di esse. Si noti come senza l'ausilio dei kernel le operazioni tendano di gran lunga a complicarsi.
+ \begin{block}<2->{Approcci}
+  \begin{itemize}
+   \item<3-> \alert<3,3>{\textbf{1D kernels:}}\\ Sfruttamento formato SMILES per rappresentazione delle molecole tramite stringhe
+   \item<4-> \alert<4,4>{\textbf{2D kernels:}}\\ Studio delle molecole sotto forma di grafi e analisi delle loro caratteristiche
+   \begin{itemize}
+    \item<4-> Tanimoto Kernel
+    \item<4-> MinMax Kernel
+   \end{itemize}
+   \item<5-> \alert<5,5>{\textbf{3D kernels:}}\\ Basati su rappresentazione 3D delle molecole
+  \end{itemize}
+ \end{block}
+\end{frame}
+
+\subsection{Tanimoto Kernel}
+
+\begin{frame}
+ \frametitle{Tanimoto Kernel: descrizione}
+ \begin{itemize}
+  \item Molecole strutturate in forma di grafi
+  \item Ricerca con algoritmo DFS a partire da ciascun nodo, profondità variabile\\ (particolarità dei grafi con cicli)
+  \item Memorizzazione dei cammini (tipi di atomi e di legami)
+  \item Conteggio dei percorsi in comune e normalizzazione
+ \end{itemize}
+ \begin{block}<2->{Perché normalizzare ?}
+  Si discrimina fra molecole con stessi percorsi in comune ma diversa dimensione
+ \end{block}
+ \begin{block}<3->{Formulazione}
+  Data la profondità \textit{d}, un percorso \textit{path} e le molecole \textbf{x}, \textbf{u}, \textbf{v}, definiamo:
+  $$ \phi_{\textit{path}}\left( \textbf{x}\right) = 1\quad sse\;\textit{path} \in \textbf{x} \qquad,\qquad k_d\left( \textbf{u},\textbf{v}\right) = \sum_{\textit{path}}{\phi_{\textit{path}}\left( \textbf{u}\right)\cdot\phi_{\textit{path}}\left( \textbf{v}\right)} $$
+  $$ k^{t}_{d}\left( \textbf{u},\textbf{v}\right) = \frac{k_d\left( \textbf{u},\textbf{v}\right)}{k_d\left( \textbf{u},\textbf{u}\right) + k_d\left( \textbf{v},\textbf{v}\right) - k_d\left( \textbf{u},\textbf{v}\right)} $$
+ \end{block}
+\end{frame}
+
+\begin{frame}
+ \frametitle{Tanimoto Kernel: funzionamento}
+ \begin{columns}[c]
+  \column{0.45\textwidth}
+   \textit{\textbf{Molecola 1}}
+   \begin{center}
+    \pgfuseimage{mol1}
+   \end{center}
+   \textit{\textbf{Molecola 2}}
+   \begin{center}
+    \pgfuseimage{mol2}
+   \end{center}
+  \column{0.50\textwidth}
+    \begin{columns}[c]
+     \column{0.475\textwidth}
+      \begin{block}{\textit{Path} Molecola 1}
+       O-C-C-N-C-C\\
+       C-N-C-C\\
+       C-C-N-C-C\\
+       N-C-C\\
+       O=C\\
+       \ldots
+      \end{block}
+     \column{0.475\textwidth}
+      \begin{block}{\textit{Path} Molecola 2}
+       C-C-C-C\\
+       O-C-C\\
+       O=C-C\\
+       O=C\\
+       N-C\\
+       \ldots
+      \end{block}
+    \end{columns}
+   \vbox{\vskip10pt}
+   \begin{block}{Risultati}
+    \# \textit{path} mol. 1: \textbf{52}\\ \# \textit{path} mol. 2: \textbf{38}\\ \# \textit{path} comuni: \textbf{27}\\ Valore del Kernel: \textbf{0.4286}
+   \end{block}
+ \end{columns}
+\end{frame}
+
+\subsection{MinMax Kernel}
+
+\begin{frame}
+ \frametitle{MinMax Kernel: descrizione}
+ \begin{itemize}
+  \item Basato sulla struttura del Tanimoto Kernel
+  \item Molteplicità associata a ciascun percorso
+  \item Conteggio dei percorsi in comune basato su molteplicità
+  \item Normalizzazione sui dati ottenuti
+ \end{itemize}
+ \begin{block}<2->{Formulazione}
+  Data la profondità \textit{d}, un percorso \textit{path} e le molecole \textbf{x}, \textbf{u}, \textbf{v}, definiamo:
+  $$ \varphi_{\textit{path}}\left( \textbf{x}\right) = \#\; occorrenze\; di\; \textit{path}\; in\; \textbf{x} $$
+  $$ k^{m}_{d}\left( \textbf{u},\textbf{v}\right) = \frac{\sum_{\textit{path}}min\left(\varphi_{path}\left( \textbf{u}\right),\varphi_{path}\left( \textbf{v}\right)\right)}{\sum_{\textit{path}}max\left(\varphi_{path}\left( \textbf{u}\right),\varphi_{path}\left( \textbf{v}\right)\right)} $$
+ \end{block}
+\end{frame}
+
+\begin{frame}
+ \frametitle{MinMax Kernel: funzionamento}
+ \begin{columns}[c]
+  \column{0.45\textwidth}
+   \textit{\textbf{Molecola 1}}
+   \begin{center}
+    \pgfuseimage{mol1}
+   \end{center}
+   \textit{\textbf{Molecola 2}}
+   \begin{center}
+    \pgfuseimage{mol2}
+   \end{center}
+  \column{0.50\textwidth}
+    \begin{columns}[c]
+     \column{0.475\textwidth}
+      \begin{block}{\textit{Path} Molecola 1}
+       O-C-C [x2] \textbf{\uncover<2->{\alert{$\Leftarrow$ !!}}}\\
+       C-N-C-C [x1] \textbf{\uncover<2->{\alert{$\Leftarrow$ !!}}}\\
+       C-C [x5] \textbf{\uncover<2->{\alert{$\Leftarrow$ !!}}}\\
+       O=C-O [x1]\\
+       O=C [x1]\\
+       \ldots
+      \end{block}
+     \column{0.475\textwidth}
+      \begin{block}{\textit{Path} Molecola 2}
+       C-C-C-C [x6]\\
+       O-C-C [x1]\\
+       N-C-C [x2]\\
+       O=C-C [x1]\\
+       O=C [x1]\\
+       \ldots
+      \end{block}
+    \end{columns}
+   \vbox{\vskip10pt}
+   \begin{block}{Risultati}
+    \# \textit{path} mol. 1: \textbf{52}\\ \# \textit{path} mol. 2: \textbf{38}\\ \# \textit{path} comuni: \textbf{27}\\ Somma molteplicità minime: \textbf{33}\\ Somma molteplicità massime: \textbf{111}\\ Valore del Kernel: \textbf{0.2973}\\
+   \end{block}
+ \end{columns}
+\end{frame}
+
+\section{Implementazione}
+
+\subsection{Il Codice}
+
+\begin{frame}
+ \frametitle{Realizzazione programma}
+ Per la generazione del kernel è stato realizzato un software in codice C.\\ \vbox{\vskip10pt} Di seguito le caratteristiche principali.
+ \begin{block}<2->{Software Hope-K}
+  \begin{itemize}
+   \item<3-> Parser ad-hoc per la generazione di grafi a partire da una versione rielaborata (attraverso uno script PERL) del formato mol2
+   \item<4-> Capacità di generazione delle matrici per kernel Tanimoto e MinMax su grafi (sfruttando algoritmi DFS e analisi di cammino)
+   \item<5-> Calcolo accuratezza e leave-one-out (loo) a partire dai file ottenuti dall'elaborazione con SVMGist
+  \end{itemize}
+ \end{block}
+\end{frame}
+
+\begin{frame}
+ \frametitle{Modalità di training\&test}
+ Esistono varie metodologie per l'analisi ed il confronto dei risultati.\\ Nel caso specifico sono state percorse separatamente due vie differenti, con scopi diversi di seguito illustrati.\\ \vbox{\vskip10pt} 
+ \begin{block}<2->{Tecniche: 10 Fold Cross Validation e 80-20 Cross Validation}
+  \begin{itemize}
+   \item<3-> \alert<3,3>{\textbf{10 Fold Cross Validation:}} la tecnica è stata sfruttata per l'analisi ed il confronto dei due kernel generati, così da individuare sia quale dei due presenta un comportamento migliore, quanto quale risulta essere la profondità ottimale di ricerca
+   \item<4->
+   \item<4-> \alert<4,4>{\textbf{80-20 Cross Validation:}} basandosi su quanto proposto nell'articolo di riferimento\footnote{\begin{tiny}Kernels for small molecules and the prediction of mutagenicity, toxicity and anti-cancer activity\\ ( Swamidass, Chan, Bruand, Phung, Ralaivola and Baldi )\end{tiny}}, è stata usata questa tecnica per l'estrazione di dati utilizzabili per il confronto con quelli proposti nel documento stesso
+  \end{itemize}
+ \end{block}
+\end{frame}
+
+\begin{frame}
+ \frametitle{Script PERL per 80-20 Cross Validation}
+ Il kernel ottenuto in forma di matrice quadrata simmetrica non è adatto all'uso diretto per la 80-20 Cross Validation.\\ \vbox{\vskip10pt} A questo scopo è stato realizzato uno script in PERL, utilizzato per la scomposizione della matrice del kernel in matrici di training e test.\\ \vbox{\vskip10pt}
+ \begin{block}<2->{Script: \textit{matrix\_maker.pl}}
+  \begin{itemize}
+   \item<3-> Suddivide la matrice in due sotto-matrici di dimensione variabile
+   \item<4-> Effettua ad ogni iterazione lo swapping di colonne scelte in modo casuale
+   \item<5-> Genera in maniera randomica una lista di indici utilizzati per la scelta delle colonne che andranno a comporre le due matrici
+   \item<6-> Produce una serie di coppie di matrici diverse derivate dall'originale
+  \end{itemize}
+ \end{block}
+\end{frame}
+
+\begin{frame}
+ \frametitle{SVMGist}
+ \textit{Solver} contenente strumenti per la classificazione tramite l'uso di macchine a vettori di supporto.\\ Esistono due possibili approcci
+ \begin{itemize}
+  \item Definire la mappa delle \textit{feature} e fornirne i valori a SVMGist
+  \item Definire direttamente la matrice di Gram del kernel (approccio adottato)
+ \end{itemize}
+ \begin{block}<2->{Fase di \textit{training}}
+  Calcolo delle matrici tramite applicativo C e utilizzo di SVMGist al fine di ottenere i pesi ottimali $\alpha_i$ per la funzione di classificazione (risoluzione del problema vincolato di ottimizzazione)
+ \end{block}
+ \begin{block}<3->{Fase di \textit{test}}
+  Utilizzo della funzione di classificazione ottimale per l'esecuzione del test su una porzione del dataset in accordo alla suddivisione adottata (10 Fold Validation, 80/20 Cross Validation)
+ \end{block}
+\end{frame}
+
+\section{Risultati}
+
+\subsection{Analisi (10 fold cross validation)}
+
+\begin{frame}
+ \frametitle{Tanimoto vs MinMax su dataset 786\_0}
+ \begin{center}
+  \pgfuseimage{g1}
+ \end{center}
+\end{frame}
+
+\begin{frame}
+ \frametitle{Tanimoto d8 vs MinMax d5 su 10 dataset}
+ \begin{center}
+  \pgfuseimage{g2}
+ \end{center}
+\end{frame}
+
+\begin{frame}
+ \frametitle{Tanimoto d8 vs MinMax d8 su 10 dataset}
+ \begin{center}
+  \pgfuseimage{g3}
+ \end{center}
+\end{frame}
+
+\subsection{Analisi (80/20 fold validation)}
+
+\begin{frame}
+ \frametitle{MinMax d10 vs Swamidass MinMax d10 su 6 dataset}
+ \begin{center}
+  \pgfuseimage{g4}
+ \end{center}
+\end{frame}
+
+\subsection{Conclusioni}
+
+\begin{frame}
+ \frametitle{Risultati finali}
+ Di seguito, quanto osservato durante il lavoro
+ \begin{itemize}
+  \item<2-> Tasso di profondità basso $\Rightarrow$ scarsa utilità
+  \item<3-> All'aumentare del tasso di profondità
+   \begin{itemize}
+    \item MinMax si comporta complessivamente meglio di Tanimoto
+    \item Il tempo di computazione cresce inevitabilmente
+   \end{itemize}
+  \item<4-> Dal confronto con Swamidass è risultato che
+   \begin{itemize}
+    \item I valori puntuali delle percentuali sono leggermente più elevati
+    \item Considerando la tolleranza (deviazione standard) sui valori, l'andamento è conforme a quello atteso nella quasi totalità dei casi
+   \end{itemize}
+  \item<5-> Nonostante tutto SVMGist non si comporta in modo deterministico ma propone al suo interno un fonte randomica, la quale influisce sulle elaborazioni causando occasionali discostamenti fra i risultati forniti
+  \begin{itemize}
+   \item I risultati riportati in precedenza sono pertanto soggetti a variazioni
+   \item Per i motivi sopra esposti sono state effettuate misurazioni ripetute
+  \end{itemize}
+ \end{itemize}
+\end{frame}

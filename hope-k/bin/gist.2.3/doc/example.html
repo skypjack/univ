@@ -1,0 +1,59 @@
+ <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+FILE: index.html
+AUTHOR: William Stafford Noble
+CREATE DATE: 7/24/02
+PROJECT: SVM
+REVISION: $Revision: 1.2 $
+-->
+<HEAD>
+<TITLE>Gist example</TITLE>
+</head>
+<BODY BGCOLOR=white>
+<CENTER><H1>Gist example</H1></CENTER>
+
+<BLOCKQUOTE>
+
+<P>
+Here is a set of <A HREF="sample.mtx">sample input data</A> and the <A
+HREF="sample.labels">associated labels</A>.  Once you have installed
+the Gist software, you can train an SVM using a command line like
+this:
+<PRE>
+gist-train-svm -train sample.mtx -class sample.labels > sample.weights
+</PRE>
+The file <A HREF="sample.weights">sample.weights</A> contains SVM
+weights associated with each example.  Using these weights, you can
+classify a <A HREF="test.mtx">test data set</A> like this:
+<PRE>
+gist-classify -train sample.mtx -learned sample.weights -test test.mtx > test.predict
+</PRE>
+<A HREF="test.predict">Here</A> are the resulting predictions.  You
+can assess the accuracy of your predictions, using <A
+HREF="test.labels">these labels</A> and this command line:
+<PRE>
+gist-score-svm -test test.labels test.predict sample.weights
+</PRE>
+Here is the resulting output:
+<PRE>
+Number of training examples: 1644 (24 positive, 1620 negative)
+Number of support vectors: 60 (14 positive, 46 negative) 3.65%
+Number of bounded support vectors: 6 (5 positive, 1 negative) 0.365%
+Training results: FP=0 FN=3 TP=21 TN=1620
+Training ROC: 0.99874
+Test results: FP=12 FN=1 TP=9 TN=801
+Test ROC: 0.99397
+</PRE>
+See the documentation for <A
+HREF="score-svm-results.html">gist-core-svm</A> for an explanation
+of these results.
+
+
+
+</BLOCKQUOTE>
+
+<HR>
+<A HREF="index.html">Gist</A>
+</BODY>
+</HTML>

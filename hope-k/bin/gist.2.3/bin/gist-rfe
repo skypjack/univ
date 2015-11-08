@@ -1,0 +1,490 @@
+#! /usr/bin/perl
+# -* perl *-
+# FILE: gist-rfe
+# AUTHOR: William Stafford Noble
+# PROJECT: GIST
+# DESCRIPTION: Perform recursive feature elimination using Gist.
+
+$usage = "gist-rfe [options] <train data> <train labels>
+
+  Runs the SVM recursive feature elimination algorithm on a given
+  data set.  By default, evaluates the performance using leave-one-out
+  cross-validation.  The \"-test\" option enables evaluation on an
+  independent test set.  Performance evaluation at each iteration is
+  printed to standard output.
+
+  Options:
+     -test <data> <labels>  Test set and corresponding labels.
+     -rfe-iter <value>      Maximum number of iterations.
+     -reduce <percent>      Percent of training set to eliminate each round.
+                            At least one feature will always be removed.
+                            Default = 50.
+     -features <file>       File in which to print the features selected
+                            at each iteration.  If the filename contains a
+                            \"%\", then multiple output files will be
+                            created, replacing \"%\" with the iteration.
+     -weights <file>        File in which to store weights.  The same use
+                            of \"%\" applies.
+     -predicts <file>       File in which to store predictions.  The same
+                            use of \"%\" applies.
+     -tmp <dir>             Directory in which to store temporary files.
+                            Default = current directory.
+
+  In addition, any option that is valid for gist-train-svm may also be
+  given to SVM-RFE.
+";
+
+# Command line defaults.
+$reduce_percent = 50;
+$compute_weights_options = "";
+$tmp_dir = ".";
+
+# Check to be sure we have enough command line arguments.
+if (scalar(@ARGV) < 2 ) {
+  print(STDERR $usage);
+  exit(1);
+}
+
+# Read the comamnd line.
+while (scalar(@ARGV) > 2) {
+  $next_arg = shift(@ARGV);
+  if ($next_arg eq "-test") {
+    $test_data = shift(@ARGV);
+    $test_labels = shift(@ARGV);
+  } elsif ($next_arg eq "-rfe-iter") {
+    $maxiter = shift(@ARGV);
+  } elsif ($next_arg eq "-reduce") {
+    $reduce_percent = shift(@ARGV);
+  } elsif ($next_arg eq "-features") {
+    $features_filename = shift(@ARGV);
+  } elsif ($next_arg eq "-weights") {
+    $weights_filename = shift(@ARGV);
+  } elsif ($next_arg eq "-predicts") {
+    $predict_filename = shift(@ARGV);
+  } elsif ($next_arg eq "-tmp") {
+    $tmp_dir = ".";
+    # Strip off the trailing slash, if it's there.
+    if (substr($tmp_dir, length($tmp_dir) - 1, 1) eq "/") {
+      $tmp_dir = substr($tmp_dir, 0, length($tmp_dir) - 1);
+    }
+  } elsif (($next_arg eq "-matrix") ||
+	   ($next_arg eq "-zeromeanrow") ||
+	   ($next_arg eq "-varone") ||
+	   ($next_arg eq "-nonormalize") ||
+	   ($next_arg eq "-radial") ||
+	   ($next_arg eq "-radial") ||
+	   ($next_arg eq "-rdb") ||
+	   ($next_arg eq "-notime")) {
+    $compute_weights_options .= " $next_arg";
+  } else {
+    $compute_weights_options .= " $next_arg " . shift(@ARGV);
+  }
+}  
+($train_data, $train_labels) = @ARGV;
+
+# Make copies of the training and test data.
+$reduced_train_data = "$tmp_dir/train.$$.tmp";
+system("cp $train_data $reduced_train_data");
+if (defined($test_data)) {
+  $reduced_test_data = "$tmp_dir/test.$$.tmp";
+  system("cp $test_data $reduced_test_data");
+}
+
+# Do SVM-RFE.
+$iter = 0;
+while () {
+  print("Iteration $iter\n");
+  $num_features
+      = &one_rfe($reduced_train_data, $train_labels, $reduced_test_data,
+		 $test_labels, $reduce_percent, $compute_weights_options,
+		 $features_filename, $iter, $weights_filename, 
+		 $predict_filename);
+
+  # Check for stopping conditions.
+  if (defined($maxiter) && ($iter >= $maxiter)) {
+    last;
+  }
+  if ($num_features == 0) {
+    last;
+  }
+  $iter++;
+}
+unlink($reduced_train_data);
+if (defined($test_data)) {
+  unlink($reduced_test_data);
+}
+exit(0);
+
+#############################################################################
+sub one_rfe {
+  my($train_data, $train_labels, $test_data, $test_labels, 
+     $reduce_percent, $compute_weights_options, $features_filename,
+     $iteration, $weights_filename, $predict_filename) = @_;
+
+  # Run gist-train-svm.
+  $weights_file = &run_compute_weights($train_data, $train_labels, $test_data,
+				       $compute_weights_options);
+
+  # If necessary, run gist-classify.
+  if (defined($test_data)) {
+    $predict_file = &run_classify($train_data, $weights_file, $test_data);
+  }
+
+  # Evaluate the performance.
+  &evaluate_performance($train_data, $train_labels, $test_labels,
+			$weights_file, $predict_file);
+
+  # Reduce the size of the training and test sets.
+  ($num_features, $features_file)
+      = &reduce_data_sets($train_data, $weights_file, $test_data,
+			  $reduce_percent, $iteration);
+
+  # Remove temporary files.
+  &store_and_unlink($weights_file, $iteration, $weights_filename);
+  &store_and_unlink($predict_file, $iteration, $predict_filename);
+  &store_and_unlink($features_file, $iteration, $features_filename);
+
+  return($num_features);
+}
+
+#############################################################################
+# Unlink a file, but store a copy first, if the user wants to.
+sub store_and_unlink {
+  my($existing_file, $iteration, $filename) = @_;
+
+  # If the file isn't defined, don't bother.
+  if (!defined($existing_file)) {
+    return;
+  }
+
+  # If the filename is defined, ...
+  if (defined($filename)) {
+
+    # Create the new filename.
+    $new_filename = $filename;
+    $new_filename =~ s/%/$iteration/;
+
+    # Decide whether to concatenate.
+    if (($iter == 0) || ($filename ne $new_filename)) {
+
+      # Copy this file there.
+      system("cp $existing_file $new_filename");
+
+    } else {
+
+      # Append to the end of an existing file.
+      system("cat $existing_file >> $new_filename");
+    }
+  }
+
+  unlink($existing_file);
+}
+
+
+#############################################################################
+sub run_compute_weights {
+  my($train_data, $train_labels, $test_data, $compute_weights_options) = @_;
+  my($return_value) = "$tmp_dir/weights.$$.tmp";
+
+  $command = "gist-train-svm -verbose 0 ";
+  if (!defined($test_data)) {
+    $command .= " -holdout 100";
+  }
+  $command .= " -train $train_data -class $train_labels";
+  $command .= " $compute_weights_options";
+  $command .= " > $return_value";
+  &run_program($command);
+
+  return($return_value);
+}
+
+#############################################################################
+sub run_classify {
+  my($train_data, $weights_file, $test_data) = @_;
+  my($return_value) = "$tmp_dir/predict.$$.tmp";
+
+  $command = "gist-classify -verbose 0 -train $train_data -test $test_data";
+  $command .= " -learned $weights_file > $return_value";
+  &run_program($command);
+
+  return($return_value);
+}
+
+#############################################################################
+# Run gist-score-svm and print the results to stdout.
+sub evaluate_performance {
+  my($train_data, $train_labels, $test_labels, $weights_file, $predict_file)
+      = @_;
+
+  $command = "gist-score-svm";
+  if (defined($test_labels)) {
+    $command .= " -test $test_labels $predict_file";
+  }
+  $command .= " $weights_file";
+  &run_program($command);
+}
+
+#############################################################################
+sub reduce_data_sets {
+  my($train_data, $weights_file, $test_data, $reduce_percent, $iteration) = @_;
+  my($num_features, $features_file);
+  my(@keep_or_toss, @normal_vector);
+
+  # Compute the normal vector.
+  @normal_vector = &compute_normal_vector($train_data, $weights_file);
+
+  # Figure out how many values we want.
+  $num_features = int((1 - ($reduce_percent / 100)) * scalar(@normal_vector));
+  if ($num_features == scalar(@normal_vector)) {
+    $num_features--;
+  }
+  printf("Reducing from %d to %d features.\n", scalar(@normal_vector),
+	 $num_features);
+
+  # Decide which ones to keep.
+  @keep_or_toss = &keep_or_toss($num_features, @normal_vector);
+
+  # Store the features.
+  $features_file = &create_features_file($train_data, $iteration, 
+					 scalar(@normal_vector),
+					 @normal_vector, @keep_or_toss);
+
+  # Reduce the files.
+  &reduce_file($train_data, $iteration, @keep_or_toss);
+  if (defined($test_data)) {
+    &reduce_file($test_data, $iteration, @keep_or_toss);
+  }
+
+  return($num_features, $features_file);
+}
+
+
+#############################################################################
+sub compute_normal_vector {
+  my($train_data, $weights_file) = @_;
+  my(@return_value, $id, @data);
+
+  # Open both input files.
+  open($TRAIN_DATA, "<$train_data") || die("Can't open $train_data.");
+  open($WEIGHTS_FILE, "<$weights_file") || die("Can't open $weights_file.");
+
+  # Skip the header and title line.
+  &skip_header($TRAIN_DATA);
+  &skip_header($WEIGHTS_FILE);
+
+  # Compute the normal vector.
+  while ($data_line = <$TRAIN_DATA>) {
+
+    # Parse the data line.
+    chomp($data_line);
+    ($id, @data) = split("\t", $data_line);
+
+    # Read and parse the weights line.
+    $weights_line = <$WEIGHTS_FILE>;
+    ($id, $_, $weight) = split("\t", $weights_line);
+    # N.B. In the Gist output, the weight is already multiplied by the label.
+
+    # Compute the normal.
+    $i = 0;
+    foreach $datum (@data) {
+      $return_value[$i] += $weight * $datum;
+      $i++;
+    }
+  }
+
+  close($TRAIN_DATA);
+  close($WEIGHTS_FILE);
+
+  return(@return_value);
+}
+
+#############################################################################
+# Skip the header and the title line of a file.
+sub skip_header {
+  my($INFILE) = @_;
+  my($header) = "";
+
+  while () {
+    $line = <$INFILE>;
+    if (substr($line, 0, 1) eq "#") {
+      $header .= $line;
+    } else {
+      $title = $line;
+      last;
+    }
+  }
+
+  return($header, $title);
+}
+
+
+#############################################################################
+sub tagged_cmp {
+  ($a_value) = split(" ", $a);
+  ($b_value) = split(" ", $b);
+  return(abs($b_value) <=> abs($a_value));
+}
+
+#############################################################################
+# Convert a given vector of numbers to binary, replacing the largest n values
+# with 1s and the remainder with 0s.
+sub keep_or_toss {
+  my($num_to_keep, @vector) = @_;
+  my(@return_value, @sorted_vector, @tagged_vector);
+
+  # Make a tagged version of the vector.
+  $i = 0;
+  foreach $entry (@vector) {
+    push(@tagged_vector, "$entry $i");
+#    print(STDERR "$entry $i\n");
+    $i++;
+  }
+
+  # Sort the tagged version.
+  @sorted_vector = sort tagged_cmp @tagged_vector;
+
+  # Make the bit string.
+  $i = 0;
+  $num_ones = 0;
+  foreach $entry (@sorted_vector) {
+    ($_, $index) = split(" ", $entry);
+    if ($i < $num_to_keep) {
+      $return_value[$index] = 1;
+      $num_ones++;
+    } else {
+      $return_value[$index] = 0;
+    }
+    $i++;
+  }
+  if ($num_ones != $num_to_keep) {
+    die("Kept $num_ones features, rather than $num_to_keep.");
+  }
+
+  return(@return_value);
+}
+
+
+#############################################################################
+# Create an output file listing all the features and their scores.
+sub create_features_file {
+  my($train_data, $iteration, $num_features, @two_lists) = @_;
+  my(@normal_vector, @keep_or_toss, @feature_names, $features_file,
+     $FEATURES_FILE);
+
+  # Split the two input vectors.
+  @normal_vector = splice(@two_lists, 0, $num_features);
+  @keep_or_toss = @two_lists;
+
+  # Get the list of feature names.
+  @feature_names = &extract_feature_names($train_data);
+
+  # Check the size of the vectors.
+  if (($num_features != scalar(@feature_names)) ||
+      ($num_features != scalar(@keep_or_toss)) ||
+      ($num_features != scalar(@normal_vector))) {
+    printf(STDERR
+	   "ERROR: num_features=%d feature_names=%d keep_or_toss=%d normal_vector=%d\n",
+	   $num_features, scalar(@feature_names), scalar(@keep_or_toss),
+	   scalar(@normal_vector));
+    exit(1);
+  }
+
+  # Create and open the features file.
+  $features_file = "$tmp_dir/features.$$.tmp";
+  open(FEATURES_FILE, ">$features_file") || die("Can't open $features_file.");
+
+  # Print the titles.
+  print(FEATURES_FILE "feature\titeration\tscore\tkeep\n");
+
+  # Print all the features.
+  for ($i = 0; $i < $num_features; $i++) {
+    printf(FEATURES_FILE "%s\t%d\t%g\t%d\n", $feature_names[$i], $iteration, 
+	   $normal_vector[$i], $keep_or_toss[$i]);
+  }
+  close(FEATURES_FILE);
+
+  return($features_file);
+}
+
+#############################################################################
+# Extract the feature names from a data file.
+sub extract_feature_names {
+  my($train_data) = @_;
+  my($TRAIN_DATA, @return_value);
+
+  # Open the training data file.
+  open($TRAIN_DATA, "<$train_data") || die("Can't open $train_data.");
+
+  # Read the header.
+  ($foo, $title) = &skip_header($TRAIN_DATA);
+  close($TRAIN_DATA);
+
+  # Parse it.
+  chomp($title);
+  ($foo, @return_value) = split("\t", $title);
+
+  return(@return_value);
+}
+
+
+#############################################################################
+# Reduce a given file, using a binary vector to decide which lines to 
+# eliminate.
+sub reduce_file {
+  my($infile, $iteration, @keep_or_toss) = @_;
+  my(@data);
+
+  # Create a temporary filename.
+  $outfile = "$tmp_dir/reduced.$$.tmp";
+
+  # Open both files.
+  open($INFILE, "<$infile") || die("Can't open $infile.");
+  open($OUTFILE, ">$outfile") || die("Can't open $outfile.");
+
+  # Copy the header.
+  ($header, $title) = &skip_header($INFILE);
+  print($OUTFILE $header);
+  
+  # Process the file.
+  $line = $title;
+  while (defined($line)) {
+    chomp($line);
+
+    # Parse the line.
+    ($id, @data) = split("\t", $line);
+
+    # Print the ID.
+    print($OUTFILE $id);
+
+    # Print the selected features.
+    $i = 0;
+    foreach $decision (@keep_or_toss) {
+      if ($decision) {
+	print($OUTFILE "\t$data[$i]");
+      }
+      $i++;
+    }
+    print($OUTFILE "\n");
+
+    $line = <$INFILE>;
+  }
+
+  # Close files.
+  close($INFILE);
+  close($OUTFILE);
+
+  # Replace the data file with the reduced one.
+  system("cp $outfile $infile");
+  unlink($outfile);
+}
+
+#############################################################################
+sub run_program {
+  my($command) = @_;
+
+  #print(STDERR "$command\n");
+  $error = system($command);
+  if ($error) {
+    die("gist-rfe: Error $error from $command.");
+  }
+}

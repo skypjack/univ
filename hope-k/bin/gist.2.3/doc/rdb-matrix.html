@@ -1,0 +1,267 @@
+ <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+FILE: rdb-matrix.html
+AUTHOR: William Stafford Noble
+CREATE DATE: 1/26/2000
+PROJECT: SVM
+REVISION: $Revision: 1.6 $
+-->
+<head>
+<title>gist-matrix</title>
+</head>
+<body bgcolor=white>
+<center><h1>gist-matrix</h1></center>
+
+<blockquote>
+
+<p><b>Description:</B> Perform various matrix manipulations on
+matrices in RDB or white-space delimited format.
+
+<P><B>Usage:</B> <code>gist-matrix -matrix1 &lt;filename&gt; [-matrix2
+&lt;filename&gt;]</code>
+
+<P><B>Input:</B> 
+<UL> 
+
+<li> -matrix1 &lt;filename&gt; - a tab-delimited matrix file
+containing floating point values, with labels in the first row and
+column.
+
+<li> -matrix2 &lt;filename&gt; - similar to matrix1.  This option is
+only necessary for some of the operations listed below.
+</UL>
+
+<P><B>Output:</B> Write to standard output the result of performing
+the requested operation on the given matrix or matrices.  The output
+is in the same format as the input.</P>
+
+<P><B>Options:</B>
+
+<UL>
+
+<li> -operation &lt;option&gt; Specify the operation to be performed on the
+given matrix or matrices.  These include the following:
+<UL>
+
+<li>
+none - Do not modify the matrix.
+
+<li>
+size - Print the dimensions of the matrix, row by column.
+
+<li>
+randomize - Fill the matrix with random numbers between 0 and 1.
+
+<li>
+covariance - Compute the covariance matrix.
+
+<li>
+square - Multiply the matrix by itself (must be a square matrix).
+
+<li>
+invert - Invert the matrix (must be a square matrix).
+
+<li>
+binarize - Convert all entries in the matrix to -1 if less than a
+given threshold value, 1 otherwise.
+
+<li>
+transpose - Transpose the matrix.
+
+<li>
+eigenvectors - Compute the eigenvectors of the given matrix (must
+be symmetric across the diagonal).
+
+<li>
+eigenvalues - Compute the eigenvalues of the given matrix (must
+be symmetric across the diagonal).
+
+<li>
+eigenvector1 - Compute only the first eigenvector of the given matrix
+(symmetry not required).
+
+<li>
+symdiag - Symmetrize the matrix by averaging across the diagonal.
+
+<li>
+adddiag - Add a given value (specified using the -value option) to the
+diagonal of the matrix.
+
+<li>
+getrowsums - Extract the row sums.
+
+<li>
+getcolsums - Extract the column sums.
+
+<li>
+getdiag - Extract the diagonal of the matrix.
+
+<li>
+add - Add two matrices together (requires -matrix2 option).
+
+<li>
+normalizerow - Compute the sum of each row in a given matrix, and
+divide each entry in the matrix by the sum.  If matrix2 is given, then
+the division is carried out on that matrix.
+
+<li>
+normalizecol - Same as normalizerow, but works vertically.
+
+<li>
+rescalerow - Linearly rescale the values in each row so that the
+minimum is -1 and the maximum is 1.
+
+<li>
+rescalecol - Same as previous, but for columns.
+
+<li>
+normalize - Iteratively normalize the matrix rows and columns so that
+they sum to 1.0.
+
+<li>
+zeromeanrow - Set the mean of each row in the matrix to zero.
+
+<li>
+zeromeancol - Set the mean of each column in the matrix to zero.
+
+<li>
+varone - Set the variance of each row in the matrix to one.
+
+<li>
+colvars - Compute the variance of each column.
+
+<li>
+scalarmult - Multiply the matrix by a scalar value (specified via the
+-value option).
+
+<li>
+dotmult - Multiply corresponding entries in two matrices of the
+same dimensionality.
+
+<li>
+posdef - Force a symmetric matrix to be positive definite by
+adding to the diagonal the opposite of the smallest eigenvalue.
+
+<li>
+row-correlation - Compute all pairwise correlations between rows in a
+matrix.  Admits a second, optional argument to compute correlations
+between rows in one matrix and rows in a second.
+
+<li>
+col-correlation - Compute all pairwise correlations between columns in a
+matrix.  Like the previous option, admits a second matrix.
+
+<li>
+jacard - Compute all pairwise Jacard similarities between rows in a
+matrix.  The Jacard similarity is J(X,Y) = \sum
+min(X<sub>i</sub>/Y<sub>I</sub>, Y<sub>i</sub>/X<sub>I</sub>)
+
+<li>
+shuffle - Randomly shuffle the entries in the matrix.
+
+<li>
+alignment - Compute the alignment score between two square
+matrices of the same dimensionality.  This score is &lt;M1,M2&gt; /
+\sqrt(&lt;M1,M1&gt; &lt;M2,M2&gt;).
+
+<li>
+diagonal - Compute the alignment score between a given matrix and
+the corresponding diagonal matrix (i.e., the matrix with zeroes for
+off-diagonal elements and ones for diagonal elements).
+
+<li>
+label-align - Compute the alignment score between a given matrix
+and a label matrix that is created from a given label file.  The label
+file (which is specified using the <code>-matrix2</code> option), must
+be a two-column file, of the type used by
+<code>compute-weights</code>, with labels of 1 and -1.  The program
+multiplies the label column by its transpose and then calculates the
+alignment between the given matrix (specified by <code>-matrix</code>
+and the square label matrix.
+
+<li>
+scalediag - Take a square matrix as input, and replace the
+diagonal elements with the sum of each row, minus the given diagonal
+element.
+
+<li>
+euclidean - Convert a square kernel matrix to the corresponding matrix
+of Euclidean distances.
+
+<li>
+center - Center a given kernel in feature space.  The second kernel is
+centered using feature means from the first kernel.  The first kernel
+must be square, and the second must have the same columns as the
+first.
+
+<li>
+setdiag - Set the entries on the diagonal of a given square matrix to a
+given value.
+
+<li>
+diffusion - Perform a diffusion operation on the given symmetric
+matrix, using the specified value as the diffusion constant.
+
+<li>
+euclidean - Convert a square kernel matrix to a Euclidean distance
+matrix using d(x,y) = sqrt(k(x,x) - 2k(x,y) + k(y,y)).
+
+<li>
+int-dim - Estimate the intrinsic dimensionality of a square kernel
+matrix.  This is done by converting the kernel to a Euclidean distance
+matrix, and then computing the squared mean inter-object distance
+divided by the corresponding variance.
+
+<li>
+modav - Compute the mean off-diagonal absolute value in a square matrix.
+
+</ul>
+
+<li>
+-width &lt;value&gt; - Total number of digits in each output
+value.
+
+<li>
+-precision &lt;value&gt; - Number of digits to the right of zero
+in each output value.
+
+<li>
+-value &lt;value&gt; - Specify a value to be used in the matrix
+operation.  When normalizing, this value is the precision to which the
+normalization is carried.  With "adddiag," this value is the number to
+be added to the diagonal of the given matrix. With "scalarmult," it is
+the scalar value to multiply the matrix by.
+
+<li>
+-seed &lt;value&gt; - Set the seed for the random number
+generator.  By default the seed is set from the clock.  The random
+number generator is only used in conjunction with the "normalize"
+option.
+
+<li>
+-raw - Do not require on input (or produce on output) labels on
+each row and column.  Also, use space delimiters rather than tabs
+between entries.
+
+<li>
+-rdb - Allow the program to read and create <A
+HREF="http://www.cse.ucsc.edu/research/compbio/rdb/index.html">RDB</A>
+formatted files, which contain an additional format line after the
+first line of text.
+
+<li>
+-verbose 1|2|3|4|5 - Set the verbosity level of the output to
+stderr.  The default level is 2.
+
+</UL>
+
+<P><B>Bugs:</B> Very little checking of command line arguments is
+performed.</P>
+
+</BLOCKQUOTE>
+
+<HR>
+<A HREF="index.html">Gist</A>
+</BODY>
+</HTML>

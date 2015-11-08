@@ -1,0 +1,88 @@
+ <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+FILE: gist-score-svm.html
+AUTHOR: William Stafford Noble
+CREATE DATE: 8/7/2001
+PROJECT: SVM
+-->
+<HEAD>
+<TITLE>gist-score-svm</TITLE>
+</head>
+<BODY BGCOLOR=white>
+<CENTER><H1>gist-score-svm</H1></CENTER>
+
+<UL>
+
+<P><B>Description:</B> Compute various statistics from svm output files.
+
+<P><B>Usage:</B> gist-score-svm [options] &lt;weights&gt;
+
+<P><B>Inputs:</B>
+<UL>
+<LI> weights - an SVM weights file produced by compute-weights
+</UL>
+
+<P><B>Output:</B>
+<UL>
+
+<PRE>
+Number of training examples: 985 (477 positive, 508 negative)
+Number of support vectors: 498 (217 positive, 281 negative) 50.6%
+Training results: FP=0 FN=0 TP=477 TN=508
+Training ROC: 1.00000
+Test results: FP=103 FN=107 TP=370 TN=405
+Test ROC: 0.85417
+</PRE>
+
+<LI>
+The first line of output reports the number of examples in the
+training set.
+
+<LI>
+The second line reports the number and percentage of those examples
+that are support vectors (i.e., for which the weight is non-zero).
+
+<LI>
+The third line will only be printed if the weights file specifies
+constraints on the magnitudes of the support vector weights.  This
+line reports the number and percentage of support vectors whose
+weights reached the set bounds.  Note that the percentage reported on
+this line is with respect to the entire data set, not the set of
+support vectors.
+
+<LI>
+The fourth line reports the number of false positive, false negative,
+true positive and true negative classifications of the training set.
+
+<LI>
+The fifth line reports the ROC score, which is the normalized area
+under a curve that plots true positives as a function of false
+positives for varying decision thresholds.  Perfect classification
+corresponds to an ROC of 1.0.
+
+<LI>
+The sixth and seventh lines report the same values as the fourth and
+fifth lines, but with respect to the test set.  The test set
+statistics may computed with respect to hold-one-out predictions if
+the weights file contains them.  Alternatively, the test set may be
+supplied as additional files, using the <CODE>-test</CODE> option.  If
+no test set is given, these two lines will not appear in the output.
+
+</UL>
+
+
+
+<P><B>Options:</B>
+<UL>
+<LI> -test &lt;truth&gt; &lt;predictions&gt; - Compute the total
+number of errors with respect to an external test set.
+<LI> -rdb - Assume that the input files contain RDB format lines.
+</UL>
+
+<P><B>Calls:</B> none
+
+</UL>
+
+</BODY>
+</HTML>

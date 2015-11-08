@@ -1,0 +1,96 @@
+ <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+FILE: classify.html
+AUTHOR: William Stafford Noble
+CREATE DATE: 7/15/99
+PROJECT: SVM
+REVISION: $Revision: 1.1 $
+-->
+<HEAD>
+<TITLE>gist-classify</TITLE>
+</head>
+<BODY BGCOLOR=white>
+<BLOCKQUOTE>
+
+<CENTER><H1>gist-classify</H1></CENTER>
+
+
+<P><B>Description:</B> Classify a set of unlabeled vectors using a
+trained support vector machine.
+
+<P><B>Usage:</B> <CODE>gist-classify [options] -train&nbsp;&lt;filename&gt;
+-learned&nbsp;&lt;filename&gt; -test&nbsp;&lt;filename&gt;</CODE>
+
+<P><B>Input:</B> 
+<UL> 
+
+<LI> -train &lt;filename&gt; - a tab-delimited file of training
+examples.  The first column contains labels, and the remaining columns
+contain real-valued features.  Missing values are not allowed.
+
+<LI> -learned &lt;filename&gt; - a file of weights, as output from
+<CODE>compute-weights</CODE>.  The kernel parameters are read from the
+header of this file.
+
+<LI> -test &lt;filename&gt; - a tab-delimited file of test examples
+to be classified.  Missing values are not allowed.
+</UL>
+
+<p>Note that, if the given weights file was trained on an externally
+defined kernel (using the '-matrix' option to
+<CODE>compute-weights</CODE>), then the file specified by the '-test'
+option should contain a kernel matrix, rather than test set examples.
+The kernel matrix is an n+1 (rows) by m+1 (columns) matrix, where n is
+the number of test examples and m is the number of training examples.
+The first row and column contain data labels.  The matrix entry for
+row x, column y, contains the kernel value K(x,y).  If a kernel matrix
+is supplied in place of the test set, then a training set should not
+be specified.  However, if the kernel is normalized or is radial
+basis, then the '-selftrain' and '-selftest' files must be supplied
+(see below).</p>
+
+
+<P><B>Output:</B> A three-column file containing data labels,
+classifications (-1 or 1) and discriminants for the test set.
+
+<P><B>Options:</B>
+<UL>
+
+<LI> -selftrain &lt;filename&gt; - Read from the given file a series
+of n values of the form K(x,x), where K is the base kernel function
+and x is an element in the training set.  This option is only
+necessary if the base kernel matrix is supplied from a file (using the
+-matrix option in <CODE>compute-weights</CODE>) and the kernel is
+normalized or radial basis.  The input file should be in tab-delimited
+format, with titles in the first row, data labels in the first column
+and values in the second column.
+
+<LI> -selftest &lt;filename&gt; - Similar to '-selftrain', but for the
+test set. This option is only needed if you used the -matrix option in
+<CODE>compute-weights</CODE>.
+
+<LI> -rdb - Allow the program to read and create <A
+HREF="http://www.cse.ucsc.edu/research/compbio/rdb/index.html">RDB</A>
+formatted files, which contain an additional format line after the
+first line of text.
+
+<LI> -kernelout - Compute and print the kernel matrix to stdout.  Do
+not compute the classifications.
+
+<LI> -notime - Do not include timing information in the output header.
+
+<LI> -precision &lt;value&gt; - Number of digits after the decimal
+place in the output file.  The default is 6.
+
+<LI> -verbose 1|2|3|4|5 - Set the verbosity level of the output to
+stderr.  The default level is 2.
+</UL>
+
+
+<HR>
+<A HREF="index.html">Gist</A>
+
+</BLOCKQUOTE>
+</BODY>
+</HTML>

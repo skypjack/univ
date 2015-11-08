@@ -1,0 +1,108 @@
+ <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+FILE: gist-rfe.html
+AUTHOR: William Stafford Noble
+CREATE DATE: 6/19/03
+PROJECT: GIST
+-->
+<HEAD>
+<TITLE>gist-rfe</TITLE>
+</head>
+<BODY BGCOLOR=white>
+<CENTER><H1>gist-rfe</H1></CENTER>
+
+<UL>
+
+<P><B>Description:</B>
+<BLOCKQUOTE>
+Perform recursive feature elimination, following
+<BLOCKQUOTE>
+I. Guyon, J. Weston, S. Barnhill and V. Vapnik. "Gene selection for
+cancer classification using support vector machines." <I>Machine
+Learning</I>. 46(1-3):389-422, 2002.
+</BLOCKQUOTE>
+This is an algorithm for selecting a subset of features for a
+particular learning task.  The basic algorithm is the following:<BR>
+<BR>
+<OL>
+<LI> Initialize the data set to contain all features.
+<LI> Train an SVM on the data set.
+<LI> Rank features according to c<SUB>i</SUB> = (w<SUB>i</SUB>)<SUP>2</SUP>.
+<LI> Eliminate the lower-ranked 50% of the features.
+<LI> If more than one feature remains, return to step 2.
+</OL>
+
+<P>
+When using this algorithm, beware of incurring a selection bias.  For
+details, see
+<BLOCKQUOTE>
+C. Ambroise and G. J. McLachlan. "Selection bias in gene extraction on
+the basis of microarray gene-expression data." <I>PNAS</I>.
+99:6562-6566, 2002.
+</BLOCKQUOTE>
+</BLOCKQUOTE>
+
+<P><B>Usage:</B> <CODE>gist-rfe [options] &lt;train&nbsp;data&gt;
+&lt;train&nbsp;labels&gt;</CODE>
+
+
+<P><B>Inputs:</B>
+<UL>
+<LI> train data - a data file suitable for input to
+<CODE>compute-weights</CODE>
+<LI> train labels - the corresponding label file
+</UL>
+
+<P><B>Output:</B>
+<UL>
+
+  Prints to standard output the performance evaluation (as produced by
+  <CODE>score-svm-results</CODE>) at each iteration of the SVM-RFE
+  algorithm.  By default, evaluates the performance using
+  leave-one-out cross-validation.  The <CODE>-test</CODE> option
+  enables evaluation on an independent test set.
+
+</UL>
+
+
+
+<P><B>Options:</B>
+<UL>
+
+<LI> -test &lt;data&gt; &lt;labels&gt; - Evaluate performance
+with respect to an external test set.
+
+<LI> -rfe-iter &lt;value&gt; - Perform a maximum number of iterations
+of RFE.  By default, the algorithm continues until all features are
+eliminated.
+
+<LI> -reduce &lt;percent&gt; - Percent of training set to eliminate
+each round.  At least one feaure will always be removed.  Default = 50.
+
+<LI> -features &lt;file&gt; - File in which to print the features
+selected at each iteration.  The output is in four columns: feature
+name, iteration, score (c<SUB>i</SUB>) and a binary value indicating
+whether the feature was discarded in this iteration.  If the filename
+contains a <CODE>%</CODE>, then multiple output files will be created,
+replacing <CODE>%</CODE> with the iteration number.
+
+<LI> -weights &lt;file&gt; - File in which to store weights.  The same
+use of <CODE>%</CODE> applies.
+
+<LI> -predicts &lt;file&gt; - File in which to store predictions.  The same
+use of <CODE>%</CODE> applies.
+
+<P>
+In addition, any option that is valid for <CODE>gist-train-svm</CODE>
+may also be given to SVM-RFE.
+
+</UL>
+
+<P><B>Calls:</B> <CODE>gist-train-svm</CODE>, <CODE>gist-classify</CODE>,
+<CODE>gist-score-svm</CODE>
+
+</UL>
+
+</BODY>
+</HTML>

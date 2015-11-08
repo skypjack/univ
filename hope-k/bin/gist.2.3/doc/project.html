@@ -1,0 +1,77 @@
+ <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+FILE: project.html
+AUTHOR: William Stafford Noble
+CREATE DATE: 1/25/2000
+PROJECT: SVM
+REVISION: $Revision: 1.2 $
+-->
+<HEAD>
+<TITLE>gist-project</TITLE>
+</head>
+<BODY BGCOLOR=white>
+<CENTER><H1>gist-project</H1></CENTER>
+
+<BLOCKQUOTE>
+
+<P><B>Description:</B> Project a given set of data onto a given set of
+eigenvectors. </P>
+
+<P><B>Usage:</B> <CODE>gist-project [options] -train&nbsp;&lt;filename&gt;
+-learned&nbsp;&lt;filename&gt; -test&nbsp;&lt;filename&gt;</CODE></P>
+
+<P><B>Input:</B> 
+<UL> 
+
+<LI> -train &lt;filename&gt; - an tab-delimited file of training data.
+The first column contains labels, and the remaining columns containing
+real-valued features.
+
+<LI> -learned &lt;filename&gt; - a tab-delimited file of eigenvectors,
+as produced by <CODE>kernel-pca</CODE>.  Each column corresponds to an
+eigenvector.
+
+<LI> -test &lt;filename&gt; - a tab-delimited file of test data to be
+projected onto the training data's eigenvectors.  </UL>
+
+<P><B>Output:</B> A tab-delimited matrix in which the given data has
+been projected onto the given set of eigenvectors.</P>
+
+<P><B>Options:</B>
+<UL>
+
+<LI> -selftrain &lt;filename&gt; - Read from the given file a series
+of n values of the form K(x,x), where K is the base kernel function
+and x is an element in the training set.  This option is only
+necessary if the base kernel function is supplied from a file and the
+kernel is normalized or radial basis.  The input file should be in
+tab-delimited format, with data labels in the first column and values
+in the second column.
+
+<LI> -selftest &lt;filename&gt; - Similar to '-selftrain', but for the
+test set.
+
+<LI> -rdb - Allow the program to read and create <A
+HREF="http://www.cse.ucsc.edu/research/compbio/rdb/index.html">RDB</A>
+formatted files, which contain an additional format line after the
+first line of text.
+
+<LI> -kernelout - Compute and print the kernel matrix to stdout.  Do
+not compute the classifications.
+
+<LI> -notime - Do not include timing information in the output header.
+
+<LI> -precision &lt;value&gt; - Number of digits after the decimal
+place in the output file.  The default is 6.
+
+<LI> -verbose 1|2|3|4|5 - Set the verbosity level of the output to
+stderr.  The default level is 2.
+</UL>
+
+</BLOCKQUOTE>
+
+<HR>
+<A HREF="index.html">Gist</A>
+</BODY>
+</HTML>

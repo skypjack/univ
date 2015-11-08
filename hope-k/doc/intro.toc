@@ -1,0 +1,14 @@
+\beamer@endinputifotherversion {3.01pt}
+\select@language {italian}
+\beamer@sectionintoc {1}{Introduzione}{2}{0}{1}
+\beamer@subsectionintoc {1}{1}{Panoramica}{2}{0}{1}
+\beamer@sectionintoc {2}{Kernel fra grafi}{10}{0}{2}
+\beamer@subsectionintoc {2}{1}{Metodologie}{10}{0}{2}
+\beamer@subsectionintoc {2}{2}{Tanimoto Kernel}{15}{0}{2}
+\beamer@subsectionintoc {2}{3}{MinMax Kernel}{19}{0}{2}
+\beamer@sectionintoc {3}{Implementazione}{23}{0}{3}
+\beamer@subsectionintoc {3}{1}{Il Codice}{23}{0}{3}
+\beamer@sectionintoc {4}{Risultati}{41}{0}{4}
+\beamer@subsectionintoc {4}{1}{Analisi (10 fold cross validation)}{41}{0}{4}
+\beamer@subsectionintoc {4}{2}{Analisi (80/20 fold validation)}{44}{0}{4}
+\beamer@subsectionintoc {4}{3}{Conclusioni}{45}{0}{4}
