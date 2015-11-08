@@ -1,0 +1,163 @@
+[ Introduzione ]
+  Una introduzione alla tesi, ultima cosa che scriverò e a cui penserò, ergo ...
+  Non ho ancora la minima idea su cosa verterà, ma è immnacabile! 
+
+[ Il protocollo ]
+  Chi, come, quando e perché.
+
+  [ Scopo ]
+    Una descrizione breve delle problematiche che hanno portato alla progettazione
+    di un protocollo come quello proposto e cosa si propone di risolvere.
+
+  [ Cifrario originale (paillier) ]
+    Funzionamento, principi e caratteristiche della tecnica di Paillier (se mai
+    riuscirò a capirla per bene!) e spiegazione del perché è così interessante.
+    Proprietà omomorfiche in primis.
+
+  [ Cifrario modificato (damgard-jurik) ]
+    Modifiche al sistema di Paillier, motivazioni e spiegazione del perché
+    queste modifiche sono così belle e interessanti.
+
+  [ Il protocollo vero e proprio ]
+    Il protocollo vero e proprio implementato poi in NNSec, come funziona, come
+    è stato concepito, organizzato e cosa si prefigge. In pratica, il documento
+    su cui tutto il lavoro si è basato. Discussi anche i problemi di mappatura
+    dei reali e della "doppia quantizzazione".
+
+  [ Possibili utilizzi ]
+    Esempi di utilizzo del protocollo, come il caso malato e ospedale che
+    fornisce una rete e via dicendo, giusto epr fare capire come può essere
+    praticamente impiegato questo lavoro (o almeno, su quale strada si è fatto
+    un piccolo passo).
+
+[ NNSec ]
+  Il nome, spiegazione.
+
+  [ Progettazione e struttura ]
+    Come è stato progettato NNSec a partire dal protocollo proposto, come è
+    stato modellato su di esso e come sono state affrontate le problematiche
+    incontrate (breve spiegazione, dettagli nei paragrafi che seguono):
+
+  [ Il package nnsec ]
+    Il pacchetto nnsec, spiegazione della suddivisione in sotto parti. Breve
+    introduzione delle parti componenti.
+
+    [ Parser ]
+      Il ruolo del parser, perché è utilizzato e perché si è scelto di usare un
+      "linguaggio" proprio e non uno pre-esistente (come quello di JavaNNS, per
+      esempio).
+
+      [ Grammatica dei file in ingresso ]
+        Spiegazione della grammatica dei file in ingresso, come è possibile
+        descrivere una rete in NNSec e alcuni trucchi per sfruttare tutte le
+	potenzialità del linguaggio proposto.
+
+      [ JavaCUP e JFlex ]
+        Una introduzione ai due strumenti usati per automatizzare la creazione
+	del parser dalla descrizione di una grammatica e dei simboli coinvolti.
+
+    [ Cryptosystem ]
+      Due parole sulle classi di questo sotto pacchetto, senza approfondire
+      visto che il vifrario ha già un capitolo a sé dedicato.
+
+      [ Usare i float è possibile ]
+        Spiegazione del perché è utile poter usare i float (input) e del come
+	questo è reso possibile grazie al mapper, usato anche per
+	de-quantizzare. Panoramica anche sulla problematica della mappatura e
+	del "raddoppio di quantizzazione", spiegato anche in altri capitoli.
+
+      [ Il cifrario]
+        Due parole su come è stato praticamente sviluppato il cifrario di
+	paillier, modificando l'originale scaricabile dal sito per adattarlo
+	alle necessità di NNSec.
+
+    [ Net ]
+      Sotto pacchetto cruciale del progetto, panoramica sulle classi
+      appartenenti e loro scopi.
+
+      [ Composizione = confusione (net/net wrapper) ]
+        Cenni sul pattern composite e su come una variante di quest'ultimo sia
+	stata utilizzata per permettere la composizione di reti e wrapper (senza
+	limiti di profondità) per ottenere l'oscuramento dei dati. Interfaccia
+	di accesso alle reti unificata.
+
+      [ Manager di reti (accesso controllato) ]
+        Discussione su come sia stata affrontata la problematica della gestione
+	delle reti e dei parametri associati ad ognuna di esse, dell'accesso
+	concorrente alle reti stesse e della regolarizzazione nel loro uso.
+
+    [ Server ]
+      Ruolo del server, parti coinvolte e scopi di ognuna.
+
+      [ Factory remota ]
+        Cenni sul pattern abstract factory e su come una variante di
+	quest'ultimo permetta l'accesso concorrente (e sia causa della necessità
+	di una gestione oculata) nei confronti delle reti gestite.
+
+      [ I "lavoratori" ]
+        Oggetti worker, funzione e scopo, due parole su come viene affrontato il
+	problema dei crash da parte dei client e come questi non blocchino in
+	eterno una rete ma solo per un breve lasso di tempo. Gli oggetti worker
+	giocano un ruolo centrale nel protocollo NNSec.
+
+    [ Client ]
+      Ruolo del client, parti coinvolte e scopi di ognuna.
+
+      [ Modulo di comunicazione ]
+        Modulo di comunicazione con il server, problematica del "riferimento
+	circolare" (risolto col "calcolatore") e ruolo giocato dal modulo nel
+	protocollo (rappresenta la parte che inizia la comunicazione e richiede
+	i servizi, legata ad un proprio worker richiesto alla connessione).
+
+      [ Il "calcolatore" ]
+        Perché è necessaria una classe indipendente di calcolo (problematica del
+	"riferimento circolare"), a cosa serve e come viene gestita dal client e
+	più in particolare dal modulo di comunicazione.
+
+    [ Modello di comunicazione ]
+      Come viene effettivamente implementato il protocollo, chi sono gli attori
+      principali (ad esempio, è ovvio che una GUI è solo una classe di contorno)
+      e quali sono stati i problemi (e le relative soluzioni) lungo il cammino.
+
+      [ Remote Method Invocation ]
+        Cenni su RMI, percHé si presta, perché è usato, come funziona
+	effettivamente, sue parole sugli stub.
+
+      [ Secure Socket Layer ]
+        Canale sicuro, il protocollo si appoggia su questo, ma come si
+	implementa e gestisce dal punto di vista di Java?
+
+      [ I quattro moschettieri (worker, worker
+        	factory, communication module, calculator) ]
+        Gli attori principali del protocollo, come questi lo mettono in pratica
+	e interagiscono fra di loro. Le informazioni "importanti" su come
+	effettivamente funziona la cosa sono riportate in questo capitolo mentre
+	nei paragrafi di descrizione dei componenti non sono affrontate se non
+	in modo superifciale (ad esempio per motivarne l'esistenza).
+
+      [ Ruolo del server (?) ]
+        Che ruoli ha il server, nel senso dall'avvio alla fornitura. Due parole.
+	Ad esempio, decidere la dimensione di espansione dei livelli intermedi o
+	la scala di una rete a seconda degli input in modo da non rendere
+	computazionalmente pesante l'utilizzo di una rete ma neanche insicuro.
+
+      [ Ruolo del client (?) ]
+        Che ruoli ha il client, nel senso dalla connesione all'utilizzo di una
+	rete. Due parole. Ad esempio, creare e gestire la propria chiave che
+	determina un indice di sicurezza.
+
+    [ Certificati e invocazione (keytool, java e parametri) ]
+      Come si creano i certificati per l'uso di NNSec, a cosa servono e perché
+      sono necessari, come si invocano server e client in modo corretto e come
+      is potrebbe aggirare questa limitazione ampliando la GUI o limitando i
+      gradi di libertà.
+
+[ Risultati ]
+  Sono discussi in questo capitolo alcuni risultati pratici ottenuti da
+  applicazioni del protocollo e test su rete, con diverse chiavi (512, 1024,
+  2048 bit) e un numero variabile di nodi falsi e scale sull'input, tutti su una
+  rete di prova con 60 nodi di ingresso, 12 intermedi e uno di output.
+
+[ Conclusioni]
+  Ovviamente, concluderò qualcosa dopo aver scritto tanto ... Almeno spero!
+

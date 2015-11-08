@@ -1,0 +1,16 @@
+\chapter{Conclusioni}
+Dall'idea alla realizzazione concreta di un protocollo. Da un'idea allo studio di nuovi terreni dove fino ad oggi la crittografia non si era mai spinta. Dall'idea al prodotto finale, un punto di partenza e non di arrivo.
+\paragraph{}
+Lo sviluppo di un protocollo concepito e approfondito solamente in linea teorica può nascondere molte sorprese e raramente rappresenta un percorso facile e privo di problemi. Ciò nonostante, questo cammino può giovare anche all'idea da cui tutto è partito, come nel caso di NNSec e del protocollo implementato. Da un concetto ad un insieme di classi, interfacce e relazioni fra queste il passo è breve, ma dove alcuni nodi si sciolgono in maniera più facile del previsto, altri vengono al pettine e rischiano di dare molti grattacapi. Da una teoria ad un algoritmo, la via è corta ma a volte tortuosa.\\
+L'implementazione del protocollo ha richiesto l'applicazione di molte tecniche e tecnologie, come dimostrazione di quanto alcuni concetti di teoria apparentemente banali si rivelino fondamentali quando sposati con altri concetti, a loro volta tanto innocui quanto inaspettatamente utili. Dalla teoria alla pratica, è stato dimostrato che il protocollo proposto può essere ``tradotto'' in un insieme di elementi che, interagendo fra di loro, concorrono ad implementare quanto ipotizzato.
+
+\paragraph{}
+Ma non solo.
+
+Passando da un'idea al codice, è stato dimostrato che le prestazioni non sono così pessime e queste possono ancora migliorare utilizzando altri linguaggi e diverse tecniche. Ancora, è stato osservato che l'utilizzo di reti neurali remote è uno scenario plausibile, il che comporta la validità e attualità del protocollo proposto.\\
+La possibilità di realizzare soluzioni concrete in questo ambito viene quindi avvalorata dalla possibilità di avere prestazioni decorose, non drasticamente pessime o assolutamente inaccettabili. Senza dubbio, i limiti della crittografia in termini di calcolo computazionale (ancora oggi non superati e non superabili) incidono sui tempi impiegati dal prodotto finale per giungere ad un risultato partendo dagli ingressi, ma le risposte ottenute in fase sperimentale hanno dato buone speranze e dipingono un futuro roseo per le applicazioni di crittografia in questo campo.
+
+\paragraph{}
+Senza dubbio, a partire dal protocollo, passando per il lavoro di tesi e arrivando al prodotto finale, rappresentato dal software NNSec, si deduce che questo ambito in cui la crittografia fino a poco tempo fa era solo una leggenda oggi può rappresentare un terreno di studio fertile e pieno di sorprese. Le reti neurali possono essere sposate con un cifrario che presenti determinate caratteristiche e possono essere utilizzate in sicurezza, sia dal punto di vista dell'utente che del fornitore.
+
+Come detto, questo lavoro di tesi rappresenta senza dubbio non un punto di arrivo con il software implementato, ma un punto di partenza con i dati ricavati da tale software, i quali dimostrano che la strada è tutt'altro che senza via d'uscita.

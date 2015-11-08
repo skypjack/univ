@@ -1,0 +1,172 @@
+%%
+%% This is file `alg.sty',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% alg.dtx  (with options: `package')
+%% 
+%% IMPORTANT NOTICE:
+%% 
+%% For the copyright see the source file.
+%% 
+%% Any modified versions of this file must be renamed
+%% with new filenames distinct from alg.sty.
+%% 
+%% For distribution of the original source see the terms
+%% for copying and modification in the file alg.dtx.
+%% 
+%% This generated file may be distributed as long as the
+%% original source files, as listed above, are part of the
+%% same distribution. (The sources need not necessarily be
+%% in the same archive or directory.)
+\def\filedate{23 September 1997}
+%% alg.dtx
+%% Copyright (c) 1995, 1999 Staffan Ulfberg
+\NeedsTeXFormat{LaTeX2e}[1994/06/01]
+\ProvidesPackage{alg}
+         [1999/04/15]
+\RequirePackage{float, ifthen}
+\newlength{\algmarginwidth}\setlength{\algmarginwidth}{.5in}
+\newlength{\alglinenowidth}\setlength{\alglinenowidth}{1.2cm}
+\newlength{\algtabwidth}\setlength{\algtabwidth}{.5cm}
+\newlength{\alg@fromleft}
+\newlength{\alg@tmplen}
+\newsavebox{\alg@tmpbox}
+\newcounter{alg@inmargin}\setcounter{alg@inmargin}{0}
+\newcounter{algline}
+\newboolean{alg@linenums}
+\newboolean{alg@nonumber}
+\DeclareOption{english}{\def\alg@floatname{Algorithm}
+                        \def\alg@listname{List of Algorithms}
+                        \def\alg@descname{Description}
+                        \def\alg@inputname{Input}
+                        \def\alg@outputname{Output}}
+\DeclareOption{american}{\def\alg@floatname{Algorithm}
+                        \def\alg@listname{List of Algorithms}
+                        \def\alg@descname{Description}
+                        \def\alg@inputname{Input}
+                        \def\alg@outputname{Output}}
+\DeclareOption{swedish}{\def\alg@floatname{Algoritm}
+                        \def\alg@listname{Algoritmer}
+                        \def\alg@descname{Beskrivning}
+                        \def\alg@inputname{Input}
+                        \def\alg@outputname{Output}}
+\DeclareOption{french}{\def\alg@floatname{Algoritme}
+                        \def\alg@listname{Liste des algorithmes}
+                        \def\alg@descname{Description}
+                        \def\alg@inputname{Entr\'{e}e}
+                        \def\alg@outputname{Sortie}}
+\ExecuteOptions{english}
+\ProcessOptions
+\newcommand\floatc@alg[2]{{\bfseries\rmfamily
+   \hspace{\algmarginwidth}#1:} #2\par}
+\newcommand\fs@alg{
+   \let\@fs@capt\floatc@alg
+   \def\@fs@pre{}\def\@fs@post{}\def\@fs@mid{\vspace{3pt}}
+   \let\@fs@iftopcapt\iftrue}
+\floatstyle{alg}
+\newfloat{algorithmfloat}{h}{loa}
+\floatname{algorithmfloat}{\alg@floatname}
+\newcommand{\listofalgorithms}{\listof{algorithmfloat}{\alg@listname}}
+\newcommand{\alg@margin} {
+   \ifthenelse{\value{alg@inmargin}=0} {
+       \advance\leftskip\algmarginwidth
+       \advance\rightskip\algmarginwidth
+       \alg@fromleft=\leftskip
+   } {}
+   \stepcounter{alg@inmargin}
+   \parskip=0cm\parindent=0cm
+}
+\newcommand{\alg@unmargin} {
+   \setcounter{alg@inmargin}{0}%
+   \advance\leftskip-\algmarginwidth%
+   \advance\rightskip-\algmarginwidth%
+}
+\newenvironment{algorithm}[1][H] {
+   \begin{algorithmfloat}[#1]\alg@margin
+} {
+   \alg@unmargin\end{algorithmfloat}
+}
+\newenvironment{alg@tab}[1] {
+   \setboolean{alg@nonumber}{false}%
+   \ifthenelse{\value{alg@inmargin}=0} {\vskip\baselineskip}{}
+   \alg@margin
+   \let\\=\alg@cr
+   \catcode`\^^M=10
+   \setcounter{algline}{0}\refstepcounter{algline}
+   \advance\leftskip#1
+   \alg@putlineno\ignorespaces
+} {
+   \setbox\alg@tmpbox=\lastbox
+   \ifhbox\alg@tmpbox{\vskip-\baselineskip}\else\par\fi
+   \alg@unmargin
+   \ifthenelse{\value{alg@inmargin}=0}{\vskip\baselineskip}{}
+}
+\newenvironment{algtab}[1][\alglinenowidth] {
+   \setboolean{alg@linenums}{true}\begin{alg@tab}{#1}
+} {\end{alg@tab}}
+\newenvironment{algtab*}[1][0cm] {
+   \setboolean{alg@linenums}{false}\begin{alg@tab}{#1}
+} {\end{alg@tab}}
+\newcommand{\alg@kill}{\setbox\alg@tmpbox=\lastbox%
+   \ifvoid\alg@tmpbox\PackageError{alg}{Attempt to remove label
+      in middle of line}\fi}
+\newcommand{\algbegin}[1][\algtabwidth]{\advance\leftskip#1%
+   \alg@kill\alg@putlineno\ignorespaces}
+\newcommand{\algend}[1][\algtabwidth]{\advance\leftskip-1#1%
+   \alg@kill\alg@putlineno\ignorespaces}
+\newcommand{\algnonumber}{\alg@kill\alg@putlabel{}%
+   \setboolean{alg@nonumber}{true}\ignorespaces}
+\newcommand{\alg@cr}{\par\refstepcounter{algline}%
+   \setboolean{alg@nonumber}{false}\alg@putlineno\ignorespaces}
+\newcommand{\alg@putlineno} {%
+   \ifthenelse{\boolean{alg@linenums}} {%
+      \ifthenelse{\boolean{alg@nonumber}}{\alg@putlabel{}} {%
+         \alg@putlabel{(\arabic{algline})}}}%
+      {\alg@putlabel{}}}
+\newcommand{\alg@putlabel}[1]{{%
+      \alg@tmplen=\leftskip \advance\alg@tmplen-\alg@fromleft%
+      \makebox[0cm][r]{\makebox[\alg@tmplen][l]{#1}}}}
+\newcommand{\algdescript}[1]{\alg@margin\textbf{\alg@descname: }#1\par}
+\newcommand{\alginout}[2]{\alg@margin\textbf{\alg@inputname: }#1\par
+   \textbf{\alg@outputname: }#2\par}
+\newcommand{\algname}[2]{\alg@margin\textsc{#1}(#2)\par}
+\newcommand{\alglabel}[1]{%
+   \ifthenelse{\boolean{alg@linenums}}{%
+      \label{#1}}{\alg@kill\alg@putlabel{#1}}\ignorespaces}
+\newcommand{\algref}[1]{\ifthenelse{\boolean{alg@linenums}}%
+   {\ref{#1}}{#1}}
+\newcommand{\algand}{\mbox{\textbf{and }}}
+\newcommand{\algbreak}{\textbf{break}}
+\newcommand{\algcall}[2]{\textsc{#1}(#2)}
+\newcommand{\algcase}[1]{\algend\textbf{case} #1\\\algbegin}
+\newcommand{\algcontinue}{\textbf{continue}}
+\newcommand{\algdefault}{\algend\textbf{default}\\\algbegin}
+\newcommand{\algelse}{\algend\textbf{else}\\\algbegin}
+\newcommand{\algelseif}[1]{\algelsif{#1}}
+\newcommand{\algelsif}[1]{\algend\textbf{else if} #1\\\algbegin}
+\newcommand{\algerror}{\textbf{error }}
+\newcommand{\algfalse}{\mbox{\textbf{false }}}
+\newcommand{\algforto}[2]{\textbf{for} #1 \textbf{to} #2\\\algbegin}
+\newcommand{\algforeach}[1]{\textbf{foreach} #1\\\algbegin}
+\newcommand{\alggoto}{\textbf{goto~}}
+\newcommand{\algif}[1]{\textbf{if} #1\\\algbegin}
+\newcommand{\algifthen}[2]{\textbf{if} #1 \textbf{then} #2\\}
+\newcommand{\algifthenelse}[3]{\setbox\alg@tmpbox=
+   \hbox{\textbf{if} #1 }\copy\alg@tmpbox\textbf{then} #2\\
+   \settowidth{\alg@tmplen}{\box\alg@tmpbox}%
+   \algbegin[\alg@tmplen]\textbf{else} #3\\ \algend[\alg@tmplen]}
+\newcommand{\algnot}{\mbox{\textbf{not }}}
+\newcommand{\algor}{\mbox{\textbf{or }}}
+\newcommand{\algpardo}{\mbox{\textbf{pardo}}}
+\newcommand{\algprint}{\textbf{print }}
+\newcommand{\algrepeat}{\textbf{repeat}\\\algbegin}
+\newcommand{\algreturn}{\textbf{return~}}
+\newcommand{\algswitch}[1]{\textbf{switch} #1\\\algbegin}
+\newcommand{\algtrue}{\mbox{\textbf{true }}}
+\newcommand{\alguntil}[1]{\algend\textbf{until} #1\ \\}
+\newcommand{\algwhile}[1]{\textbf{while} #1\\\algbegin}
+\endinput
+%%
+%% End of file `alg.sty'.

@@ -1,0 +1,44 @@
+\chapter{Appendice B}
+L'interfaccia grafica è una componente importante per quanto riguarda l'interazione con il software. Nel caso di NNSec, questa si suddivide in due componenti e mette a disposizione lato server un metodo per configurare il sistema e caricare nuove reti neurali in modo da metterle a disposizione di utenti remoti, mentre per i client sono disponibili controlli veloci ed intuitivi per il recupero della lista di reti neurali disponibili e l'uso di quest'ultime. Inoltre, in entrambi i casi è presente un'area di log in cui sono riportati dati utili o informazioni sommarie in caso di eventuali errori.\\
+Brevemente, saranno descritte nel seguito le interfacce grafiche lato client e lato server e come queste possono essere utilizzate per interagire con NNSec a seconda dei casi.
+
+\paragraph{Interfaccia lato client}
+Per quanto riguarda il client, l'interfaccia grafica è concepita per permette all'utente una connessione remota verso un server NNSec, il recupero della lista di reti neurali disponibili su di esso e quindi l'uso di quest'ultime.\\
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.45]{img/cstat.eps}
+\caption{\figfont Pannello di status del client}\label{fig:cstat}
+\end{figure}
+Tramite il pannello \textit{status}, evidenziato in figura \ref{fig:cstat}, è possibile indicare l'indirizzo IP del server desiderato e quindi la porta su cui effettuare la connessione, oltre al nome del server che si vuole contattare. Nello stesso pannello sono riportati dati riguardanti la connessione stessa, come ad esempio il fatto che essa sia attiva o meno. Ancora, dal pannello di status è possibile gestire la propria chiave pubblica impostandone a piacere i parametri e generandone di nuove ogni volta che lo si desidera, con la possibilità di consultazione.\\
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.45]{img/cnets.eps}
+\caption{\figfont Elenco delle reti neurali disponibili}\label{fig:cnets}
+\end{figure}
+Dal pannello \textit{Nets}, visibile in figura \ref{fig:cnets}, si può procedere al recupero e l'uso delle reti neurali. Una volta stabilita la connessione, infatti, tramite quest'area si può accedere alle reti neurali disponibili scaricandone una lista dal server e quindi procedere all'uso di una di queste tramite l'inserimento manuale dei dati di ingresso o, nei casi in cui questo risulta scomodo a causa della loro mole, facendo leggere i dati di ingresso direttamente da un file di ingresso sul quale questi dovranno apparire in numero di uno per riga.\\
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.45]{img/clog.eps}
+\caption{\figfont Area di log del client}\label{fig:clog}
+\end{figure}
+In caso di errori durante la connessione ad un server o l'uso di una rete neurale, oppure addirittura in caso di errori interni al programma, nell'area di \textit{log} (riportata in figura \ref{fig:clog}) si può ottenere una breve descrizione dell'errore per cercare di capire a cosa sia dovuto il problema. Lato client, inoltre, in questa zona sono riportati dati descrittivi riguardanti la singola sessione d'uso di una rete neurale, ovvero è indicato in modo approssimativo il tempo di elaborazione totale, quello impiegato sul server e quello impiegato sul client, dai quali è poi possibile ricavare il tempo perso nelle fasi di trasmissione dei dati.
+
+\paragraph{Interfaccia lato client}
+L'interfaccia grafica del server mette a disposizione metodi e campi per aggiungere nuove reti neurali al sistema, impostarne i parametri e renderle disponibili per gli utenti remoti. Questo è, senza dubbio, lo scopo primario del server e quindi deve risultare quanto più facile, flessibile e intuitivo possibile.\\
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.45]{img/sstat.eps}
+\caption{\figfont Pannello di status del server}\label{fig:sstat}
+\end{figure}
+Il pannello \textit{status} permette di gestire alcuni parametri relativi alla connessi
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.45]{img/snets.eps}
+\caption{\figfont Pannello per la gestione delle reti neurali}\label{fig:snets}
+\end{figure}
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.45]{img/slog.eps}
+\caption{\figfont Area di log del server}\label{fig:slog}
+\end{figure}

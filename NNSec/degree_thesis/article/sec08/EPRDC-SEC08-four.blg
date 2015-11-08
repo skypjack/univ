@@ -1,0 +1,45 @@
+This is BibTeX, Version 0.99c (Web2C 7.5.5)
+The top-level auxiliary file: EPRDC-SEC08-four.aux
+The style file: spmpsci.bst
+Database file #1: EPRDC-SEC08.bib
+You've used 25 entries,
+            2946 wiz_defined-function locations,
+            768 strings with 9267 characters,
+and the built_in function-call counts, 20879 in all, are:
+= -- 2553
+> -- 350
+< -- 14
++ -- 248
+- -- 120
+* -- 842
+:= -- 1946
+add.period$ -- 38
+call.type$ -- 25
+change.case$ -- 154
+chr.to.int$ -- 0
+cite$ -- 25
+duplicate$ -- 2363
+empty$ -- 1343
+format.name$ -- 141
+if$ -- 4458
+int.to.chr$ -- 0
+int.to.str$ -- 25
+missing$ -- 244
+newline$ -- 114
+num.names$ -- 50
+pop$ -- 894
+preamble$ -- 1
+purify$ -- 108
+quote$ -- 0
+skip$ -- 1316
+stack$ -- 0
+substring$ -- 1029
+swap$ -- 1957
+text.length$ -- 14
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 98
+warning$ -- 0
+while$ -- 112
+width$ -- 27
+write$ -- 270

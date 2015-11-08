@@ -1,0 +1,261 @@
+This is pdfeTeX, Version 3.141592-1.30.5-2.2 (Web2C 7.5.5) (format=pdflatex 2008.2.14)  4 MAR 2008 21:41
+entering extended mode
+**main.tex
+(./main.tex
+LaTeX2e <2003/12/01>
+Babel <v3.8d> and hyphenation patterns for american, french, german, ngerman, b
+ahasa, basque, bulgarian, catalan, croatian, czech, danish, dutch, esperanto, e
+stonian, finnish, greek, icelandic, irish, italian, latin, magyar, norsk, polis
+h, portuges, romanian, russian, serbian, slovak, slovene, spanish, swedish, tur
+kish, ukrainian, nohyphenation, loaded.
+(/usr/share/texmf/tex/latex/base/book.cls
+Document Class: book 2004/02/16 v1.4f Standard LaTeX document class
+(/usr/share/texmf/tex/latex/base/bk11.clo
+File: bk11.clo 2004/02/16 v1.4f Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@chapter=\count80
+\c@section=\count81
+\c@subsection=\count82
+\c@subsubsection=\count83
+\c@paragraph=\count84
+\c@subparagraph=\count85
+\c@figure=\count86
+\c@table=\count87
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+(/usr/share/texmf/tex/generic/babel/babel.sty
+Package: babel 2004/11/20 v3.8d The Babel package
+
+(/usr/share/texmf/tex/generic/babel/italian.ldf
+Language: italian 2004/02/19 v1.2p Italian support from the babel system
+
+(/usr/share/texmf/tex/generic/babel/babel.def
+File: babel.def 2004/11/20 v3.8d Babel common definitions
+\babel@savecnt=\count88
+\U@D=\dimen103
+)
+Package babel Info: Making " an active character on input line 91.
+))
+(/usr/share/texmf/tex/latex/base/fontenc.sty
+Package: fontenc 2004/02/22 v1.99f Standard LaTeX package
+
+(/usr/share/texmf/tex/latex/base/t1enc.def
+File: t1enc.def 2004/02/22 v1.99f Standard LaTeX file
+LaTeX Font Info:    Redeclaring font encoding T1 on input line 43.
+))
+(/usr/share/texmf/tex/latex/base/inputenc.sty
+Package: inputenc 2004/02/05 v1.0d Input encoding file
+
+(/usr/share/texmf/tex/latex/base/latin9.def
+File: latin9.def 2004/02/05 v1.0d Input encoding file
+)) (./fncychap.sty
+Package: fncychap 2007/07/30 v1.34 LaTeX package (Revised chapters)
+\RW=\skip43
+\mylen=\skip44
+\myhi=\skip45
+\px=\skip46
+\py=\skip47
+\pyy=\skip48
+\pxx=\skip49
+)
+(/usr/share/texmf/tex/latex/fancyhdr/fancyhdr.sty
+\fancy@headwidth=\skip50
+\f@ncyO@elh=\skip51
+\f@ncyO@erh=\skip52
+\f@ncyO@olh=\skip53
+\f@ncyO@orh=\skip54
+\f@ncyO@elf=\skip55
+\f@ncyO@erf=\skip56
+\f@ncyO@olf=\skip57
+\f@ncyO@orf=\skip58
+)
+(/usr/share/texmf/tex/latex/graphics/graphicx.sty
+Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texmf/tex/latex/graphics/keyval.sty
+Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
+\KV@toks@=\toks14
+)
+(/usr/share/texmf/tex/latex/graphics/graphics.sty
+Package: graphics 2001/07/07 v1.0n Standard LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texmf/tex/latex/graphics/trig.sty
+Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
+)
+(/usr/share/texmf/tex/latex/graphics/graphics.cfg
+File: graphics.cfg 2005/02/03 v1.3 graphics configuration of teTeX/TeXLive
+)
+Package graphics Info: Driver file: pdftex.def on input line 80.
+
+(/usr/share/texmf/tex/latex/graphics/pdftex.def
+File: pdftex.def 2002/06/19 v0.03k graphics/color for pdftex
+\Gread@gobject=\count89
+))
+\Gin@req@height=\dimen104
+\Gin@req@width=\dimen105
+)
+(/usr/share/texmf/tex/latex/geometry/geometry.sty
+Package: geometry 2002/07/08 v3.2 Page Geometry
+\Gm@cnth=\count90
+\Gm@cntv=\count91
+\c@Gm@tempcnt=\count92
+\Gm@bindingoffset=\dimen106
+\Gm@wd@mp=\dimen107
+\Gm@odd@mp=\dimen108
+\Gm@even@mp=\dimen109
+\Gm@dimlist=\toks15
+
+(/usr/share/texmf/tex/latex/geometry/geometry.cfg))
+(/usr/share/texmf/tex/latex/tools/indentfirst.sty
+Package: indentfirst 1995/11/23 v1.03 Indent first paragraph (DPC)
+) (./main.aux (./titlepage.aux) (./introduction.aux))
+\openout1 = `main.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 52.
+LaTeX Font Info:    ... okay on input line 52.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 52.
+LaTeX Font Info:    ... okay on input line 52.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 52.
+LaTeX Font Info:    ... okay on input line 52.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 52.
+LaTeX Font Info:    ... okay on input line 52.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 52.
+LaTeX Font Info:    ... okay on input line 52.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 52.
+LaTeX Font Info:    ... okay on input line 52.
+LaTeX Font Info:    Checking defaults for OT2/cmr/m/n on input line 52.
+LaTeX Font Info:    Try loading font information for OT2+cmr on input line 52.
+ (/usr/share/texmf/tex/latex/cyrillic/ot2cmr.fd
+File: ot2cmr.fd 2001/08/11 v3.2c Computer Modern Cyrillic font definitions
+)
+LaTeX Font Info:    ... okay on input line 52.
+
+(/usr/share/texmf/tex/context/base/supp-pdf.tex
+(/usr/share/texmf/tex/context/base/supp-mis.tex
+loading : Context Support Macros / Miscellaneous (2004.10.26)
+\protectiondepth=\count93
+\scratchcounter=\count94
+\scratchtoks=\toks16
+\scratchdimen=\dimen110
+\scratchskip=\skip59
+\scratchmuskip=\muskip10
+\scratchbox=\box26
+\scratchread=\read1
+\scratchwrite=\write3
+\zeropoint=\dimen111
+\onepoint=\dimen112
+\onebasepoint=\dimen113
+\minusone=\count95
+\thousandpoint=\dimen114
+\onerealpoint=\dimen115
+\emptytoks=\toks17
+\nextbox=\box27
+\nextdepth=\dimen116
+\everyline=\toks18
+\!!counta=\count96
+\!!countb=\count97
+\recursecounter=\count98
+)
+loading : Context Support Macros / PDF (2004.03.26)
+\nofMPsegments=\count99
+\nofMParguments=\count100
+\MPscratchCnt=\count101
+\MPscratchDim=\dimen117
+\MPnumerator=\count102
+\everyMPtoPDFconversion=\toks19
+)
+-------------------- Geometry parameters
+paper: a4paper
+landscape: --
+twocolumn: --
+twoside: true
+asymmetric: --
+h-parts: 63.16574pt, 0.7\paperwidth , 94.74867pt (default)
+v-parts: 101.40665pt, 0.7\paperheight , 152.11pt (default)
+hmarginratio: 2:3
+vmarginratio: 2:3
+lines: --
+heightrounded: --
+bindingoffset: 71.13188pt
+truedimen: --
+includehead: --
+includefoot: --
+includemp: --
+driver: pdftex
+-------------------- Page layout dimensions and switches
+\paperwidth  597.50787pt
+\paperheight 845.04684pt
+\textwidth  368.46158pt
+\textheight 591.5302pt
+\oddsidemargin  62.02763pt
+\evensidemargin 22.47868pt
+\topmargin  -2.73714pt
+\headheight 14.0pt
+\headsep    19.8738pt
+\footskip   27.46295pt
+\marginparwidth 54.2025pt
+\marginparsep   7.0pt
+\columnsep  10.0pt
+\skip\footins  10.0pt plus 4.0pt minus 2.0pt
+\hoffset 0.0pt
+\voffset 0.0pt
+\mag 1000
+\@twosidetrue \@mparswitchtrue 
+(1in=72.27pt, 1cm=28.45pt)
+-----------------------
+\openout2 = `titlepage.aux'.
+
+ (./titlepage.tex <salomone.pdf, id=1, 109.40875pt x 109.40875pt>
+File: salomone.pdf Graphic file (type pdf)
+
+<use salomone.pdf>) [1
+
+
+
+
+
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map} <./salomone.pdf>]
+\openout2 = `introduction.aux'.
+
+ (./introduction.tex [2
+
+
+
+] [3]
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 16.
+
+(/usr/share/texmf/tex/latex/base/omscmr.fd
+File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10.95> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 16.
+LaTeX Font Info:    Try loading font information for T1+phv on input line 25.
+
+(/usr/share/texmf/tex/latex/psnfss/t1phv.fd
+File: t1phv.fd 2001/06/04 scalable font definitions for T1/phv.
+) [4]) [5] (./main.aux
+(./titlepage.aux) (./introduction.aux)) ) 
+Here is how much of TeX's memory you used:
+ 2154 strings out of 94432
+ 25864 string characters out of 1175566
+ 81710 words of memory out of 1000000
+ 5346 multiletter control sequences out of 10000+50000
+ 13804 words of font info for 27 fonts, out of 500000 for 2000
+ 582 hyphenation exceptions out of 1000
+ 28i,10n,43p,762b,304s stack positions out of 1500i,500n,5000p,200000b,5000s
+PDF statistics:
+ 34 PDF objects out of 300000
+ 0 named destinations out of 131072
+ 6 words of extra memory for PDF output out of 10000
+ </var/cache/fonts/pk/ljfour/jknappen/
+ec/ecbx1095.600pk></usr/share/texmf/fonts/type1/bluesky/cm/cmsy10.pfb>{/usr/sha
+re/texmf/fonts/enc/dvips/psnfss/8r.enc}</usr/share/texmf/fonts/type1/urw/helvet
+ic/uhvb8a.pfb> </var/cache/fonts/pk/ljfour/jknappen/ec/ecti1095.600pk> </var/ca
+che/fonts/pk/ljfour/jknappen/ec/ecrm2488.600pk> </var/cache/fonts/pk/ljfour/jkn
+appen/ec/ecrm1200.600pk> </var/cache/fonts/pk/ljfour/jknappen/ec/ecbx1200.600pk
+> </var/cache/fonts/pk/ljfour/jknappen/ec/ecbx2074.600pk> </var/cache/fonts/pk/
+ljfour/jknappen/ec/ecrm1095.600pk>
+Output written on main.pdf (5 pages, 77196 bytes).

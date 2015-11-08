@@ -1,0 +1,19 @@
+net {
+	name = sin;
+	description = returns the sin of the value;
+	actv = sigmoid;
+	inode { id=0; }
+	hnode { id = 1; layer = 1; threshold = -2.1814; }
+	hnode { id = 2; layer = 1; threshold = -10.9423; }
+	hnode { id = 3; layer = 2; threshold = -1.5133; }
+	hnode { id = 4; layer = 2; threshold = -2.9522; }
+	onode { id = 5; threshold = 0.5348; }
+	link { from = 0; to = 1; weight = 3.7558; }
+	link { from = 0; to = 2; weight = 12.2071; }
+	link { from = 0; to = 3; weight = 14.5007; }
+	link { from = 0; to = 4; weight = -2.0168; }
+	link { from = 1; to = 5; weight = -13.1986; }
+	link { from = 2; to = 5; weight = 6.8320; }
+	link { from = 3; to = 5; weight = 5.0785; }
+	link { from = 4; to = 5; weight = -1.9914; }
+}

@@ -1,0 +1,8 @@
+net {
+	name = sigmoid;
+	description = sigmoid function;
+	actv = sigmoid;
+	inode { id = 0; }
+	onode { id = 1; }
+	link { from = 0; to = 1; weight = 1.; }
+}

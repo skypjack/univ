@@ -1,0 +1,23 @@
+\thispagestyle{plain}
+\begin{center}
+\begin{center}
+\includegraphics[scale=0.75]{salomone}
+\end{center}
+Università degli Studi di Firenze\\
+Facoltà di Ingegneria
+\rule{12cm}{0.5mm}\\[0.3cm]
+Corso di Laurea in\\ Ingegneria Informatica\\
+\vspace{3cm}
+{\begin{huge}\textbf{Protocollo sicuro per l'elaborazione di\\ dati cifrati mediante una rete neurale}\end{huge}}\\
+\vspace{\stretch{1}}
+\begin{large}
+\textbf{Relatore:}\hspace{10pt}Piva Alessandro\hspace{\stretch{1}}\textbf{Candidato:}\hspace{10pt}Caini Michele \\
+\vspace{10pt}
+\textbf{Co-relatori:}\hspace{\stretch{1}}\hbox{\hspace{1pt}}\\
+\hspace{50pt}Bianchi Tiziano\hspace{\stretch{1}}\hbox{\hspace{1pt}}\\
+\hspace{50pt}De Rosa Alessia\hspace{\stretch{1}}\hbox{\hspace{1pt}}\\
+\hspace{50pt}Orlandi Claudio\hspace{\stretch{1}}\hbox{\hspace{1pt}}\\
+[3cm]
+\hspace{\stretch{1}} A.A. 2006/2007
+\end{large}
+\end{center}

@@ -1,0 +1,92 @@
+\documentclass[a4paper,11pt,twoside,openright,titlepage]{book}
+
+
+\usepackage[perpage,bottom,ragged]{footmisc}
+\usepackage[italian]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin9]{inputenc}
+\usepackage[Lenny]{fncychap}
+\usepackage{epigraph}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage[twoside,bindingoffset=2.5cm]{geometry}
+\usepackage{indentfirst}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+
+\hyphenation{NNSec nnsec}
+\setlength{\headheight}{14pt}
+
+\raggedbottom
+
+\newcommand{\helv}{\fontfamily{phv}\fontseries{b}\fontsize{9}{11}\selectfont}
+\newcommand{\figfont}{\fontfamily{phv}\fontsize{8}{10}\selectfont}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
+\renewcommand{\sectionmark}[1]{\markright{#1}}
+\renewcommand{\headrulewidth}{0.1pt}
+\fancyhead[LO,RE]{\helv\leftmark}
+\fancyhead[RO,LE]{\helv\rightmark}
+\fancyfoot[C]{\thepage}
+\fancypagestyle{plain}{\fancyhead{}\fancyfoot{}\renewcommand{\headrulewidth}{0pt}\renewcommand{\footrulewidth}{0pt}}
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\makeatletter
+\def\cleardoublepage{\clearpage
+\if@twoside
+	\ifodd
+		\c@page
+	\else
+		\hbox{}
+		\vspace*{\fill}
+		\vspace{\fill}
+		\thispagestyle{empty}
+		\newpage
+		\if@twocolumn
+			\hbox{}
+			\newpage
+		\fi
+	\fi
+\fi}
+\makeatother
+
+\setlength{\marginparwidth}{0.75in}
+\addtolength{\headwidth}{\marginparsep}
+\addtolength{\headwidth}{\marginparwidth}
+
+\bibliographystyle{alpha}
+
+
+\begin{document}
+
+\frontmatter
+\include{titlepage}
+% blank-page
+\thispagestyle{empty}
+\hbox{\hspace{1in}}
+\newpage
+% / blank-page
+\include{dedicateto}
+\tableofcontents
+\listoffigures
+% \listoftables
+\include{introduction}
+
+\mainmatter
+\include{protocol}
+\include{nnsec}
+\include{test}
+
+\backmatter
+\include{appendixA}
+\include{theend}
+\bibliography{bib}
+% blank-page
+\thispagestyle{empty}
+\hbox{\hspace{1in}}
+\newpage
+% / blank-page
+\include{thanksto}
+
+\end{document}

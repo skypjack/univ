@@ -1,0 +1,287 @@
+\batchmode
+\documentclass[10pt,compress]{beamer}
+\RequirePackage{ifthen}
+
+
+
+
+\usepackage[italian]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+
+\title[Reti neurali in dominio cifrato]
+{\textbf{Protocollo sicuro per l'elaborazione di dati cifrati mediante una rete neurale}}
+\titlegraphic{\vskip16pt\pgfuseimage{logo}\hskip16pt\pgfuseimage{speed}}
+\subtitle[Neural Network Secure]
+{NNSec - Neural Network Secure}
+\author{Michele Caini}
+\date{18 Dicembre 2007}
+\institute[Università degli Studi di Firenze]
+{Università degli Studi di Firenze, Facoltà di Ingegneria}%
+\providecommand{\cdl}{Corso di Laurea in Ingegneria Informatica} 
+
+%
+\providecommand{\insertcdl}{Corso di Laurea in Ingegneria Informatica}%
+\providecommand{\titleheadline}{
+ \leavevmode \hbox{%
+ \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.25ex,dp=1ex,right]{section in head/foot}%
+   \usebeamerfont{section in head/foot}\insertshortsubtitle\hspace*{2ex}
+ \end{beamercolorbox}%
+ \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.25ex,dp=1ex,left]{subsection in head/foot}%
+   \usebeamerfont{subsection in head/foot}\hspace*{2ex}\insertshorttitle
+ \end{beamercolorbox}}%
+ \vskip0pt }%
+\providecommand{\titlefootline}{
+ \leavevmode \hbox{%
+ \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.25ex,dp=1ex,right]{section in head/foot}%
+   \usebeamerfont{section in head/foot}\insertshortinstitute\hspace*{2ex}
+ \end{beamercolorbox}%
+ \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.25ex,dp=1ex,left]{subsection in head/foot}%
+   \usebeamerfont{subsection in head/foot}\hspace*{2ex}Corso di Laurea in Ingegneria Informatica
+ \end{beamercolorbox}}%
+ \vskip0pt }%
+\providecommand{\footline}{
+ \leavevmode \hbox{%
+ \begin{beamercolorbox}[wd=\paperwidth,ht=2.25ex,dp=1ex,center]{section in head/foot}%
+   \usebeamerfont{section in head/foot}\inserttitle
+ \end{beamercolorbox}}%
+ \vskip0pt }%
+\providecommand{\bgunifi}{
+ \begin{minipage}{\paperwidth}
+  \centering\vspace{0.32\paperheight}
+  \includegraphics[width=0.32\paperheight]{img/salomone}
+ \end{minipage}
+} 
+
+
+\pgfdeclareimage[height=1cm]{logo}{img/lci.det}
+\pgfdeclareimage[height=1cm]{speed}{img/sspeed}
+\pgfdeclareimage[width=2.5cm]{smallspeed}{img/sspeed}%
+\providecommand{\lcispeed}{\vskip16pt\pgfuseimage{logo}\hskip16pt\pgfuseimage{speed}}%
+\providecommand{\lci}{\vskip16pt\pgfuseimage{logo}}%
+\providecommand{\speed}{\vskip16pt\pgfuseimage{speed}}%
+\providecommand{\smallspeed}{\pgfuseimage{smallspeed}} 
+
+
+\usecolortheme{default}
+\usefonttheme{serif}
+\useinnertheme{rectangles}
+\useoutertheme{infolines}
+
+
+\setbeamercovered{dynamic}
+\setbeamertemplate{footline}{
+ \leavevmode \hbox{\begin{beamercolorbox}[wd=\paperwidth,ht=2.25ex,dp=1ex,center]{section in head/foot}\usebeamerfont{section in head/foot}\inserttitle
+ \end{beamercolorbox}}\vskip0pt }
+\setbeamercolor{titlelike}{fg=white,bg=blue!35}
+\setbeamerfont{normal text}{size=\small }
+\setbeamercolor{normal text}{fg=black,bg=white}
+\setbeamerfont{alerted text}{size=\small }
+\setbeamercolor{alerted text}{fg=red}
+\setbeamerfont{example text}{size=\small }
+\setbeamercolor{example text}{fg=black}
+\setbeamerfont{structure}{size=\small }
+\setbeamercolor{structure}{fg=black}
+\setbeamercolor{palette primary}{fg=black,bg=blue!20}
+\setbeamercolor{palette secondary}{fg=black,bg=blue!25}
+\setbeamercolor{palette tertiary}{fg=black,bg=blue!30}
+\setbeamercolor{palette quaternary}{fg=black,bg=blue!35}
+\setbeamercolor{item projected}{fg=black,bg=blue!20}
+\setbeamerfont{block title}{size=\normalsize }
+\setbeamercolor{block title}{fg=black,bg=blue!20}
+\setbeamercolor{block title alerted}{fg=black,bg=blue!20}
+\setbeamercolor{block title example}{fg=black,bg=blue!20}
+\setbeamerfont{block body}{size=\small }
+\setbeamercolor{block body}{fg=black,bg=blue!10}
+\setbeamercolor{block body alerted}{fg=black,bg=blue!10}
+\setbeamercolor{block body example}{fg=black,bg=blue!10}
+\setbeamercolor{separation line}{}
+\setbeamercolor{fine separation line}{}
+
+
+\AtBeginSection[]{\frame{\frametitle{Sommario}\tableofcontents [current]}}
+
+
+
+
+\usepackage[dvips]{color}
+
+
+\pagecolor[gray]{.7}
+
+\usepackage[latin1]{inputenc}
+
+
+
+\makeatletter
+
+\makeatletter
+\count@=\the\catcode`\_ \catcode`\_=8 
+\newenvironment{tex2html_wrap}{}{}%
+\catcode`\<=12\catcode`\_=\count@
+\newcommand{\providedcommand}[1]{\expandafter\providecommand\csname #1\endcsname}%
+\newcommand{\renewedcommand}[1]{\expandafter\providecommand\csname #1\endcsname{}%
+  \expandafter\renewcommand\csname #1\endcsname}%
+\newcommand{\newedenvironment}[1]{\newenvironment{#1}{}{}\renewenvironment{#1}}%
+\let\newedcommand\renewedcommand
+\let\renewedenvironment\newedenvironment
+\makeatother
+\let\mathon=$
+\let\mathoff=$
+\ifx\AtBeginDocument\undefined \newcommand{\AtBeginDocument}[1]{}\fi
+\newbox\sizebox
+\setlength{\hoffset}{0pt}\setlength{\voffset}{0pt}
+\addtolength{\textheight}{\footskip}\setlength{\footskip}{0pt}
+\addtolength{\textheight}{\topmargin}\setlength{\topmargin}{0pt}
+\addtolength{\textheight}{\headheight}\setlength{\headheight}{0pt}
+\addtolength{\textheight}{\headsep}\setlength{\headsep}{0pt}
+\setlength{\textwidth}{349pt}
+\newwrite\lthtmlwrite
+\makeatletter
+\let\realnormalsize=\normalsize
+\global\topskip=2sp
+\def\preveqno{}\let\real@float=\@float \let\realend@float=\end@float
+\def\@float{\let\@savefreelist\@freelist\real@float}
+\def\liih@math{\ifmmode$\else\bad@math\fi}
+\def\end@float{\realend@float\global\let\@freelist\@savefreelist}
+\let\real@dbflt=\@dbflt \let\end@dblfloat=\end@float
+\let\@largefloatcheck=\relax
+\let\if@boxedmulticols=\iftrue
+\def\@dbflt{\let\@savefreelist\@freelist\real@dbflt}
+\def\adjustnormalsize{\def\normalsize{\mathsurround=0pt \realnormalsize
+ \parindent=0pt\abovedisplayskip=0pt\belowdisplayskip=0pt}%
+ \def\phantompar{\csname par\endcsname}\normalsize}%
+\def\lthtmltypeout#1{{\let\protect\string \immediate\write\lthtmlwrite{#1}}}%
+\newcommand\lthtmlhboxmathA{\adjustnormalsize\setbox\sizebox=\hbox\bgroup\kern.05em }%
+\newcommand\lthtmlhboxmathB{\adjustnormalsize\setbox\sizebox=\hbox to\hsize\bgroup\hfill }%
+\newcommand\lthtmlvboxmathA{\adjustnormalsize\setbox\sizebox=\vbox\bgroup %
+ \let\ifinner=\iffalse \let\)\liih@math }%
+\newcommand\lthtmlboxmathZ{\@next\next\@currlist{}{\def\next{\voidb@x}}%
+ \expandafter\box\next\egroup}%
+\newcommand\lthtmlmathtype[1]{\gdef\lthtmlmathenv{#1}}%
+\newcommand\lthtmllogmath{\dimen0\ht\sizebox \advance\dimen0\dp\sizebox
+  \ifdim\dimen0>.95\vsize
+   \lthtmltypeout{%
+*** image for \lthtmlmathenv\space is too tall at \the\dimen0, reducing to .95 vsize ***}%
+   \ht\sizebox.95\vsize \dp\sizebox\z@ \fi
+  \lthtmltypeout{l2hSize %
+:\lthtmlmathenv:\the\ht\sizebox::\the\dp\sizebox::\the\wd\sizebox.\preveqno}}%
+\newcommand\lthtmlfigureA[1]{\let\@savefreelist\@freelist
+       \lthtmlmathtype{#1}\lthtmlvboxmathA}%
+\newcommand\lthtmlpictureA{\bgroup\catcode`\_=8 \lthtmlpictureB}%
+\newcommand\lthtmlpictureB[1]{\lthtmlmathtype{#1}\egroup
+       \let\@savefreelist\@freelist \lthtmlhboxmathB}%
+\newcommand\lthtmlpictureZ[1]{\hfill\lthtmlfigureZ}%
+\newcommand\lthtmlfigureZ{\lthtmlboxmathZ\lthtmllogmath\copy\sizebox
+       \global\let\@freelist\@savefreelist}%
+\newcommand\lthtmldisplayA{\bgroup\catcode`\_=8 \lthtmldisplayAi}%
+\newcommand\lthtmldisplayAi[1]{\lthtmlmathtype{#1}\egroup\lthtmlvboxmathA}%
+\newcommand\lthtmldisplayB[1]{\edef\preveqno{(\theequation)}%
+  \lthtmldisplayA{#1}\let\@eqnnum\relax}%
+\newcommand\lthtmldisplayZ{\lthtmlboxmathZ\lthtmllogmath\lthtmlsetmath}%
+\newcommand\lthtmlinlinemathA{\bgroup\catcode`\_=8 \lthtmlinlinemathB}
+\newcommand\lthtmlinlinemathB[1]{\lthtmlmathtype{#1}\egroup\lthtmlhboxmathA
+  \vrule height1.5ex width0pt }%
+\newcommand\lthtmlinlineA{\bgroup\catcode`\_=8 \lthtmlinlineB}%
+\newcommand\lthtmlinlineB[1]{\lthtmlmathtype{#1}\egroup\lthtmlhboxmathA}%
+\newcommand\lthtmlinlineZ{\egroup\expandafter\ifdim\dp\sizebox>0pt %
+  \expandafter\centerinlinemath\fi\lthtmllogmath\lthtmlsetinline}
+\newcommand\lthtmlinlinemathZ{\egroup\expandafter\ifdim\dp\sizebox>0pt %
+  \expandafter\centerinlinemath\fi\lthtmllogmath\lthtmlsetmath}
+\newcommand\lthtmlindisplaymathZ{\egroup %
+  \centerinlinemath\lthtmllogmath\lthtmlsetmath}
+\def\lthtmlsetinline{\hbox{\vrule width.1em \vtop{\vbox{%
+  \kern.1em\copy\sizebox}\ifdim\dp\sizebox>0pt\kern.1em\else\kern.3pt\fi
+  \ifdim\hsize>\wd\sizebox \hrule depth1pt\fi}}}
+\def\lthtmlsetmath{\hbox{\vrule width.1em\kern-.05em\vtop{\vbox{%
+  \kern.1em\kern0.8 pt\hbox{\hglue.17em\copy\sizebox\hglue0.8 pt}}\kern.3pt%
+  \ifdim\dp\sizebox>0pt\kern.1em\fi \kern0.8 pt%
+  \ifdim\hsize>\wd\sizebox \hrule depth1pt\fi}}}
+\def\centerinlinemath{%
+  \dimen1=\ifdim\ht\sizebox<\dp\sizebox \dp\sizebox\else\ht\sizebox\fi
+  \advance\dimen1by.5pt \vrule width0pt height\dimen1 depth\dimen1 
+ \dp\sizebox=\dimen1\ht\sizebox=\dimen1\relax}
+
+\def\lthtmlcheckvsize{\ifdim\ht\sizebox<\vsize 
+  \ifdim\wd\sizebox<\hsize\expandafter\hfill\fi \expandafter\vfill
+  \else\expandafter\vss\fi}%
+\providecommand{\selectlanguage}[1]{}%
+\makeatletter \tracingstats = 1 
+
+
+\begin{document}
+\pagestyle{empty}\thispagestyle{empty}\lthtmltypeout{}%
+\lthtmltypeout{latex2htmlLength hsize=\the\hsize}\lthtmltypeout{}%
+\lthtmltypeout{latex2htmlLength vsize=\the\vsize}\lthtmltypeout{}%
+\lthtmltypeout{latex2htmlLength hoffset=\the\hoffset}\lthtmltypeout{}%
+\lthtmltypeout{latex2htmlLength voffset=\the\voffset}\lthtmltypeout{}%
+\lthtmltypeout{latex2htmlLength topmargin=\the\topmargin}\lthtmltypeout{}%
+\lthtmltypeout{latex2htmlLength topskip=\the\topskip}\lthtmltypeout{}%
+\lthtmltypeout{latex2htmlLength headheight=\the\headheight}\lthtmltypeout{}%
+\lthtmltypeout{latex2htmlLength headsep=\the\headsep}\lthtmltypeout{}%
+\lthtmltypeout{latex2htmlLength parskip=\the\parskip}\lthtmltypeout{}%
+\lthtmltypeout{latex2htmlLength oddsidemargin=\the\oddsidemargin}\lthtmltypeout{}%
+\makeatletter
+\if@twoside\lthtmltypeout{latex2htmlLength evensidemargin=\the\evensidemargin}%
+\else\lthtmltypeout{latex2htmlLength evensidemargin=\the\oddsidemargin}\fi%
+\lthtmltypeout{}%
+\makeatother
+\setcounter{page}{1}
+\onecolumn
+
+% !!! IMAGES START HERE !!!
+
+{\newpage\clearpage
+\lthtmlfigureA{beamercolorbox151}%
+\begin{beamercolorbox}[wd=\paperwidth,ht=2.25ex,dp=1ex,center]{section in head/foot}\usebeamerfont{section in head/foot}\inserttitle
+ \end{beamercolorbox}%
+\lthtmlfigureZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlfigureA{beamercolorbox156}%
+\begin{beamercolorbox}[wd=.5\paperwidth,ht=2.25ex,dp=1ex,right]{section in head/foot}\usebeamerfont{section in head/foot}\insertshortsubtitle\hspace*{2ex}
+ \end{beamercolorbox}%
+\lthtmlfigureZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlfigureA{beamercolorbox161}%
+\begin{beamercolorbox}[wd=.5\paperwidth,ht=2.25ex,dp=1ex,left]{subsection in head/foot}\usebeamerfont{subsection in head/foot}\hspace*{2ex}\insertshorttitle
+ \end{beamercolorbox}%
+\lthtmlfigureZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlfigureA{beamercolorbox167}%
+\begin{beamercolorbox}[wd=.5\paperwidth,ht=2.25ex,dp=1ex,right]{section in head/foot}\usebeamerfont{section in head/foot}\insertshortinstitute\hspace*{2ex}
+ \end{beamercolorbox}%
+\lthtmlfigureZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlfigureA{beamercolorbox172}%
+\begin{beamercolorbox}[wd=.5\paperwidth,ht=2.25ex,dp=1ex,left]{subsection in head/foot}\usebeamerfont{subsection in head/foot}\hspace*{2ex}Corso di Laurea in Ingegneria Informatica
+ \end{beamercolorbox}%
+\lthtmlfigureZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlfigureA{frame129}%
+\begin{frame}
+\titlepage
+\end{frame}%
+\lthtmlfigureZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlfigureA{figure249}%
+\begin{figure}\vbox{\include{slides}
+}\end{figure}%
+\lthtmlfigureZ
+\lthtmlcheckvsize\clearpage}
+
+
+\end{document}

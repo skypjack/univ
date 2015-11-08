@@ -1,0 +1,14 @@
+net {
+	name = sum of sign;
+	description = returns the sum of the sign of the two submitted values;
+	actv = sign;
+	inode { id = 0; }
+	inode { id = 1; }
+	hnode { id = 2; layer = 1; }
+	onode { id = 3; }
+	onode { id = 4; }
+	link { from = 0; to = 2; weight = 1.; }
+	link { from = 1; to = 2; weight = 1.; }
+	link { from = 2; to = 3; weight = 1.; }
+	link { from = 2; to = 4; weight = -1.; }
+}

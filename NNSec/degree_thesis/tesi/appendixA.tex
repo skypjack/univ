@@ -1,0 +1,209 @@
+\chapter{Appendice A}
+In questa appendice viene indicato l'insieme dei simboli riconosciuti da NNSec e la grammatica utilizzata per la descrizione delle reti neurali. Essendo stati utilizzati i programmi JavaCUP e JFlex e avendo questi una sintassi particolare, viene in realtà riportata parte del contenuto dei file sottomessi come ingressi ai programmi sopra citati. Per maggiori informazioni, è consigliato fare riferimento alla documentazione ufficiale dei due programmi sopra citati.
+
+\paragraph{Simboli Terminali}
+I simboli basilari, su cui sono costruiti mattone dopo mattone tutti gli altri, sono i seguenti:
+\begin{lstlisting}
+  nl  =  [\r|\n|\r\n]*
+  ws  =  [ \t\f]*
+  wtok  =  {nl} | {ws}
+  equal  =  {ws}"="{ws}
+  sfloat  =  ["+"|"-"]?[0-9]+"."[0-9]*
+  integer  =  [0-9]+
+  string  =  [a-zA-Z0-9 ]+
+  lbracket  =  {wtok}"{"{wtok}
+  rbracket  =  {wtok}"}"{wtok}
+  endterm	  =  {wtok}";"{wtok}
+\end{lstlisting}
+A partire da questi, lo spazio di valutazione è diviso in sezioni e alcuni simboli composti possono apparire solo in alcune aree mentre altri assumono significati diversi a seconda dell'area in cui si presentano. L'area principale, dalla quale comincia la valutazione, e i simboli in essa possibili sono di seguito riportati:
+\begin{lstlisting}
+  <YYINITIAL>
+    NET_SEC : "net"{lbracket}
+\end{lstlisting}
+Quanto sopra impone decisamente che la descrizione relativa ad una rete neurale inizi con il termine \textit{net} seguito da una parentesi graffa aperta, nessun altro termine è accettato. L'unico valore possibile definisce anche la seconda area di valutazione, composta come sotto indicato:
+\begin{lstlisting}
+  <NET_SEC>
+    NAME : "name"{equal}
+    DESC : "description"{equal}
+    ACTVF : "actv"{equal}
+    OUTF : "out"{equal}
+    O_NODE_SEC : ["output"{lbracket}|"onode"{lbracket}]
+    I_NODE_SEC : ["input"{lbracket}|"inode"{lbracket}]
+    H_NODE_SEC : ["hidden"{lbracket}|"hnode"{lbracket}]
+    LINK_SEC : "link"{lbracket}
+    STRING : {string}
+    END_TERM : {endterm}
+    NET_SEC_END : {rbracket}
+\end{lstlisting}
+Le sezioni che seguono direttamente da quella sopra introdotta sono relative ai nodi di ingresso, nodi di uscita e nodi nascosti (ovvero appartenneti ai livelli intermedi) e ai collegamenti presenti fra nodi, rispettivamente.\\
+La prima delle sezioni è relativa ai nodi di ingresso:
+\begin{lstlisting}
+  <I_NODE_SEC>
+    NODE_ID : "id"{equal}
+    ID_VALUE : {integer}
+    END_TERM : {endterm}
+    NODE_SEC_END : {rbracket}
+\end{lstlisting}
+La seconda è invece relativa ai nodi nascosti, o intermedi:
+\begin{lstlisting}
+  <H_NODE_SEC>
+    NODE_ID : "id"{equal}
+    ACTVF : "actv"{equal}
+    OUTF : "out"{equal}
+    GROUP_ID : ["layer"{equal}|"group"{equal}]
+    THRESHOLD : "threshold"{equal}
+    THRESHOLD_VALUE : {sfloat}
+    ID_VALUE : {integer}
+    STRING : {string}
+    END_TERM : {endterm}
+    NODE_SEC_END : {rbracket}
+\end{lstlisting}
+La terza, ancora, è relativa ai nodi di uscita:
+\begin{lstlisting}
+  <O_NODE_SEC>
+    NODE_ID : "id"{equal}
+    ACTVF : "actv"{equal}
+    OUTF : "out"{equal}
+    THRESHOLD : "threshold"{equal}
+    THRESHOLD_VALUE : {sfloat}
+    ID_VALUE : {integer}
+    STRING : {string}
+    END_TERM : {endterm}
+    NODE_SEC_END : {rbracket}
+\end{lstlisting}
+Infine, la sezione riguardante i collegamenti fra nodi:
+\begin{lstlisting}
+  <LINK_SEC>
+    LINK_INPUT_NODE_ID : ["to"{equal}|"hnode"{equal}]
+    LINK_OUTPUT_NODE_ID : ["from"{equal}|"tnode"{equal}]
+    LINK_WEIGHT : "weight"{equal}
+    WEIGHT_VALUE : {sfloat}
+    NODE_ID_VALUE : {integer}
+    END_TERM : {endterm}
+    LINK_SEC_END : {rbracket}
+\end{lstlisting}
+
+\paragraph{Grammatica}
+La grammatica per la costruzione di reti neurali è di seguito riportata e si basa sui simboli discussi nella sezione precedente. Questa è volutamente semplice ma completa e permettere di descrivere potenzialmente qualsiasi tipo di rete neurale, con le dovute limitazioni in base alle reti ``comprese'' da NNSec. I simboli terminali sono riportati in lettere maiuscole, i simboli non terminali in lettere minuscole.
+\begin{lstlisting}
+  net_list  ::=  net_list net_expr
+                 | net_expr
+
+  net_expr  ::=  NET_SEC net_tokens node link NET_SEC_END
+
+  net_tokens  ::=  net_tokens net_token
+                   | net_token
+
+  net_token  ::=  name
+                  | desc
+                  | actvfunc
+                  | outfunc
+
+  name  ::=  NAME STRING END_TERM
+
+  desc  ::=  DESC STRING END_TERM
+
+  actvfunc  ::=  ACTVF STRING END_TERM
+
+  outfunc  ::=  OUTF STRING END_TERM
+
+  node  ::=  node node_expr
+             | node_expr
+
+  node_expr  ::=  inode
+                  | hnode
+                  | onode
+
+  inode  ::=  I_NODE_SEC node_tokens NODE_SEC_END
+
+  hnode  ::=  H_NODE_SEC node_tokens NODE_SEC_END
+
+  onode  ::=  O_NODE_SEC node_tokens NODE_SEC_END
+
+  node_tokens  ::=  node_tokens node_token
+                    | node_token
+
+  node_token  ::=  gid
+                   | id
+                   | nodeactvfunc
+                   | nodeoutfunc
+                   | threshold
+
+  gid  ::=  GROUP_ID ID_VALUE END_TERM
+
+  id  ::=  NODE_ID ID_VALUE END_TERM
+
+  nodeactvfunc  ::=  ACTVF STRING END_TERM
+
+  nodeoutfunc  ::=  OUTF STRING END_TERM
+
+  threshold  ::=  THRESHOLD THRESHOLD_VALUE END_TERM
+
+  link  ::=  link link_expr
+             | link_expr
+
+  link_expr  ::=  LINK_SEC output_ref \
+                        input_ref weight LINK_SEC_END
+
+  input_ref  ::=  LINK_INPUT_NODE_ID NODE_ID_VALUE END_TERM
+
+  output_ref  ::=  LINK_OUTPUT_NODE_ID NODE_ID_VALUE END_TERM
+
+  weight  ::=  LINK_WEIGHT WEIGHT_VALUE END_TERM
+\end{lstlisting}
+\paragraph{}
+Grazie alla grammatica utilizzata, descrivere le reti neurale diventa facile e intuitivo per chiunque. Inoltre, per come è stata concepito, NNSec permette di inserire più reti neurali in un unico file se si ritiene utile.\\
+Insieme al software sono distribuite alcune reti neurali \textit{di prova}, che possono essere utilizzate per testare client e server e dare un'idea di come questi file devono essere effettivamente scritti. Di seguito, un esempio di rete neurale descritta grazie alla grammatica sopra citata:
+\begin{lstlisting}
+  net {
+    name = seno;
+    description = ritorna il seno del valore;
+    actv = sigmoid;
+    inode { id=0; }
+    hnode { id = 1; layer = 1; threshold = -2.1814; }
+    hnode { id = 2; layer = 1; threshold = -10.9423; }
+    hnode { id = 3; layer = 2; threshold = -1.5133; }
+    hnode { id = 4; layer = 2; threshold = -2.9522; }
+    onode { id = 5; threshold = 0.5348; }
+    link { from = 0; to = 1; weight = 3.7558; }
+    link { from = 0; to = 2; weight = 12.2071; }
+    link { from = 0; to = 3; weight = 14.5007; }
+    link { from = 0; to = 4; weight = -2.0168; }
+    link { from = 1; to = 5; weight = -13.1986; }
+    link { from = 2; to = 5; weight = 6.8320; }
+    link { from = 3; to = 5; weight = 5.0785; }
+    link { from = 4; to = 5; weight = -1.9914; }
+  }
+\end{lstlisting}
+In tabella \ref{tab:sin} sono riportati i valori associati alla rete neurale riportata. In realtà, questa rete prende come ingressi valori compresi fra 0 e 1 che rappresentano l'angolo tra 0 e 360 gradi, mentre in uscita forniscono il seno dell'angolo nel range $ 0,1 \dots 0,9 $  (il valore da $ 0,1 $ a $ 0,9 $ in uscita deve rappresentare il seno da $ -1 $ a $ +1 $).
+\begin{table}[t]
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Gradi} & \textbf{Seno} & \textbf{Ingressi} & \textbf{Uscite} \\
+\hline
+0.0 & 0.0000 & 0.0000 & 0.5000 \\
+22.5 & 0.3827 & 0.0625 & 0.6531 \\
+45.0 & 0.7071 & 0.1250 & 0.7828 \\
+67.5 & 0.9239 & 0.1875 & 0.8696 \\
+90.0 & 1.0000 & 0.2500 & 0.9000 \\
+112.5 & 0.9239 & 0.3125 & 0.8696 \\
+135.0 & 0.7071 & 0.3750 & 0.7828 \\
+157.5 & 0.3827 & 0.4375 & 0.6531 \\
+180.0 & 0.0000 & 0.5000 & 0.5000 \\
+202.5 & -0.3827 & 0.5625 & 0.3469 \\
+225.0 & -0.7071 & 0.6250 & 0.2172 \\
+247.5 & -0.9239 & 0.6875 & 0.1304 \\
+270.0 & -1.0000 & 0.7500 & 0.1000 \\
+292.5 & -0.9239 & 0.8125 & 0.1304 \\
+315.0 & -0.7071 & 0.8750 & 0.2172 \\
+337.5 & -0.3827 & 0.9375 & 0.3469 \\
+360.0 & 0.0000 & 1.0000 & 0.5000 \\
+\hline
+\end{tabular}
+\end{center}
+\label{tab:sin}
+\end{table}
+\paragraph{}
+Una nota in particolare va fatta sulla flessibilità implicita, propria di molti linguaggi, che permette di fare cose al di là di ciò per cui sono stati concepiti grazie a qualche trucco o forzatura delle regole di base. Questo è anche il caso della grammatica introdotta in NNSec. Un esempio molto semplice è la possibilità di aggiungere implicitamente nodi di bias senza doverli descrivere in modo indipendente, semplicemente ponendo il valore del collegamento associato come soglia del nodo a cui fanno riferimento. Infatti, sia $ t $ la soglia, questa è aggiunta al valore computato per il singolo nodo considerandola come il peso di un collegamento stabilito da un nodo unitario: proprio lo stesso modo in cui viene considerato il valore di bias!\\
+Basta lasciar correre la fantasia e anche con la grammatica utilizzata in NNSec, sposata con la struttura del codice, si possono trovare tanti altri trucchi per aggirare problemi o risolvere in modo veloce ed efficiente varie questioni.

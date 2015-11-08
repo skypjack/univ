@@ -1,0 +1,236 @@
+-- README FILE ---
+
+The jar file nnsecserver.jar contains the server side classes of the nnsec
+project, useful to start the server part of the system.
+Reading the following sections is suggested for users that are new to nnsec.
+
+
+
+--- THE KEYSTORE ---
+
+What users need is to create a keystore (as shown in the JSSE Reference Guide)
+suitable for use with JSSE. This is because client and server communicate using
+a SSL tunnel. Then, users have to make a keyEntry in the keystore, so that they
+can submit a certificate to the clients and they can make a corresponding
+trustedCertEntry (public keys only) into them truststore.
+
+
+Following steps have to be done.
+
+1 - Create a new keystore and self-signed certificate with corresponding
+    public/private keys.
+    
+      % keytool -genkey -alias nnsec -keyalg RSA -keystore keystore 
+
+      Enter keystore password:  nnsecks
+      What is your first and last name?
+      [Unknown]:  Michele Caini
+      What is the name of your organizational unit?
+      [Unknown]:  lci
+      What is the name of your organization?
+      [Unknown]:  unifi
+      What is the name of your City or Locality?
+      [Unknown]:  Florence
+      What is the name of your State or Province?
+      [Unknown]:  FI
+      What is the two-letter country code for this unit?
+      [Unknown]:  IT
+      Is CN=Michele Caini, OU=lci, O=unifi, L=Florence, ST=FI, C=IT correct?
+      [no]:  yes
+
+      Enter key password for <nnsec>
+      (RETURN if same as keystore password):  <CR>
+
+
+    This is the keystore that the server will use. If you want to add a validity
+    to the keys, simpy use next command line instead:
+
+      % keytool -genkey -alias duke -keyalg RSA -validity 7 -keystore keystore
+
+
+2 - Export self-signed certificate. 
+
+      % keytool -export -alias nnsec -keystore keystore -rfc -file nnsec.cer
+
+      Enter keystore password:  nnsecks
+      Certificate stored in file <nnsec.cer>
+
+
+Now, you have a valid certificate that can be sent to the clients, so that they
+can put it into them truststore. Then, server and client can communicate without
+problems.
+
+
+
+--- THE POLICY FILE ---
+
+In fact, you also have to do something else. A policy file is needed to run
+correctly the server. How to write a policy file is out of our intent, so please
+refer to the documentation that you can find to the next URL:
+  http://java.sun.com
+
+
+
+--- TEST-ONLY PROVIDED FILES ---
+
+Provided with the jar file you can see that there are three files (other than
+that README file). These are test-files that you can use trying the server, but
+there is absolutely no warranty with these files. Use them at your own risk.
+
+
+
+--- COMMAND LINE ---
+
+Once that the keystore and policy files are ready to be used, you can run the
+server. Simply, type:
+
+    % java -Djava.security.policy=policy -Djavax.net.ssl.keyStore=keystore \
+            -Djavax.net.ssl.keyStorePassword=nnsecks -jar nnsecserver.jar
+
+
+Clearly, you have to change the policy/keystore/nnsecks entries if you have
+assigned different names to the files or if you have used a different password
+for the keystore.
+
+
+
+--- NEURAL NETWORK FILE FORMAT ---
+
+NNSec uses a specific grammar for the neural network files. Here in a nutshell.
+External programs like JavaCUP and JFlex are involved into the parser/lexer
+building process. So, proposed syntax is similar to that used by the above
+programs. You can find some examples into the net directory.
+
+
+- Terminal Symbols -
+
+nl		=	[\r|\n|\r\n]*
+ws		=	[ \t\f]*
+wtok		=	{nl} | {ws}
+equal		=	{ws}"="{ws}
+sfloat		=	["+"|"-"]?[0-9]+"."[0-9]*
+integer		=	[0-9]+
+string		=	[a-zA-Z0-9 ]+
+lbracket	=	{wtok}"{"{wtok}
+rbracket	=	{wtok}"}"{wtok}
+endterm		=	{wtok}";"{wtok}
+
+NET_SEC		=	"net"{lbracket}
+
+<NET_SEC>
+	NAME		=	"name"{equal}
+	DESC		=	"description"{equal}
+	ACTVF		=	"actv"{equal}
+	OUTF		=	"out"{equal}
+	O_NODE_SEC	=	["onode"|"output"]{lbracket}
+	I_NODE_SEC	=	["inode"|"input"]{lbracket}
+	H_NODE_SEC	=	["hnode"|"hidden"]{lbracket}
+	LINK_SEC	=	"link"{lbracket}
+	STRING		=	{string}
+	END_TERM	=	{endterm}
+	NET_SEC_END	=	{rbracket}
+
+<I_NODE_SEC>
+	NODE_ID		=	"id"{equal}
+	ID_VALUE	=	{integer}
+	END_TERM	=	{endterm}
+	NODE_SEC_END	=	{rbracket}
+
+<H_NODE_SEC>
+	NODE_ID		=	"id"{equal}
+	ACTVF		=	"actv"{equal}
+	OUTF		=	"out"{equal}
+	GROUP_ID	=	["group"|"layer"]{equal}
+	THRESHOLD	=	"threshold"{equal}
+	THRESHOLD_VALUE	=	{sfloat}
+	ID_VALUE	=	{integer}
+	STRING		=	{string}
+	END_TERM	=	{endterm}
+	NODE_SEC_END	=	{rbracket}
+
+<O_NODE_SEC>
+	NODE_ID		=	"id"{equal}
+	ACTVF		=	"actv"{equal}
+	OUTF		=	"out"{equal}
+	THRESHOLD	=	"threshold"{equal}
+	THRESHOLD_VALUE	=	{sfloat}
+	ID_VALUE	=	{integer}
+	STRING		=	{string}
+	END_TERM	=	{endterm}
+	NODE_SEC_END	=	{rbracket}
+
+<LINK_SEC>
+	LINK_INPUT_NODE_ID	=	["hnode"|"to"]{equal}
+	LINK_OUTPUT_NODE_ID	=	["tnode"|"from"]{equal}
+	LINK_WEIGHT		=	"weight"{equal}
+	WEIGHT_VALUE		=	{sfloat}
+	NODE_ID_VALUE		=	{integer}
+	END_TERM		=	{endterm}
+	LINK_SEC_END		=	{rbracket}
+
+
+- Grammar -
+
+net_list	::=	net_list net_expr
+			| net_expr
+
+net_expr	::=	NET_SEC net_tokens node link NET_SEC_END
+
+net_tokens	::=	net_tokens net_token
+			| net_token
+
+net_token	::=	name
+			| desc
+			| actvfunc
+			| outfunc
+
+name		::=	NAME STRING END_TERM
+
+desc		::=	DESC STRING END_TERM
+
+actvfunc	::=	ACTVF STRING END_TERM
+
+outfunc		::=	OUTF STRING END_TERM
+
+node		::=	node node_expr
+			| node_expr
+
+node_expr	::=	inode
+			| hnode
+			| onode
+
+inode		::=	I_NODE_SEC node_tokens NODE_SEC_END
+
+hnode		::=	H_NODE_SEC node_tokens NODE_SEC_END
+
+onode		::=	O_NODE_SEC node_tokens NODE_SEC_END
+
+node_tokens	::=	node_tokens node_token
+			| node_token
+
+node_token	::=	gid
+			| id
+			| nodeactvfunc
+			| nodeoutfunc
+			| threshold
+
+gid		::=	GROUP_ID ID_VALUE END_TERM
+
+id		::=	NODE_ID ID_VALUE END_TERM
+
+nodeactvfunc	::=	ACTVF STRING END_TERM
+
+nodeoutfunc	::=	OUTF STRING END_TERM
+
+threshold	::=	THRESHOLD THRESHOLD_VALUE END_TERM
+
+link		::=	link link_expr
+			| link_expr
+
+link_expr	::=	LINK_SEC output_ref input_ref weight LINK_SEC_END
+
+input_ref	::=	LINK_INPUT_NODE_ID NODE_ID_VALUE END_TERM
+
+output_ref	::=	LINK_OUTPUT_NODE_ID NODE_ID_VALUE END_TERM
+
+weight		::=	LINK_WEIGHT WEIGHT_VALUE END_TERM

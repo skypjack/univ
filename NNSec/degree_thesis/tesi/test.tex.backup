@@ -1,0 +1,339 @@
+\chapter{Prove Sperimentali}\label{cap:three}
+\epigraph{Non testare mai una condizione d'errore che non sai come gestire.}{Linea di Guida di Steinbach per la Programmazione}
+
+NNSec è stato ovviamente testato sotto determinate condizioni e modalità, tanto per verificarne il corretto funzionamento quanto per valutarne il comportamento in relazione alla variazione di alcuni parametri (quali il numero di nodi fittizi, il fattore di quantizzazione utilizzato per gestire valori reali, etc.). Ciò che risulta è un quadro completo che fornisce un'idea di come NNSec si comporterà in un potenziale ambiente reale.
+
+Per poter usare NNSec in ambiente distribuito (ma alcuni di questi accorgimenti sono validi anche per l'uso in locale) sono necessari dei passaggi obbligatori che concorrono ad ottenere un corretto funzionamento. Sarà quindi discussa tutta la fase preparatoria sia lato server che lato client per poter utilizzare NNSec. Questo comporta la preparazione, distribuzione e uso di certificati e la stesura di un file di policy che regoli le potenzialità del server.\\
+Infine, saranno analizzati alcuni parametri chiave che andranno ad influire sulle prestazioni di NNSec, come già accennato, proponendo risultati e tempistiche, ma anche cercando di stabilire una sorta di regola che permetta di predire un futuro quantomeno plausibile a partire da determinate impostazioni. Questo è molto importante anche nell'ottica di voler comprendere quale sia effettivamente un tetto massimo approssimativo per le possibilità d'uso di NNSec.\\
+Quello che segue è in parte preso direttamente dalla documentazione sulla sicurezza in Java, in particolare dalle sezioni relative a JSSE. Per approfondimenti e/o chiarimenti, fare riferimento alla documentazione ufficiale in lingua originale a partire da \cite{javasec}.
+
+\newpage
+
+\section{Configurare il server}
+Per chi intende proporre un server NNSec (quindi, per chi intende mettere a disposizione le proprie reti neurali) ci sono alcuni passi forse tediosi ma necessari da percorrere, prima di poter raggiungere lo scopo. Questo lo si può mettere in conto come il prezzo da pagare per avere un pò di sicurezza in più (che non guasta mai).
+
+\subsection{Certificati}
+Quello di cui il gestore di server NNSec necessita per poter stabilire una connessione con i client che si appoggi ad un tunnel SSL è creare un così detto \textit{keystore} e riempirlo con appropriati elementi. In termini piuttosto semplici, si può pensare ad un \textit{keystore} come un portachiavi in cui sono immagazzinate tutte le chiavi locali utilizzabili dal server, o meglio tutte le coppie di chiavi pubblica/privata la cui parte pubblica è poi esportata per essere utilizzata dai client. Un elemento del \textit{keystore} è anche detto \textit{keyEntry} e tramite questo si può realizzare un certificato da fornire ai client così che questi possano gestirlo e inserirlo nel proprio \textit{truststore} (trattato in sezione \ref{subsec:ccer}).\\
+La procedura per creare un \textit{keystore}, preparare una \textit{keyEntry}, inserirla nel \textit{keystore} e ricavarne un certificato valido è abbastanza semplice e si articola in pochi passi, di seguito elencati. Per fare quanto descritto è richiesto il programma \texttt{keytool}, solitamente distribuito insieme al Java Development Kit.
+\lstset{basicstyle=\footnotesize}
+\begin{itemize}
+\item Per prima cosa è necessario creare un \textit{keystore} ed aggungervi una coppia di chiavi pubblica/privata. È possibile farlo in un unico comando, riportato di seguito. L'esempio mostra alcune linee spezzate su più righe grazie all'introduzione di una barra. Questo non avviene in casi reali ma è dovuto ad esigenze di spazio.
+\begin{lstlisting}
+ % keytool -genkey -alias nnsec -keyalg RSA \
+     -keystore keystore 
+
+ Enter keystore password:  nnsecks
+ What is your first and last name?
+ [Unknown]:  Michele Caini
+ What is the name of your organizational unit?
+ [Unknown]:  lci
+ What is the name of your organization?
+ [Unknown]:  unifi
+ What is the name of your City or Locality?
+ [Unknown]:  Florence
+ What is the name of your State or Province?
+ [Unknown]:  FI
+ What is the two-letter country code for this unit?
+ [Unknown]:  IT
+ Is CN=Michele Caini, OU=lci, O=unifi, L=Florence, \
+   ST=FI, C=IT correct?
+ [no]:  yes
+
+ Enter key password for <nnsec>
+ (RETURN if same as keystore password):  <CR>
+\end{lstlisting}
+Vengono poste come si può notare alcune domande di carattere generale a cui rispondere, come alcuni dati relativi all'utente. Questo crea il \textit{keystore} che il server userà. È possibile aggiungere una validità temporale a questo oggetto passando il parametro  \textit{validity} seguito da un numero rappresentante un intervallo in giorni.\\
+Intuitivamente, il parametro \textit{genkey} indica la necessità di generazione di una coppia di chiavi il cui identificativo è indicato dal parametro \textit{alias}; in modo simile, si capisce che il parametro \textit{keyalg} indica l'algoritmo da utilizzare nella fase di generazione delle chiavi mentre il parametro \textit{keystore} definisce il nome dell'archivio (in altri termini, il nome del file contenente il \textit{keystore} vero e proprio)
+\item Adesso, è necessario esportare un certificato auto-convalidato. Ovviamente, se il client non si fida di chi mantiene il server, questa procedura non è molto adatta in realtà, piuttosto si dovrà ricorrere ad una \textit{Certification Authority} che supervisioni sulla generazione e convalidi i certificati coinvolti. Nel caso di esempio, quanto necessario lo si può ottenere in modo semplice e immediata.
+\begin{lstlisting}
+ % keytool -export -alias nnsec -keystore keystore \
+     -rfc -file nnsec.cer
+
+ Enter keystore password:  nnsecks
+ Certificate stored in file <nnsec.cer>
+\end{lstlisting}
+Il certificato così ottenuto è pronto per essere distribuito ai client che ne faranno richiesta tramite un mezzo di comunicazione qualsiasi, affinché la connessione su canale SSL possa essere stabilita facilmente.\\
+Per quanto riguarda i parametri, \textit{export} indica la richiesta di esportazione della chiave relativa all'identificatore fornito come argomento con \textit{alias}, mentre come nel caso precedente \textit{keystore} indica il file contenente l'archivio e \textit{file} il nome del file in cui archiviare il certificato. In merito al parametro \textit{rfc}, laddove presente questo comporta la creazione di un certificato in un formato di codifica stampabile, ovvero delimitato all'inizio e alla fine dagli identificatori:
+\begin{lstlisting}
+  -----BEGIN CERTIFICATE-----
+     Corpo del messaggio
+  -----END CERTIFICATE-----
+\end{lstlisting}
+\end{itemize}
+
+\subsection{File policy}
+Il file di \textit{policy} per il linguaggio Java stabilisce le politiche adottate nei confronti di svariate risorse. I file di \textit{policy} e la loro sintassi sono discussi a partire da \cite{javasec}. Fra le cose interessanti, ad esempio, si possono definire intervalli di indirizzi IP per cui le connessioni in ingresso siano accettate o meno o ancora stabilire quali porzioni di un filesystem sono accessibili, da chi e con quali privilegi. Ovviamente, laddove questo si scontra con il sistema operativo sottostante, in alcuno modo ciò che definisce il file di \textit{policy} va contro ciò che è stabilito dall'ambiente ospite e in tali casi sono apportate tutte le limitazioni imposte dal sistema operativo con priorità rispetto alle altre.\\
+Di seguito è riportato il file di \textit{policy} di esempio fornito insieme al server NNSec.
+\begin{lstlisting}
+  grant {
+    permission java.net.SocketPermission "*", \
+      "accept,connect,resolve";
+    permission java.security.SocketPermission "*", \
+      "accept,connect,resolve";
+  };
+
+  grant {
+    permission java.util.PropertyPermission "user.home", "read";
+    permission java.io.FilePermission "${user.home}${/}", "read";
+    permission java.io.FilePermission "${user.home}${/}*", "read";
+  };
+\end{lstlisting}
+Questa configurazione è fin troppo permissiva e non si presta ad essere usata in situazioni reali, ma rappresenta un ottimo compromesso per la fase di test in quanto non pone quasi alcuna limitazione sulle connessioni in ingresso e sulle possibilità di accesso al filesystem.\\
+La sintassi e le modalità di stesura di un file di \textit{policy} esulano dallo scopo di questa tesi e per ogni approfondimento è consigliato fare riferimento alla documentazione ufficiale, a partire da \cite{javasec}.
+
+\subsection{Lanciare il server}
+Una breve ma importante nota va fatta sulle modalità di esecuzione del server. Questo è invocato da riga di comando, passando tutto ciò di cui è stato discusso fin'ora come parametri. In particolare, la riga di comando risultante è la seguente (supposto di usare l'archivio originale chiamato \texttt{nnsecserver.jar}):
+\begin{lstlisting}
+ % java -Djava.security.policy=policy \
+     -Djavax.net.ssl.keyStore=keystore \la stampa
+     -Djavax.net.ssl.keyStorePassword=nnsecks \
+     -jar nnsecserver.jar
+\end{lstlisting}
+
+
+\section{Eseguire il client}
+Per chi vuole utilizzare il client NNSec (quindi, per chi intende sfruttare le reti neurali remote messe a disposizione), invece, la cosa è leggermente meno complicata ma non priva di accorgimenti. Anche in questo caso, si può mettere il tutto in conto come il prezzo da pagare per avere un pò di sicurezza in più (che non guasta mai).
+
+\subsection{Certificati}\label{subsec:ccer}
+Una volta venuto in possesso di un certificato valido, fornito dal possessore del server NNSec in un modo qualsiasi, chi vuole utilizzare il client deve creare un \textit{truststore}, ovvero in parole povere un archivio in cui saranno contenuti tutti i certificati ritenuti validi da poter utilizzare per i propri scopi. Le voci presenti nel \textit{truststore} sono anche dette \textit{trustedCertEntry}.\\
+È possibile importare i nuovi elementi all'interno del \textit{truststore} come segue (rifacendosi all'esempio visto nelle sezioni precedenti):
+\begin{lstlisting}
+ % keytool -import -alias nnseccert -file nnsec.cer \
+     -keystore truststore
+
+ Enter keystore password:  trustword
+ Owner: CN=Michele Caini, OU=lci, O=unifi, L=Florence, \
+   ST=FI, C=IT
+ Issuer: CN=Michele Caini, OU=lci, O=unifi, L=Florence, \
+   ST=FI, C=IT
+ Serial number: 46e29d22
+ Valid from: Sat Sep 08 15:01:22 CEST 2007 until: \
+   Fri Dec 07 14:01:22 CEST 2007
+ Certificate fingerprints:
+   MD5: 76:8B:9E:4A:E3:5A:00:AE:65:8E:B5:DF:47:FE:E7:06
+   SHA1: \
+     9C:0F:C8:DC:C8:5E:CC:CD:25:94:E4:A4:F3:70:14:85:7C:9C:A3:8E
+ Trust this certificate? [no]:  yes
+ Certificate was added to keystore
+\end{lstlisting}
+La procedura, evidentemente, è molto semplice. Anche in questo caso sono poste poche, semplici domande in merito agli identificativi forniti insieme al certificato, stampati per poter essere esaminati. Il compito dell'utente client è finito, non resta che lanciare NNSec e sfruttare le reti neurali remote secondo le proprie necessità.\\
+Intuitivamente, per quanto riguarda i parametri passati da riga di comando, è possibile dire che \textit{import} indica la necessità di importare una determinata voce all'interno dell'archivio identificandola col nome passato come argomento di \textit{alias}, \textit{file} indica il nome del file che contiene il certificato relativo mentre \textit{keystore} rappresenta il nome del file dell'archivio, ovvero del \textit{truststore} vero e proprio.
+
+\subsection{Lanciare il client}
+Come già sottolineato, bisogna soffermarci anche in questo caso sulla modalità di esecuzione del programma. Questo è invocato da riga di comando, come anche il server, tramite l'uso di appositi parametri (supposto di usare l'archivio originale chiamato \texttt{nnsecclient.jar}):
+\begin{lstlisting}
+ % java -Djavax.net.ssl.trustStore=truststore \
+     -Djavax.net.ssl.trustStorePassword=nnsects
+     -jar nnsecclient.jar
+\end{lstlisting}
+
+\section{Parametri}
+L'uso di righe di comando piuttosto lunghe per mandare in esecuzione sia client che server può apparire scomodo, in realtà.\\
+Sebbene non percorsa in questo caso, Java mette a disposizione almeno una seconda strada che consiste nel caricare nell'ambiente i valori relativi alle variabili indicate direttamente da file. Questa via comprende la preparazione, una volta per tutte, di un file contenente coppie chiave/valore da cui il programma attingerà all'avvio. Del resto, questo modello vincola all'uso di determinati file o costringe l'utente, una volta avviato il programma, alla ricerca nel filesystem di un file e conseguente caricamento ad ogni esecuzione. Un altro metodo possibile è l'inclusione di un pannello attraverso cui, a run-time, impostare le diverse variabili d'ambiente, secondo necessità.\\
+La via scelta in NNSec è quella sopra discussa, ovvero il passaggio dei parametri tramite riga di comando. In ogni caso, futuri sviluppi potrebbero integrare comode interfacce tramite cui impostare i parametri direttamente da programma o attraverso cui caricare file contenenti tali valori.
+
+\section{NNSec, RMI e router}
+Per quanto riguarda l'uso di NNSec sulla rete Internet, laddove la macchina su cui eseguono client e/o server si trovi dietro ad un router, devono essere fatte alcune precisazioni. Infatti, con le configurazioni di cui sopra il programma (client e server) funziona senza particolari problemi in locale ma si lamenta quando viene tentato l'uso distribuito, ovvero nei casi in cui client e server siano dislocati su macchine diverse.
+\paragraph{Indirizzi.}
+Nel caso, per altro molto probabile, in cui si vogliano usare client e server su macchine diverse poste potenzialmente ai due angoli opposti della terra, possono presentarsi problemi nella risoluzione degli indirizzi in più punti del processo di interazione fra client e server, come ad esempio al momento della chiamata verso il registro di nomi o quando si cerca di stabilire una connessione fra modulo di comunicazione e factory remota e via dicendo. I problemi citati possono essere di vario genere e dovuti alle più svariate cause; per fare un piccolo esempio (ma potrebbero essere molti di più), su sistemi GNU/Linux una riga solitamente innocua nel file \textit{/etc/hosts} può rivelarsi una spina nel fianco cercando di usare RMI. Queste situazioni, apparentemente semplici da affrontare e risolvere, in realtà sono abbastanza subdole perché il programma termina con una eccezione che indica il rifiuto di stabilire una connessione da parte del server e non dà indicazioni sulla reale motivazione. La ricerca del perché può quindi risultare lunga ed estenuante, anche alla luce del fatto che su questo aspetto la documentazione è un po' scarsa e incompleta.\\
+Per capire il problema è meglio procedere con un esempio. Si immagini la fase in cui la componente server crea una \texttt{WorkerFactory} e la esporta legando lo \textit{stub} di quest'oggetto ad un determinato identificatore su un registro di nomi, così che i client possano recuperarlo ed usarlo (per quanto riguarda gli \textit{stub}, sono stati introdotti motivandone l'esistenza in sezione \ref{subsec:fourfour}). In termini molto semplici, si può pensare alla fase di creazione ed esportazione dello \textit{stub} come un'operazione in cui questo viene istruito sul come svolgere specifiche funzioni e gli viene fornito un indirizzo a cui fare riferimento per le chiamate di metodi remote. Questo indirizzo è recuperato lato server facendo richiesta al proprio sistema e se la macchina si trova in una rete locale l'indirizzo che verrà incapsulato nello \textit{stub} non sarà valido per il rintracciamento sulla rete Internet. Peggio ancora, sotto determinate condizioni allo \textit{stub} potrebbe essere fornito l'indirizzo 127.0.0.1 che rappresenta la macchina locale; una volta che questo riferimento è poi consegnato ai client esso farà richiesta sulla rete verso la stessa macchina su cui opera dove, ovviamente, non risiede il server, generando un'eccezione.\\
+La soluzione esiste e consiste nell'aggiunta di una ulteriore opzione fra i parametri d'invocazione per client e server, ovvero una stringa:
+\begin{lstlisting}
+-Djava.rmi.server.hostname=<ip>
+\end{lstlisting}
+In questo caso, ad \textit{<ip>} va sostituito l'indirizzo che il router della sottorete presenta sull'interfaccia di rete affacciata verso l'esterno, ovvero sulla rete Internet. Ovviamente, il valore di \textit{<ip>} può differire (molto probabilmente lo farà) fra client e server.\\
+Questo parametro permette di indicare al programma il nome dell'host (in questo caso, l'indirizzo ip) che deve essere associato agli stub remoti per gli oggetti creati localmente e a cui queste interfacce fanno riferimento, così da permettere ai client l'invocazione di metodi sugli oggetti remoti stessi senza che essi sollevino eccezioni del tipo \textit{connessione rifiutata}. Il valore predefinito per questa proprietà è l'indirizzo IP della macchina su cui il programma esegue ma, se questa opera dietro un firewall, potrebbe non essere una informazione utile. Infatti, non sempre la Java Virtual Machine è in grado di ottenere automaticamente il nome del dominio in cui si trova o, come nel caso proposto, l'indirizzo IP corretto da utilizzare.
+\paragraph{Porte.}
+Un altro problema, non di minore importanza, è dato dal fatto che l'ipotetico router sopra citato che separa la rete locale dalla rete Internet potrebbe operare da firewall o potrebbe comunque essere presente un firewall nella rete locale che limita le connessioni da e verso gli utenti. Questo è uno scoglio facilmente superabile ma bisogna fare molta attenzione.\\
+Dal punto di vista del server NNSec, questo deve poter riceve collegamenti in ingresso sulla porta 1099 (in modalità predefinita, ma tale numero può essere liberamente cambiato), ovvero la porta su cui ascolta il registro di nomi. Purtroppo però questo non basta. Infatti, gli oggetti esportati dal server quali la factory remota o i lavoratori associati ai diversi client possono essere posti in ascolto su una qualsiasi porta maggiore di 1023 e non prevedibile a priori. Quindi, devono essere permesse tutte le connessioni su queste porte senza alcuna esclusione. Questo potrebbe rappresentare una limitazione alla sicurezza della rete locale, ma si osservi che un comportamento simile è adottato anche dai server Web e non rappresenta potenzialmente un problema.\\
+Dal punto di vista del client NNSec, invece, vale un discorso simile al precedente. Infatti, questo per poter comunicare ed interagire col server dovrà poter esportare un oggetto calcolatore per la computazione dei valori di attivazione/uscita di un nodo. Questi oggetti, ancora, possono risultare in ascolto su una qualsiasi porta con indice maggiore di 1023 e bisogna quindi permettere connessioni in ingresso su tali porte. Come nel caso precedente, la problematica risulta nella configurazione di un eventuale firewall così da ridurre i rischi di questa operazione. Allo stesso pari del punto precedente, si osservi che questo è lo stesso comportamento adottato ad esempio da software P2P e non introduce quindi alcuna novità o stravolgimento.
+
+\section{Risultati}
+Ultimi, ma non ultimi, alcuni risultati sperimentali sull'uso di NNSec. Una volta terminato lo sviluppo di NNSec è stato necessario portare avanti alcuni test variando i parametri di funzionamento del software per valutarne il comportamento sotto diversi punti di vista e carico variabile.
+
+Bisogna prima di tutto soffermare un attimo la discussione sul cosa sia veramente interessante o meno da studiare e valutare. Questo perché per quanto riguarda NNSec non ha molto senso valutare la complessità algoritmica nelle fasi di interazione fra client e server, ovvero durante l'espletamento vero e proprio del protocollo. Infatti, si capisce facilmente che il grosso del carico è dovuto alla presenza di algoritmi a chiave pubblica/privata e quest'ultimi hanno una complessità di gran lunga superiore a quella quasi lineare delle fasi di interazione, per cui rappresentano la componente principale sotto questo aspetto. Per una analisi dettagliata di questi algoritmi ed uno studio completo sulla loro complessità, fare riferimento a \cite{paillier} e \cite{brics}.\\
+Un aspetto che vale la pena di studiare, invece, è quello del carico in termini di pacchetti e conseguentemente in byte sulla rete, per vedere come questo varia al variare dei parametri fondamentali come il numero di nodi fittizi o il fattore di quantizzazione utilizzato per rappresentare i numeri reali in interi positivi e via dicendo. Questo può essere molto interessante perché essendo NNSec un software basato sul modello client-server può incidere notevolmente sul carico di rete e quindi sulle prestazioni di quest'ultima. Allo stesso modo, sono interessanti le osservazioni sui tempi di esecuzione, sia per quanto riguarda il tempo totale che il tempo in seno al client e al server (dai quale si può dedurre, infine, il tempo di trasmissione).
+\paragraph{Teoria.}
+Intuitivamente, è possibile aspettarsi che il comportamento sia linearmente dipendente dal numero di nodi della rete neurale.\\
+Infatti, eccezion fatta per le fasi di interazione che prevedono il recupero di un riferimento lato server da parte del client e il recupero della lista delle reti neurali disponibili (operazioni a carico fisso e indipendente dai parametri delle diverse reti), si può immaginare che per ogni nodo appartenente a livelli intermedi o di uscita di una specifica rete neurale vi sia una fase di comunicazione fra client e server, ovvero la fase in cui essi interagiscono per la computazione del risultato. Questo è vero, poiché per ogni nodo fra quelli sopra indicati il server dovrà ricorrere ai servizi del client così da poterne estrapolare il valore associato.\\
+\begin{figure}
+\centering
+\includegraphics[scale=0.75]{img/idea.eps}
+\caption{\figfont comportamento atteso}\label{fig:yx}
+\end{figure}
+Teoricamente, quindi, il comportamento atteso è qualcosa di simile a quello riportato in figura \ref{fig:yx}, ovvero una funzione del tipo $ y = f(x) = x $. Questo è vero tanto per quanto rigurda il tempo di esecuzione totale che per il numero di pacchetti (e conseguentemente il flusso di dati sulla rete), mentre poco si può dire sui tempi lato client e lato server senza un'analisi più attenta e approfondita.\\
+Anche se si potrebbe studiare in modo più completo il comportamento atteso in linea teorica, è più conveniente discutere direttamente i dati sperimentali ed estrapolare il comportamento adottato a partire da una situazione reale in cui il software sviluppato viene mandato in esecuzione.
+\paragraph{Pratica.}
+Per quanto riguarda le prove fatte, l'ambiente di test utilizzato è descritto nei punti che seguono:
+\begin{itemize}
+\item Le macchine su cui server e client sono stati mandati in esecuzione sono descritte di seguito, rispettivamente:
+\begin{itemize}
+\item Pc Desktop con processore Intel Core 2 Quad (2.40GHz) e 4Gb RAM, sistema operativo GNU/Linux Debian e java versione 1.5 (Java 5).
+\item Laptop con processore Intel Core Duo (2GHz) e 1024Mb RAM, sistema operativo GNU/Linux Gentoo e java versione 1.5 (Java 5).
+\end{itemize}
+I due dispositivi sono stati messi in comunicazione attraverso una rete LAN a cui entrambe le macchine erano direttamente connesse.
+\item La rete neurale utilizzata per i test presenta 60 nodi di ingresso, 12 nodi intermedi e 1 nodo di uscita. Questa rete è stata addestrata con dati presi dall'UCI Machine Learning Repository\footnote{http://mlearn.ics.uci.edu/MLRepository.html} e relativi alla distinzione di segnali lanciati contro cilindri metallici o pietre sotto varie angolazioni e condizioni. La rete neurale è stata sottoposta, in realtà, ad overfitting, ovvero si è lasciato che imparasse a memoria gli esempi visti: infatti, lo scopo non era creare una rete neurale in grado di generalizzare, ma piuttosto capace di dare il risultato esatto sugli esempi sottomessi per poter valutare il comportamento di NNSec e la sua correttezza a prescindere da quella della rete neurale. L'idea di una rete neurale che sbagliasse facendo sospettare un errore in NNSec non era, effettivamente, cosa gradita e viste le necessità questa operazione è giustificata.
+\item La dimensione delle chiavi pubbliche/private è stata scelta pari a 1024 bit, ovvero sono stati generati grazie ai metodi messi a disposizione dalla classe \texttt{BigInteger} valori primi interi esprimibili con 1024 bit. In \cite{reccomendation} è trattata la questione della gestione delle chiavi e si possono trovare cenni sulla lunghezza consigliata per le chiavi in numero di bit a seconda dell'algoritmo usato e del tempo di vita previsto (dove per tempo di vita si intende l'intervallo di tempo necessario affinché la chiave possa essere potenzialmente rivelata); da notare che l'uso di chiavi con lunghezza pari a 512 bit è sconsigliato se non in fasi di test o per effettuare prove arbitrarie, mentre l'uso di chiavi di lunghezza pari a 1024 bit può assumere un ruolo rilevante anche in ambienti reali.
+\item Il fattore di quantizzazione è stato scelto pari a 9, ovvero tale per cui il fattore effettivo risultante fosse equivalente a $ 10^9 $. Questa scelta può sembrare azzardata e potrebbe essere avanzata l'ipotesi di ridurre tale fattore a 6, così da diminuire la complessità di calcolo. Bisogna però osservare che i valori ottenuti a seguito della quantizzazione e rappresentazione nel dominio degli interi positivi saranno poi espressi, una volta cifrati, con un minimo di 1024 bit (ovvero la lunghezza minima utilizzabile per le chiavi pubbliche/private). Quindi, il tentativo di limitare le loro dimensioni nella fase di quantizzazione è reso vano dalle operazioni di cifratura; ne segue che si può liberamente scegliere un fattore come quello sopra riportato (ovvero, pari a 9) in modo che ciò non influisca sulle operazioni a seguito di eventuali troncamenti dei valori decimali, basandosi sul fatto che esso non influirà in modo eccessivamente consistente in maniera negativa neanche sulla complessità dei calcoli presenti all'interno del protocollo.
+\end{itemize}
+Prima di cominciare, va notato che si può limitare l'analisi sul traffico alla sola fase di interazione per l'uso della rete. Infatti, il carico dovuto alla connessione fra client e server e al recupero della lista delle reti neurali disponibili è fisso nel primo caso (in cui discende dall'interazione fra client e registro dei nomi e alla chiamata verso la factory remota per recuperare un riferimento ad un lavoratore associato) e lineare in base al numero di reti neurali presenti nel secondo caso. Ovviamente, entrambi questi valori non sono in alcun modo relazionati al numero di nodi fittizi o al fattore di quantizzazione usato per gestire i numeri reali e, pertanto, risultano di scarso interesse.
+
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{|c||c|c|c|c|c|}
+\hline
+& \multicolumn{5}{|c|}{\textbf{Fattore di Quantizzazione = 9}} \\
+\cline{2-6}
+\textbf{Nodi}& \textbf{tempo (s)} & \textbf{client (s)} & \textbf{server (s)} & \textbf{pacchetti} & \textbf{byte} \\
+\hline
+\hline
+12 + 1 & 27 & 7 & 20 & 204 & 71608 \\
+12 + 2 & 27 & 7 & 20 & 223 & 74157 \\
+12 + 3 & 28 & 8 & 20 & 217 & 75089 \\
+12 + 4 & 29 & 8 & 20 & 228 & 77121 \\
+12 + 5 & 29 & 9 & 20 & 242 & 79814 \\
+12 + 6 & 30 & 9 & 20 & 242 & 80677 \\
+12 + 7 & 30 & 10 & 20 & 263 & 83835 \\
+12 + 8 & 31 & 10 & 20 & 254 & 84032 \\
+12 + 9 & 31 & 11 & 20 & 281 & 87634 \\
+12 + 10 & 32 & 11 & 21 & 285 & 89477 \\
+12 + 15 & 35 & 13 & 21 & 326 & 99095 \\
+12 + 20 & 38 & 16 & 22 & 365 & 107634 \\
+12 + 25 & 40 & 18 & 21 & 375 & 114412 \\
+12 + 30 & 43 & 20 & 22 & 437 & 125771 \\
+12 + 40 & 49 & 26 & 23 & 512 & 143591 \\
+12 + 50 & 55 & 31 & 24 & 592 & 162007 \\
+12 + 75 & 69 & 43 & 26 & 792 & 208763 \\
+12 + 100 & 81 & 54 & 27 & 958 & 251834 \\
+12 + 125 & 97 & 67 & 30 & 1167 & 299168 \\
+12 + 150 & 112 & 80 & 32 & 1332 & 342173 \\
+12 + 200 & 141 & 105 & 35 & 1705 & 432702 \\
+12 + 250 & 169 & 130 & 39 & 2109 & 525925 \\
+12 + 300 & 200 & 154 & 46 & 2499 & 616422 \\
+12 + 400 & 260 & 208 & 52 & 3266 & 799258 \\
+12 + 500 & 312 & 251 & 60 & 4461 & 1379563 \\
+\hline
+\end{tabular}
+\end{center}
+\caption{risultati sperimentali (esecuzione distribuita)}\label{tab:x64x86}
+\end{table}
+
+Gli esperimenti sono stati portati avanti variando in diversi modi i parametri di ambiente. Da notare che i dati sono viziati dal fatto che le diverse prove sono state effettuate su una rete LAN mentre molto probabilmente in un ambiente distribuito come la rete Internet queste stime potrebbero peggiorare o variare notevolmente.\\
+I risultati ottenuti sono riportati in tabella \ref{tab:x64x86}, cercando di estrapolarne una legge che possa guidare una predizione futura.
+
+In particolare, è riportato il numero di nodi fittizi introdotti per occultare la rete, i secondi impiegati per ottenere il risultato e la loro distribuzione su client e server (da cui può essere dedotto il tempo di trasmissione), il numero di pacchetti scambiati fra le due macchine e la dimensione in byte del flusso di dati. Il fattore di quantizzazione è, come anticipato, pari a 9, mentre le chiavi coinvolte hanno una lunghezza pari a 1024 bit. Deve essere sottolineato il fatto che i risultati proposti, sebbene legati ad un fattore di quantizzazione pari a 9, sono approssivamente gli stessi a cui si potrebbe giungere con un fattore di quantizzazione pari a 6 o 12.
+
+Si può osservare che il tempo impiegato per la risoluzione del problema cresce all'aumentare del numero di nodi, come previsto. Ciò nonostante, si nota come esso non degeneri in modo troppo veloce e sia ancora accettabile per reti neurali contenenti circa 500 nodi. Questo aspetto è interessante perché permette, infine, di fare una valutazione approssimativa sulla componente temporale di NNSec al variare del numero di nodi: la risoluzione impiega un tempo praticamente costante per quantità molto basse di nodi e, superata una certa soglia, assume un andamento crescente che tende ad esplodere col crescere del numero di nodi. Si noti in particolar modo che, lato server, il tempo impiegato per la risoluzione è praticamente invariato per un intervallo di 30 nodi. Il comportamento descritto in base al numero di secondi impiegati a seconda del numero di nodi fittizzi aggiuntivi è riportato in figura \ref{fig:qtime} e, in scala logaritmica, in figura \ref{fig:qltime} dove si può apprezzare meglio l'andamento costante mantenuto in alcuni casi con basse quantità di nodi inseriti nella rete neurale.
+\begin{figure}
+\centering
+\includegraphics[scale=1.0]{img/qtime.eps}
+\caption{\figfont tempi di esecuzione (test distribuito)}\label{fig:qtime}
+\end{figure}
+\begin{figure}
+\centering
+\includegraphics[scale=1.0]{img/qlogtime.eps}
+\caption{\figfont tempi di esecuzione su scala logaritmica (test distribuito)}\label{fig:qltime}
+\end{figure}
+Un'analisi del tutto simile può essere fatta per il numero di pacchetti e il numero di byte che circolano sulla rete durante le fasi di interazione fra client e server per la risoluzione del problema. In entrambi i casi si ha un comportamento approssimativamente lineare che vede un aumento incontrollato superata una certa soglia, mentre in nessuno dei due si ha una componente costante per quantità basse di nodi fittizzi (cosa del resto prevedibile, visto che anche solo l'aggiunta di un singolo nodo comporta in ogni caso una mole maggiore di dati da scambiare fra le parti).\\
+Per quanto riguarda il tempo di trasmissione questo può anche non essere preso in considerazione in quanto i test sono stati effettuati su rete LAN e in quasi totale assenza, quindi, di tutti i problemi tipici delle reti estese come la rete Internet, quali la congestione, la caduta di nodi, la variazione sui cammini, etc. Nel caso specifico, il tempo di trasimissione può essere recuperato sottraendo dal tempo totale di esecuzione i tempi impiegati lato server e lato client: ciò che rimane rappresenta l'intervallo impiegato per la trasmissione fra le parti. In tutti gli esempi proposti si osserva come questo tempo sia effettivamente trascurabile nel caso specifico.
+
+A questo punto bisogna però osservare che si può considerare il numero di nodi fittizi costante all'interno di un determinato intervallo, ovvero è improbabile che avendo solo dodici nodi intermedi si possano aggiungere addirittura cinquecento nodi fittizi, almeno che lo scopo non sia quello di degradare le prestazioni dell'intero protocollo. Questo si traduce nel fatto che è possibile considerare i risultati ottenuti all'interno di un intervallo di valori approssimativamente compreso fra 10 e 100  nel quale il comportamento di NNSec si può approssimare in una componente lineare direttamente dipendente dal numero di nodi coinvolti.\\
+Pertanto, approssimando si può convalidare l'ipotesi fatta in precedenza, ovvero è possibile considerare praticamente costante il carico in termini di pacchetti e dimensione del flusso per un numero basso di nodi intermedi difficilmente riscontrabile in casi reali, mentre al crescere di tale parametro e mantenendolo all'interno di limiti plausibili le variazioni su tali valori diventano molto più apprezzabili e marcate legandosi in modo abbastanza netto al numero di nodi nei livelli intermedi.
+
+Come spesso accade, la teoria si sposa quasi perfettamente con la realtà, anche se deve fare i conti spesso con alcuni aspetti non considerati che portano ad un comportamento leggermente differente. In figura \ref{fig:yxbis} è riportata un'approssimazione dell'andamento di NNSec valida sia in termini di tempo, di nodi e dimensioni del flusso e in cui è messa in evidenza la componente costante e quella che cresce in maniera proporzionale al crescere del numero di nodi appartenenti ai livelli intermedi.
+
+\begin{figure}
+\centering
+\includegraphics[scale=1]{img/ceil512.eps}
+\caption{\figfont approssimazione del comportamento reale}\label{fig:yxbis}
+\end{figure}
+
+\paragraph{}
+Come era possibile aspettarsi, quindi, dato che l'aggiunta di un nuovo nodo va ad incidere tanto sul numero di nodi che di collegamenti e quindi influisce sia sulla computazione lato server che lato client, questo evento porta ad un innalzarsi dei valori relativi alle prestazioni di NNSec.\\
+Quello che è interessante prendere in considerazione è il fatto che se da un lato si ha un carico incidente inevitabile dovuto all'interazione che resta quasi costante anche diminuendo il numero di nodi presenti, dall'altro si ha un comportamento che impone una crescita circa lineare sotto ogni aspetto preso in considerazione una volta superata una certa soglia ed entro certi limiti (in termini di numero di nodi) e che si mantiene tale senza grosse variazioni. Questo permette, senza dubbio, di dare una stima approssimativa di ciò che aspetta l'utente a partire da una determinata configurazione iniziale per la rete neurale.\\
+Ovviamente, eventuali congestioni sulla rete o problemi sui nodi (client o server) incidono notevolmente su questa stima e la rendono assolutamente inattendibile, ma del resto niente si può contro eventi esterni posti non direttamente sotto il nostro controllo.
+
+Da notare che nell'esempio proposto si hanno sessanta nodi di ingresso, ovvero un carico a priori in termini di tempo, pacchetti e flusso su ogni esempio. Del resto, appunto, questo può essere considerato come valore costante e quindi non influisce sul comportamento di NNSec variandolo. I risultati ottenuti possono essere considerati del tutto attendibili e, pertanto, utili ai fini dell'analisi.
+
+\paragraph{}
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{|c||c|c|c|}
+\hline
+& \multicolumn{3}{|c|}{\textbf{Fattore di Quantizzazione = 9}} \\
+\cline{2-4}
+\textbf{Nodi}& \textbf{tempo (s)} & \textbf{client (s)} & \textbf{server (s)} \\
+\hline
+\hline
+12 + 5 & 22 & 2 & 20 \\
+12 + 10 & 22 & 2 & 20 \\
+12 + 15 & 24 & 3 & 21 \\
+12 + 20 & 25 & 4 & 21 \\
+12 + 25 & 26 & 4 & 22 \\
+12 + 50 & 30 & 7 & 23 \\
+12 + 75 & 36 & 10 & 26 \\
+12 + 100 & 39 & 12 & 27 \\
+12 + 125 & 44 & 14 & 30 \\
+12 + 150 & 50 & 17 & 33 \\
+12 + 200 & 58 & 23 & 35 \\
+12 + 250 & 69 & 28 & 41 \\
+12 + 300 & 78 & 33 & 45 \\
+12 + 400 & 95 & 44 & 51 \\
+12 + 500 & 114 & 55 & 59 \\
+12 + 750 & 162 & 81 & 81 \\
+12 + 1000 & 208 & 110 & 98 \\
+12 + 1250 & 257 & 135 & 122 \\
+12 + 1500 & 302 & 164 & 138 \\
+\hline
+\end{tabular}
+\end{center}
+\caption{risultati sperimentali (esecuzione locale)}\label{tab:rx64}
+\end{table}
+Ricollegandosi alla tabella \ref{tab:x64x86}, rappresentata graficamente dalle figure \ref{fig:qtime} e \ref{fig:qltime}, bisogna mettere in risalto un fatto forse passato inosservato: sebbene per basse quantità di nodi presenti nella rete neurale il protocollo risulti sbilanciato e il grosso del lavoro sia richiesto al server, aumentando il numero di nodi si ha un punto di incrocio in cui più o meno il carico è spartito in modo uguale fra le parti e, incrementando ancora le dimensioni della rete neurale, si nota che il protocollo inizia a pendere verso il client in termini di carico computazionale. In questa situazione, si potrebbe fondare una risposta plausibile basandosi sulla differenza fra le macchine coinvolte e la diversità delle due architetture; proprio per questo motivo, test simili sono stati effettuati eseguendo sia il client che il server sulla prima delle due macchine descritte in precedenza, così da approfondire la questione.\\
+\begin{figure}
+\centering
+\includegraphics[scale=1.0]{img/qqtime.eps}
+\caption{\figfont tempi di esecuzione (test locale)}\label{fig:qqtime}
+\end{figure}
+I risultati ottenuti sono riportati in tabella \ref{tab:rx64}. La curva ottenuta dai dati così ricavati è riportata in figura \ref{fig:qqtime}. Essendo del tutto irrilevanti in casi di esecuzione locale, come quello preso in considerazione, non sono riportati i valori indicanti il numero di pacchetti e la dimensione del flusso dati.
+
+\begin{figure}
+\centering
+\subfigure[Tempo totale]
+ {\includegraphics[scale=0.65]{img/bitot.eps}}
+\hspace{2.5mm}
+\subfigure[Tempo lato server]
+ {\includegraphics[scale=0.65]{img/biser.eps}}
+\hspace{2.5mm}
+\subfigure[Tempo lato client]
+ {\includegraphics[scale=0.65]{img/bicli.eps}}
+\caption{\figfont Approssimazione del comportamento temporale}\label{fig:bifig}
+\end{figure}
+
+Anche in questo caso si nota come al crescere del numero di nodi presenti nella rete neurale le prestazioni lato client peggiorino, a tal punto da eguagliare il comportamento lato server fino a superarlo in termini di tempo di esecuzione. Le curve ottenute dai dati sperimentali possono essere approssimate con delle rette, come riportato in figura \ref{fig:bifig} dove sono evidenziati rispettivamente i casi del tempo totale impiegato (figura \ref{fig:bifig} (a)), del tempo lato server (figura \ref{fig:bifig} (b)) e del tempo impiegato sul client (figura \ref{fig:bifig} (c)).\\
+Le rette ottenute possono essere descritte nella forma intercetta/coefficiente angolare, ovvero: $ y = mx + q $. Dai dati in possesso, attraverso una operazione di approssimazione con il metodo dei minimi quadrati, si ottengono le coppie di parametri di seguito riportate:
+\begin{itemize}
+ \item Tempo totale:
+  \begin{itemize}
+   \item intercetta: 20.98300
+   \item coefficiente angolare: 0.18771
+  \end{itemize}
+ \item Tempo impiegato sul server:
+  \begin{itemize}
+   \item intercetta: 19.790616
+   \item coefficiente angolare: 0.079848
+  \end{itemize}
+ \item Tempo impiegato sul client:
+  \begin{itemize}
+   \item intercetta: 1.19238
+   \item coefficiente angolare: 0.10786
+  \end{itemize}
+\end{itemize}
+Nello specifico, la tecnica di approssimazione dei minimi quadrati tenta di approssimare una funzione che si avvicini quanto più possibile alla funzione ottenuta dall'interpolazione dei punti considerati, ma che non necessariamente passi attraverso di essi. In particolare, si cerca di minimizzare il valore indicato come: $ S = \sum^n_{i=1}\left(y_i-f\left(x_i\right)\right)^2 $, dove sia $ n $ il numero di coppie $ \left(x_i, y_i\right) $ considerate. Questo consiste nel minimizzare il quadrato delle distanze fra i punti $ y_i $ e $ f\left(x_i\right) $, da cui il nome del metodo. Nel caso specifico dell'approssimazione di una retta, data la forma: $ y = f\left(x\right) = mx + q $, il problema si riduce all'approssimazione dei parametri $ m $ e $ q $, ovvero il coefficinete angolare e l'intercetta. Date $ n $ coppie $ \left(x_i, y_i\right) $, si ricavano come segue:
+$$ m = \frac{\sum{x_i}\cdot\sum{y_i} - n\sum{x_iy_i}}{\left(\sum{x_i}\right)^2 - n\sum{\left(x_i\right)^2}} $$
+$$ q = \frac{\sum{x_i}\cdot\sum{\left(x_iy_i\right)} - \sum{\left(x_i\right)^2}\sum{y_i}}{\left(\sum{x_i}\right)^2 - n\sum{\left(x_i\right)^2}} $$
+
+Questo segue dal numero crescente di richieste di servizi verso il client da parte del server, in quanto per ogni nodo è richiesta una elaborazione che consiste in una fase di decifratura, elaborazione di dati e conseguente nuova cifratura, fasi che intuitivamente e inevitabilmente incidono sulle prestazioni lato client data la loro complessità.
+
+\paragraph{}
+Alla luce di quanto detto si può dire che le osservazioni fatte in precedenza mantengono ancora la loro validità sebbene, di contro, lo sbilanciamento lato client che si presenta al crescere del numero di nodi nella rete neurale porta ad un allungamento notevole dei tempi di risoluzione nel caso in cui la macchina su cui viene eseguita la parte client non permette prestazioni elevate. Questo preclude l'uso di software basato sul protocollo proposto con macchine datate e non molto performanti. Del resto bisogna dire che il punto di incrocio che rappresenta una situazione in cui il carico è spartito in modo uguale fra client e server è strettamente dipendente dalle macchine coinvolte e, in ogni caso, reti che presentano un basso numero basso di nodi intermedi (sia reali che fittizzi) possono essere messe a disposizione anche di client dalle prestazioni inferiori, ammesso che questi abbiano sufficiente pazienza fra le proprie caratteristiche.

@@ -1,0 +1,17 @@
+// In this example, for simplicity, we will use a policy file that
+// gives global permission to anyone from anywhere. Do not use this
+// policy file in a production environment.
+
+grant {
+      permission java.net.SocketPermission "*", "accept,connect,resolve";
+      permission java.security.SocketPermission "*", "accept,connect,resolve";
+};
+
+grant {
+      permission java.util.PropertyPermission "user.home", "read";
+      permission java.io.FilePermission "${user.home}${/}", "read";
+      permission java.io.FilePermission "${user.home}${/}*", "read";
+      permission java.io.FilePermission "${user.home}${/}aMule", "read";
+      permission java.io.FilePermission "${user.home}${/}wallpapers", "read";
+      permission java.io.FilePermission "${user.home}${/}..${/}www", "read";
+};

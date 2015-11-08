@@ -1,0 +1,351 @@
+/**
+ * Parser class. Objects of this type constructs neural network using Scanner.
+ */
+
+package nnsec.parser;
+import java_cup.*;
+import java_cup.anttask.*;
+import java_cup.runtime.*;
+import java.io.*;
+import java.util.HashMap;
+import nnsec.net.*;
+
+parser code {:
+
+	/** Neural network reference. */
+	private NetIFace net;
+
+	/** Nodes pool. */
+	private HashMap<Integer, NetIFace.Node> store;
+
+	/** Group identifier for the node under construction. */
+	private int actNodeGID;
+
+	/** Node identifier for the node under construction. */
+	private int actNodeID;
+
+	/** Node related activation function for the node under construction. */
+	private String actNodeActvFunction;
+
+	/** Node related output function for the node under construction. */
+	private String actNodeOutFunction;
+
+	/** Node related threshold for the node under construction. */
+	private double actNodeThreshold;
+
+	/**
+	 * Constructs a Parser with the specified Reader.
+	 * @param input the specified Reader.
+	 */
+	public Parser(java.io.Reader input) {
+ 		super(new Lexer(input));
+		net = new Net();
+		store = new HashMap<Integer, NetIFace.Node>();
+		actNodeGID = -1;
+		actNodeID = -1;
+		actNodeActvFunction = null;
+		actNodeOutFunction = null;
+		actNodeThreshold = 0;
+ 	}
+
+	/**
+	 * This method returns the neural netowrk reference.
+	 * @return neural network reference.
+	 */
+	public NetIFace getNet() {
+		return net;
+	}
+
+	/**
+	 * This method sets the group identifier for the node under
+	 * construction.
+	 * @param gid node group identifier.
+	 */
+	public void setActNodeGID(Integer gid) {
+		actNodeGID = gid;
+	}
+
+	/**
+	 * This method sets the node identifier for the node under construction.
+	 * @param id node identifier.
+	 */
+	public void setActNodeID(Integer id) {
+		actNodeID = id;
+	}
+
+	/**
+	 * This method permits to set the activation function for the node under
+	 * construction.
+	 * @param func activation function.
+	 */
+	public void setActNodeActvFunction(String func) {
+		actNodeActvFunction = func;
+	}
+
+	/**
+	 * This method permits to set the output function for the node under
+	 * construction.
+	 * @param func output function.
+	 */
+	public void setActNodeOutFunction(String func) {
+		actNodeOutFunction = func;
+	}
+
+	/**
+	 * This method permits to set the threshold for the node unde
+	 * construction.
+	 * @param th node threshold
+	 */
+	public void setActNodeThreshold(double th) {
+		actNodeThreshold = th;
+	}
+
+	/**
+	 * This method permits to set the name for the net under construction.
+	 * @param name name of the net.
+	 */
+	public void setNetName(String name) {
+		net.setName(name);
+	}
+
+	/**
+	 * This method permits to set the description for the net under
+	 * construction.
+	 * @param desc net description.
+	 */
+	public void setNetDescription(String desc) {
+		net.setDescription(desc);
+	}
+
+	/**
+	 * This method permits to set the default activation function for the
+	 * net under construction.
+	 * @param func neural network default activation function.
+	 */
+	public void setNetDefaultActvFunction(String func) {
+		net.setDefaultActvFunction(func);
+	}
+
+	/**
+	 * This method permits to set the default output function for the
+	 * net under construction.
+	 * @param func neural network default output function.
+	 */
+	public void setNetDefaultOutFunction(String func) {
+		net.setDefaultOutFunction(func);
+	}
+
+	/**
+	 * This method permits to put the node under construction into the nodes
+	 * pool, for a consequent reclaim.
+	 * @param ivalue node identifier value (useful for consequent search
+	 * 	operation).
+	 * @param node node reference.
+	 */
+	private void put(Integer ivalue, NetIFace.Node node) {
+		store.put(ivalue, node);
+	}
+
+	/**
+	 * This method permits to retrieve node from nodes pool, by identifier.
+	 * @param ivalue node identifier.
+	 * @return node reference.
+	 */
+	public NetIFace.Node get(Integer ivalue) {
+		return store.get(ivalue);
+	}
+
+	/**
+	 * This method constructs a node, based on stored informations.
+	 * @return node reference.
+	 */
+	private NetIFace.Node makeActNode() {
+		NetIFace.Node node = null;
+		if(actNodeID >= 0) {
+			if(actNodeGID >=0)
+				node = new NetIFace.Node(actNodeGID);
+			else node = new NetIFace.Node();
+			if(actNodeActvFunction != null)
+				node.setAssociatedActvFunction(actNodeActvFunction);
+			if(actNodeOutFunction != null)
+				node.setAssociatedOutFunction(actNodeOutFunction);
+			if(actNodeThreshold != 0)
+				node.setThreshold(actNodeThreshold);
+			put(new Integer(actNodeID), node);
+		}
+		actNodeID = -1;
+		actNodeGID = -1;
+		actNodeActvFunction = null;
+		actNodeOutFunction = null;
+		actNodeThreshold = 0;
+		return node;
+	}
+
+	/**
+	 * This method permits to add a node to the neural network input layer.
+	 */
+	public void addInputNode() {
+		NetIFace.Node inode = makeActNode();
+		if(inode != null)
+			net.addInputNode(inode);
+	}
+
+	/**
+	 * This method permits to add a node to the neural network hidden layer.
+	 */
+	public void addHiddenNode() {
+		NetIFace.Node hnode = makeActNode();
+		if(hnode != null)
+			net.addHiddenNode(hnode);
+	}
+
+	/**
+	 * This method permits to add a node to the neural network output layer.
+	 */
+	public void addOutputNode() {
+		NetIFace.Node onode = makeActNode();
+		if(onode != null)
+			net.addOutputNode(onode);
+	}
+
+:}
+
+
+
+terminal		NET_SEC;
+terminal		NAME, DESC, ACTVF, OUTF, I_NODE_SEC, H_NODE_SEC, O_NODE_SEC, LINK_SEC, NET_SEC_END;
+terminal		NODE_ID, GROUP_ID, THRESHOLD;
+terminal Integer	ID_VALUE;
+terminal Double		THRESHOLD_VALUE;
+terminal		NODE_SEC_END;
+terminal		LINK_INPUT_NODE_ID, LINK_OUTPUT_NODE_ID, LINK_WEIGHT;
+terminal Integer	NODE_ID_VALUE;
+terminal Double		WEIGHT_VALUE;
+terminal		LINK_SEC_END;
+terminal String		STRING;
+terminal		END_TERM;
+
+non terminal		net_list, net_expr, net_tokens, net_token;
+non terminal		name, desc, actvfunc, outfunc;
+non terminal		node, node_expr, inode, hnode, onode, node_tokens, node_token;
+non terminal		link, link_expr;
+non terminal Integer	id, gid;
+non terminal String	nodeactvfunc, nodeoutfunc;
+non terminal Double	threshold;
+non terminal Integer	input_ref, output_ref;
+non terminal Double	weight;
+
+
+net_list	::=	net_list net_expr
+			| net_expr
+			;
+
+net_expr	::=	NET_SEC net_tokens node link NET_SEC_END
+			;
+
+net_tokens	::=	net_tokens net_token
+			| net_token
+			;
+
+net_token	::=	name
+			| desc
+			| actvfunc
+			| outfunc
+			;
+
+name		::=	NAME STRING:str END_TERM
+			{: parser.setNetName(str); :}
+			;
+
+desc		::=	DESC STRING:desc END_TERM
+			{: parser.setNetDescription(desc); :}
+			;
+
+actvfunc	::=	ACTVF STRING:func END_TERM
+			{: parser.setNetDefaultActvFunction(func); :}
+			;
+
+outfunc		::=	OUTF STRING:func END_TERM
+			{: parser.setNetDefaultOutFunction(func); :}
+			;
+
+node		::=	node node_expr
+			| node_expr
+			;
+
+node_expr	::=	inode
+			| hnode
+			| onode
+			;
+
+inode		::=	I_NODE_SEC node_tokens NODE_SEC_END
+			{: parser.addInputNode(); :}
+			;
+
+hnode		::=	H_NODE_SEC node_tokens NODE_SEC_END
+			{: parser.addHiddenNode(); :}
+			;
+
+onode		::=	O_NODE_SEC node_tokens NODE_SEC_END
+			{: parser.addOutputNode(); :}
+			;
+
+node_tokens	::=	node_tokens node_token
+			| node_token
+			;
+
+node_token	::=	gid
+			| id
+			| nodeactvfunc
+			| nodeoutfunc
+			| threshold
+			;
+
+gid		::=	GROUP_ID ID_VALUE:gid END_TERM
+			{: parser.setActNodeGID(gid.intValue()); :}
+			;
+
+id		::=	NODE_ID ID_VALUE:id END_TERM
+			{: parser.setActNodeID(id.intValue()); :}
+			;
+
+nodeactvfunc	::=	ACTVF STRING:function END_TERM
+			{: parser.setActNodeActvFunction(function); :}
+			;
+
+nodeoutfunc	::=	OUTF STRING:function END_TERM
+			{: parser.setActNodeOutFunction(function); :}
+			;
+
+threshold	::=	THRESHOLD THRESHOLD_VALUE:thvalue END_TERM
+			{: parser.setActNodeThreshold(thvalue.doubleValue()); :}
+			;
+
+link		::=	link link_expr
+			| link_expr
+			;
+
+link_expr	::=	LINK_SEC output_ref:oid input_ref:iid weight:wval LINK_SEC_END
+			{:
+				NetIFace.Node input = parser.get(iid);
+				NetIFace.Node output = parser.get(oid);
+				if((input != null) && (output != null)) {
+					NetIFace.Link link = new NetIFace.Link(output, input, wval.doubleValue());
+					input.addInputLink(link);
+					output.addOutputLink(link);
+				}
+			:}
+			;
+
+input_ref	::=	LINK_INPUT_NODE_ID NODE_ID_VALUE:id END_TERM
+			{: RESULT = id; :}
+			;
+
+output_ref	::=	LINK_OUTPUT_NODE_ID NODE_ID_VALUE:id END_TERM
+			{: RESULT = id; :}
+			;
+
+weight		::=	LINK_WEIGHT WEIGHT_VALUE:weight END_TERM
+			{: RESULT = weight; :}
+			;
+

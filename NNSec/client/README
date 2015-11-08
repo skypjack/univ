@@ -1,0 +1,58 @@
+--- README FILE ---
+
+the jar file nnsecclient.jar contains the client side classes of the nnsec
+project, useful to start the client part of the system.
+Reading the following sections is suggested for users that are new to nnsec.
+
+
+
+--- THE TRUSTSTORE ---
+
+What users need is to create a truststore (as shown in the JSSE Reference Guide)
+suitable for use with JSSE. This is because client and server communicate using
+a SSL tunnel. In fact, servers have to make a keyEntry in their keystore, so
+that they can submit a certificate to the clients. Then, clients can make a
+corresponding trustedCertEntry (public key only) into them truststore.
+
+
+Once that you have received a valid certificate from a server, following steps
+have to be done:
+
+1 - Import the certificate into a new truststore.
+
+      % keytool -import -alias nnseccert -file nnsec.cer -keystore truststore
+
+      Enter keystore password:  trustword
+      Owner: CN=Michele Caini, OU=lci, O=unifi, L=Florence, ST=FI, C=IT
+      Issuer: CN=Michele Caini, OU=lci, O=unifi, L=Florence, ST=FI, C=IT
+      Serial number: 46e29d22
+      Valid from: Sat Sep 08 15:01:22 CEST 2007 until: Fri Dec 07 14:01:22 CEST
+      2007
+      Certificate fingerprints:
+        MD5: 76:8B:9E:4A:E3:5A:00:AE:65:8E:B5:DF:47:FE:E7:06
+	SHA1: 9C:0F:C8:DC:C8:5E:CC:CD:25:94:E4:A4:F3:70:14:85:7C:9C:A3:8E
+      Trust this certificate? [no]:  yes
+      Certificate was added to keystore
+
+
+
+--- TEST-ONLY PROVIDED FILES ---
+
+Provided with the jar file you can see that there are two files (other than that
+README file). These are test-files that you can use trying the client, but there
+is absolutely no warranty with these files. Use them at your own risk.
+
+
+
+--- COMMAND LINE ---
+
+Once that the truststore is ready to be used, you can run the client. Simply,
+type:
+
+    % java -Djavax.net.ssl.trustStore=truststore \
+            -Djavax.net.ssl.trustStorePassword=nnsects -jar nnsecclient.jar
+
+
+Clearly, you have to change the truststore/nnsects entries if you have assigned
+different name to the file or if you have used a different password for the
+truststore.

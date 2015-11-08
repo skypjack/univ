@@ -1,0 +1,2 @@
+Main-Class: nnsec/client/Client
+Class-Path: nnsecclient.jar

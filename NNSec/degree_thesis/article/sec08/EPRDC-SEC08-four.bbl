@@ -1,0 +1,145 @@
+\begin{thebibliography}{10}
+\providecommand{\url}[1]{{#1}}
+\providecommand{\urlprefix}{URL }
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{DOI~\discretionary{}{}{}#1}\else
+  \providecommand{\doi}{DOI~\discretionary{}{}{}\begingroup
+  \urlstyle{rm}\Url}\fi
+
+\bibitem{PPDM-Agrawal}
+Agrawal, R., Srikant, R.: Privacy-preserving data mining.
+\newblock In: SIGMOD '00: Proceedings of the 2000 ACM SIGMOD International
+  Conference on Management of Data, pp. 439--450. ACM Press, New York, NY, USA
+  (2000).
+\newblock \doi{http://doi.acm.org/10.1145/342009.335438}
+
+\bibitem{barker2005rkm}
+Barker, E., Barker, W., Burr, W., Polk, W., Smid, M.: {Recommendation for Key
+  Management--Part 1: General}.
+\newblock NIST Special Publication pp. 800--57 (2005)
+
+\bibitem{ppnn}
+Barni, M., Orlandi, C., Piva, A.: A privacy-preserving protocol for
+  neural-network-based computation.
+\newblock In: MM\&Sec '06: Proceeding of the 8th Workshop on Multimedia and
+  Security, pp. 146--151. ACM Press, New York, NY, USA (2006).
+\newblock \doi{http://doi.acm.org/10.1145/1161366.1161393}
+
+\bibitem{beaver2000mls}
+Beaver, D.: {Minimal-latency secure function evaluation}.
+\newblock Proc. of EUROCRYPT’00, LNCS pp. 335--350 (2000)
+
+\bibitem{bishop1995nnp}
+Bishop, C.: {Neural Networks for Pattern Recognition}.
+\newblock Oxford University Press (1995)
+
+\bibitem{chang2005ope}
+Chang, Y., Lu, C.: {Oblivious polynomial evaluation and oblivious neural
+  learning}.
+\newblock Theoretical Computer Science \textbf{341}(1), 39--54 (2005)
+
+\bibitem{comesana2006bns}
+Comesana, P., Perez-Freire, L., Perez-Gonzalez, F.: {Blind newton sensitivity
+  attack}.
+\newblock Information Security, IEE Proceedings \textbf{153}(3), 115--125
+  (2006)
+
+\bibitem{rd-generalisation}
+Damg{\aa}rd, I., Jurik, M.: {A generalisation, a simplification and some
+  applications of Paillier's probabilistic public-key system.}
+\newblock In: Public Key Cryptography, pp. 119--136 (2001)
+
+\bibitem{tor-design}
+Dingledine, R., Mathewson, N., Syverson, P.: Tor: The second-generation onion
+  router.
+\newblock In: Proceedings of the 13th USENIX Security Symposium (2004)
+
+\bibitem{fouque2003cr}
+Fouque, P., Stern, J., Wackers, G.: {CryptoComputing with rationals}.
+\newblock Financial-Cryptography.-6th-International-Conference,
+  Lecture-Notesin-Computer-Science \textbf{2357}, 136--46 (2003)
+
+\bibitem{Gold87}
+Goldreich, O., Micali, S., Wigderson, A.: How to play any mental game or a
+  completeness theorem for protocols with honest majority.
+\newblock In: STOC '87: Proceedings of the twentieth annual ACM symposium on
+  Theory of computing, pp. 218--229. ACM (1987)
+
+\bibitem{gorman1988}
+Gorman, P., et~al.: {UCI} machine learning repository (1988).
+\newblock
+  \urlprefix\url{http://www.ics.uci.edu/$\sim$mlearn/{MLR}epository.html}
+
+\bibitem{70408}
+Hornik, K., Stinchcombe, M., White, H.: Multilayer feedforward networks are
+  universal approximators.
+\newblock Neural Netw. \textbf{2}(5), 359--366 (1989)
+
+\bibitem{jha2005ppc}
+Jha, S., Kruger, L., McDaniel, P.: {Privacy Preserving Clustering}.
+\newblock 10th ESORICS  (2005)
+
+\bibitem{Kalk98}
+Kalker, T., Linnartz, J.P.M.G., van Dijk, M.: Watermark estimation through
+  detector analysis.
+\newblock In: ICIP98, vol.~I, pp. 425--429. Chicago, IL, USA (1998)
+
+\bibitem{kantarcioglu03privacy}
+Kantarcioglu, M., Vaidya, J.: Privacy preserving naive bayes classifier for
+  horizontally partitioned data.
+\newblock In: In IEEE Workshop on Privacy Preserving Data Mining (2003).
+\newblock \urlprefix\url{citeseer.ist.psu.edu/kantarcioglu03privacy.html}
+
+\bibitem{lapedes1988nnw}
+Lapedes, A., Farber, R.: {How neural nets work}.
+\newblock Neural information processing systems pp. 442--456 (1988)
+
+\bibitem{lipmaa2006svm}
+Laur, S., Lipmaa, H., Mielik\"{a}inen, T.: Cryptographically private support
+  vector machines.
+\newblock In: KDD '06: Proceedings of the 12th ACM SIGKDD International
+  Conference on Knowledge discovery and data mining, pp. 618--624. ACM Press,
+  New York, NY, USA (2006).
+\newblock \doi{http://doi.acm.org/10.1145/1150402.1150477}
+
+\bibitem{PPDM-LindellPinkas}
+Lindell, Y., Pinkas, B.: Privacy preserving data mining.
+\newblock In Advances in Cryptology - CRYPTO '00, volume 1880 of Lecture Notes
+  in Computer Science \textbf{1880}, 36--54 (2000).
+\newblock \urlprefix\url{citeseer.ist.psu.edu/lindell00privacy.html}
+
+\bibitem{Pailler99}
+Pailler, P.: Public-key cryptosystems based on composite degree residuosity
+  classes.
+\newblock In: Proceedings of Eurocrypt'99, Lecture Notes is Computer Science
+  vol. 1592, pp. 223--238. Springer-Verlag (1999)
+
+\bibitem{rajkovic1997}
+Rajkovic, V., et~al.: {UCI} machine learning repository (1997).
+\newblock
+  \urlprefix\url{http://www.ics.uci.edu/$\sim$mlearn/{MLR}epository.html}
+
+\bibitem{rumelhart1986lir}
+Rumelhart, D., Hinton, G., Williams, R.: {Learning internal representations by
+  error propogation}.
+\newblock Parallel distributed processing: Explorations in the microstructure
+  of cognition \textbf{1}, 318--362 (1986)
+
+\bibitem{sander1999nic}
+Sander, T., Young, A., Yung, M.: {Non-Interactive CryptoComputing For NC 1}.
+\newblock IEEE Symposium on Foundations of Computer Science pp. 554--567 (1999)
+
+\bibitem{yang2005bayesian}
+Yang, Z., Wright, R.N.: Improved privacy-preserving bayesian network parameter
+  learning on vertically partitioned data.
+\newblock In: ICDEW '05: Proceedings of the 21st International Conference on
+  Data Engineering Workshops, p. 1196. IEEE Computer Society, Washington, DC,
+  USA (2005).
+\newblock \doi{http://dx.doi.org/10.1109/ICDE.2005.230}
+
+\bibitem{Yao86}
+Yao, A.: How to generate and exchange secrets.
+\newblock In: IEEE FOCS'86 - Foundations of Computer Science, pp. 162--167
+  (1986)
+
+\end{thebibliography}

@@ -1,0 +1,100 @@
+\begin{thebibliography}{GHJV95}
+
+\bibitem[Arn95]{millerrabin}
+F.~Arnault.
+\newblock Rabin-miller primality test: Composite numbers which pass it.
+\newblock {\em Mathematics of Computation}, 64(209):355--361, 1995.
+
+\bibitem[BBS86]{blumblumshub}
+L.~Blum, M.~Blum, and M.~Shub.
+\newblock A simple unpredictable pseudo-random number generator.
+\newblock {\em SIAM Journal on Computing}, 15:364--383, 1986.
+
+\bibitem[DJ00]{brics}
+Ivan~B. Damg{\aa}rd and Mads~J. Jurik.
+\newblock A generalisation, a semplification and some applications of
+  paillier's probabilistic public-key system.
+\newblock {\em Public Key Cryptography: 4th International Workshop on Practice
+  and Theory in Public Key Cryptosystems, PKC 2001, Cheju Island, Korea,
+  February 13-15, 2001. Proceedings}, 1992/2000:119, 2000.
+
+\bibitem[FHBZ]{javanns}
+I.~Fischer, F.~Hennecke, C.~Bannes, and A.~Zell.
+\newblock {\em JavaNNS: Java Neural Network Simulator}.
+\newblock University of T\.
+
+\bibitem[FKK96]{ssl}
+A.~Freier, P.~Karlton, and P.~Kocher.
+\newblock Secure socket layer.
+\newblock Internet Draft, Mar 1996.
+
+\bibitem[GHJV95]{designpattern}
+E.~Gamma, R.~Helm, R.~Johnson, and J.~Vlissides.
+\newblock {\em Design Patterns: Elements of Reusable Object-Oriented Software}.
+\newblock Addison Wesley, 1995.
+
+\bibitem[GMW87]{goldreich1987pam}
+O.~Goldreich, S.~Micali, and A.~Wigderson.
+\newblock How to play any mental game.
+\newblock {\em Proceedings of the nineteenth annual ACM conference on Theory of
+  computing}, pages 218--229, 1987.
+
+\bibitem[Gol01]{goldreich2001fcb}
+O.~Goldreich.
+\newblock {\em Foundations of Cryptography, Volume I: Basic Tools}.
+\newblock Cambridge University Press, 2001.
+
+\bibitem[Gol04]{goldreich2004fci}
+O.~Goldreich.
+\newblock {\em Foundations of Cryptography, Volume II: Basic Applications}.
+\newblock Cambridge University Press, 2004.
+
+\bibitem[HFA]{javacup}
+S.~Hudson, F.~Flannery, and S.~Ananian.
+\newblock {\em JavaCUP - LALR Parser Generator}.
+\newblock Web Page: http://www2.cs.tum.edu/projects/cup/.
+
+\bibitem[Kle]{jflex}
+G.~Klein.
+\newblock {\em JFlex - The Fast Scanner Generator for Java}.
+\newblock Web Page: http://jflex.de/index.html.
+
+\bibitem[Mit97]{Mitchell}
+T.~M. Mitchell.
+\newblock {\em Machine Learning}.
+\newblock Mc Graw-Hill, 1997.
+
+\bibitem[OPB07]{proto}
+C.~Orlandi, A.~Piva, and M.~Barni.
+\newblock Efficient privacy preserving remote data classification, 2007.
+
+\bibitem[Pai99]{paillier}
+Pascal Paillier.
+\newblock Public-key cryptosystem based on composite degree residuosity
+  classes.
+\newblock In J.~Stern, editor, {\em Advances in Criptology - EUROCRYPT '99},
+  volume 1592 of Lecture Notes in Computer Science, pages 223--238.
+  Springer-Verlag, 1999.
+
+\bibitem[RN03]{RussellNorvig}
+S.~Russel and P.~Norvig.
+\newblock {\em Artificial Intelligence, A Modern approach}.
+\newblock Prentice Hall, 2003.
+
+\bibitem[Suna]{javarmi}
+Sun Microsystems.
+\newblock {\em Java Remote Method Invocation}.
+\newblock Web Page: http://java.sun.com/j2se/1.5.0/docs/guide/rmi/index.html.
+
+\bibitem[Sunb]{javasec}
+Sun Microsystems.
+\newblock {\em Java Security Documentation}.
+\newblock Web Page: http://java.sun.com/j2se/1.5.0/docs/guide/security/.
+
+\bibitem[Yao82]{yao1982psc}
+A.C. Yao.
+\newblock Protocols for secure computations.
+\newblock {\em Proceedings of the 23rd Annual IEEE Symposium on Foundations of
+  Computer Science}, pages 160--164, 1982.
+
+\end{thebibliography}

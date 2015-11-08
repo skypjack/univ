@@ -1,0 +1,68 @@
+﻿[ Introduzione ]
+
+[ Il protocollo ]
+
+	[ Scopo ]
+
+	[ Cifrario originale (paillier) ]
+
+	[ Cifrario modificato (damgard-jurik) ]
+
+	[ Il protocollo vero e proprio ]
+
+	[ Possibili utilizzi ]
+
+[ NNSec ]
+
+	[ Progettazione e struttura ]
+
+	[ Il package nnsec ]
+
+	[ Parser ]
+
+		[ Grammatica dei file in ingresso ]
+
+		[ JavaCUP e JFlex ]
+
+	[ Cryptosystem ]
+
+		[ Usare i float è possibile ]
+
+		[ Il cifrario]
+
+	[ Net ]
+
+		[ Composizione = confusione (net/net wrapper) ]
+
+		[ Manager di reti (accesso controllato) ]
+
+	[ Server ]
+
+		[ Factory remota ]
+
+		[ I "lavoratori" ]
+
+	[ Client ]
+
+		[ Modulo di comunicazione ]
+
+		[ Il "calcolatore" ]
+
+	[ Modello di comunicazione ]
+
+		[ Remote Method Invocation ]
+
+		[ Secure Socket Layer ]
+
+		[ I quattro moschettieri (worker, worker
+        	factory, communication module, calculator) ]
+
+[ Prove sperimentali ]
+
+	[ Ruolo del server (persone) ]
+
+	[ Ruolo del client (persone) ]
+
+	[ Certificati e invocazione (keytool, java e parametri) ]
+
+[ Conclusioni]

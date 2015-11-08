@@ -1,0 +1,422 @@
+\section{Introduzione}
+
+\subsection{Panoramica}
+
+%% SLIDE
+
+\begin{frame}
+ \frametitle{Motivazioni}
+ \begin{block}{\textbf{SPEED} (\textbf{S}ignal \textbf{P}rocessing in the \textbf{E}ncrypt\textbf{E}d \textbf{D}omain)}
+  Col progetto SPEED vengono avvicinati due mondi apparentemente distanti, come:
+  \begin{itemize}
+   \item<2-> \alert<2,2>{\textbf{Tecniche di \textit{signal processing}}}:
+    \begin{itemize}
+     \item Strumenti di classificazione dei dati in classi di appartenenza
+     \item Percettrone, reti neurali feed-forward multi-livello
+    \end{itemize}
+   \item<3-> \alert<3,3>{\textbf{Tecniche di crittografia}}:
+    \begin{itemize}
+     \item Sistemi dalle interessanti quanto utili proprietà omomorfiche
+     \item Cifrario di Paillier, generalizzazione di Damg\aa rd-Jurik
+    \end{itemize}
+  \end{itemize}
+ \end{block}
+ \begin{block}<4->{Il lavoro di tesi}
+  Partendo dallo studio di un protocollo già esistente nella teoria:
+  \begin{itemize}
+   \item Algoritmi e procedure prendono vita sotto forma di classi e relazioni fra esse
+   \item Viene realizzato un classificatore in grado di operare con dati cifrati
+   \item Si ottengono reti neurali capaci di lavorare in dominio cifrato
+  \end{itemize}
+ \end{block}
+\end{frame}
+
+
+\section{Dalla Teoria \ldots}
+
+\subsection{Il Problema}
+
+%% SLIDE
+
+\begin{frame}
+ \frametitle{Scenario}
+ \begin{columns}[c]
+  \column{0.60\textwidth}
+   \begin{block}{Gli attori\ldots}
+    \begin{itemize}
+     \item <2->Bob vuole mettere a disposizione una rete neurale opportunamente allenata
+     \item <3->Alice vuole usufruire del servizio offerto da Bob per elaborare i propri dati
+     \item <4->Bob e Alice non si fidano l'uno dell'altro
+     \item <5->Non si può o non si vuole trovare ad una terza parte fidata per entrambi
+    \end{itemize}
+   \end{block}
+  \column{0.35\textwidth}
+   \begin{overprint}
+    \onslide<2>\begin{center}\pgfuseimage{bob}\end{center}
+    \onslide<3>\begin{center}\pgfuseimage{bobalice}\end{center}
+    \onslide<4>\begin{center}\pgfuseimage{bobalicetp}\end{center}
+    \onslide<5>\begin{center}\pgfuseimage{bobalicentp}\end{center}
+    \onslide<6>\begin{center}\pgfuseimage{bobalice}\end{center}
+   \end{overprint}
+ \end{columns}
+ \begin{block}<6->{\ldots E un caso concreto}
+  Si immagini:
+  \begin{itemize}
+   \item Una rete neurale in grado di diagnosticare una malattia più o meno grave
+   \item Un capo (o ex tale) di governo con sintomi particolari
+  \end{itemize}
+  La riservatezza dei dati acquista un valore inestimabile.
+ \end{block}
+\end{frame}
+
+%% SLIDE
+
+\begin{frame}
+ \frametitle{Requisiti}
+ \begin{columns}<1->
+  \column{0.45\textwidth}
+   \pgfuseimage{random}
+  \column{0.50\textwidth}
+   \begin{block}{Sicurezza per Alice}
+    Risiede in quella del cifrario sottostante:
+     \begin{itemize}
+      \item Protezione dei dati forniti in ingresso
+      \item Protezione dei risultati ottenuti
+     \end{itemize}
+   \end{block}
+ \end{columns}
+ \begin{columns}[t]
+  \column{0.45\textwidth}
+   \begin{block}<2->{Sicurezza per Bob}
+    Consiste nel proteggere la struttura della rete neurale attraverso:
+    \begin{itemize}
+     \item<3-> Espansione tramite aggiunta di neuroni fittizi ai livelli intermedi
+     \item<4-> Permutazione di neuroni in uno stesso livello intermedio
+     \item<5-> Occultamento dello stato del singolo neurone intermedio
+    \end{itemize}
+   \end{block}
+  \column{0.50\textwidth}
+   \begin{overprint}
+     \onslide<1>\pgfuseimage{blank}
+     \onslide<2>\begin{center}\vskip4pt\pgfuseimage{nninit}\end{center}
+     \onslide<3>\begin{center}\vskip4pt\pgfuseimage{nnfill}\end{center}
+     \onslide<4>\begin{center}\vskip4pt\pgfuseimage{nnperm}\end{center}
+     \onslide<5>\begin{center}\vskip4pt\pgfuseimage{nnsign}\end{center}
+   \end{overprint}
+ \end{columns}
+\end{frame}
+
+\subsection{Il Cifrario}
+
+%% SLIDE
+
+\begin{frame}
+ \frametitle{Proprietà Omomorfiche}
+ Il cifrario di Paillier ha caratteristiche molto utili e interessanti, in particolare:
+ \begin{block}{Proprietà omomorfiche \ldots}
+  Siano $ m_i $ messaggi in chiaro ($ i = 1,\ldots ,n $), $ c_i = E\left(m_i\right) $ la loro versione cifrata (di conseguenza, $ m_i = D\left(c_i\right) $), siano $ a_i $ un insieme di $ n $ valori interi, allora:
+  $$ D\left(\prod_{i = 1}^n{c_i^{a_i}}\right) = D\left(\prod_{i = 1}^n{E\left(m_i\right)^{a_i}}\right) = \sum_{i = 1}^n{a_i\cdot m_i} $$
+ \end{block}
+ \begin{block}<2->{\ldots E reti neurali}
+  Siano $ x $ un nodo nel $ j $-esimo livello e $ \bar{x} $ e $ \bar{w} $ i vettori di nodi connessi e pesi associati (di lunghezza $ n $), sia $ \bar{c} = E\left(\bar{x}\right) $. Il valore cifrato di attivazione $ d_x $ per $ x $ risulta da:
+  $$ d_x = \prod_{i = 1}^n{c_i^{w_i}} \hskip8pt \Longrightarrow \hskip8pt a_x = D\left(d_x\right) = \sum_{i = 1}^n{w_i\cdot x_i}$$
+ \end{block}
+\end{frame}
+
+\subsection{Protocollo}
+
+%% SLIDE
+
+\begin{frame}
+ \frametitle{Il Protocollo}
+ \begin{block}{Neuroni di ingresso}
+  Per ogni neurone di ingresso $ i $:
+  \begin{itemize}
+   \item<2-> Alice cifra il valore in ingresso $ m_i $ con la propria chiave pubblica
+   \item<3-> Alice invia il valore cifrato $ c_i = E\left(m_i\right) $ a Bob, il quale lo associa al corrispondente neurone di ingresso della rete neurale per l'elaborazione
+  \end{itemize}
+ \end{block}
+ \vspace{\stretch{1}}
+ \begin{overprint}
+  \onslide<1>\begin{center}\pgfuseimage{step0}\end{center}
+  \onslide<2>\begin{center}\pgfuseimage{step01}\end{center}
+  \onslide<3>\begin{center}\pgfuseimage{step02}\end{center}
+ \end{overprint}
+\end{frame}
+
+%% SLIDE
+
+\begin{frame}
+ \frametitle{Il Protocollo}
+ \begin{block}{Neuroni intermedi}
+  \uncover<2->{Per ogni neurone intermedio $ k $, Bob ricava il valore di attivazione $ z^\prime_k $ come segue:}
+  \begin{itemize}
+   \item<3-> Calcola il valore cifrato $ d_k = E\left(a_k\right) $ e genera in modo casuale $ t_j \in \lbrace -1, 1\rbrace $:\\ se $ t_j = -1 $ allora $ d^\prime_k = d_k^{-1} = E\left(-a_k\right)$, altrimenti $ d^\prime_k = d_k $
+   \item<4-> Invia $ d^\prime_k $ ad Alice, la quale computa e ritorna: $ z_k = E\left(g\left(D\left(d_k\right)\right)\right) $\\
+   \begin{itemize}
+    \item $ g\left(a\right) $ funzione non lineare di attivazione del neurone (segno o sigmoide)
+    \item Necessario ed unico punto di interazione fra le parti
+   \end{itemize}
+   \item<5-> Se $ t_j = -1 $ allora $ z^\prime_k = E\left(1\right)z_k^{-1} $, altrimenti $ z^\prime_k = z_k $\\
+   (segue dalle proprietà di anti-simmetria della funzione $ g\left(a\right) $)
+   %(infatti: $ E\left(g\left(a_k\right)\right) = E\left(1 - g\left(-a_k\right)\right) = E\left(1\right)E\left(g\left(-a_k\right)\right)^{-1} = E\left(1\right)z_k^{-1} $)
+  \end{itemize}
+ \end{block}
+ \vspace{\stretch{1}}
+ \begin{overprint}
+  \onslide<2>\begin{center}\pgfuseimage{step0}\end{center}
+  \onslide<3>\begin{center}\pgfuseimage{step1}\end{center}
+  \onslide<4>\begin{center}\pgfuseimage{step2}\end{center}
+  \onslide<5>\begin{center}\pgfuseimage{step3}\end{center}
+ \end{overprint}
+\end{frame}
+
+%% SLIDE
+
+\begin{frame}
+ \frametitle{Il Protocollo}
+ \begin{block}{Neuroni di uscita}
+  \uncover<2->{Per ogni neurone di uscita $ j $:}
+  \begin{itemize}
+   \item<3-> Bob computa il valore: $ d_j = E\left(a_j\right) $, inviandolo poi ad Alice
+   \item<4-> Alice ricava il valore di uscita del singolo nodo come: $ z_j = g\left(D\left(d_j\right)\right) $
+  \end{itemize}
+  \uncover<5->{\textbf{Nota}: I valori così ottenuti rappresentano il risultato della computazione tramite la rete neurale di Bob sui dati forniti in ingresso da Alice, avvenuta:
+  \begin{itemize}
+   \item Oscurando la rete neurale, preservandone la struttura interna
+   \item Garantendo riservatezza per i dati di Alice
+  \end{itemize}
+  }
+ \end{block}
+ \vspace{\stretch{1}}
+ \begin{overprint}
+  \onslide<2>\begin{center}\pgfuseimage{step0}\end{center}
+  \onslide<3>\begin{center}\pgfuseimage{step4}\end{center}
+  \onslide<4>\begin{center}\pgfuseimage{step5}\end{center}
+  \onslide<5->\begin{center}\pgfuseimage{step0}\end{center}
+ \end{overprint}
+\end{frame}
+
+
+\section{\ldots Alla Pratica}
+
+\subsection{Progettazione e Struttura}
+
+%% SLIDE
+
+\begin{frame}
+ \frametitle{NNSec}
+ Il software realizzato:
+ \begin{itemize}
+  \item Implementa praticamente il protocollo proposto
+  \item Realizza un classificatore per dati cifrati
+ \end{itemize}
+ \vskip16pt
+ Inoltre, propone caratteristiche aggiuntive fra le quali:
+ \begin{columns}[c]
+  \column{0.40\textwidth}
+   \begin{block}{Domanda\ldots}
+    \begin{itemize}
+     \item \alert<2,2>{Parser integrato,\\ linguaggio specifico}
+     \item \alert<3,3>{Comunicazione fra\\ le parti coinvolte}
+     \item \alert<4,4>{Interazione multi-utente,\\ accesso concorrente}
+    \end{itemize}
+   \end{block}
+  \column{0.50\textwidth}
+  \begin{block}{\ldots E risposta}
+   \begin{overprint}
+    \onslide<2>
+    \begin{itemize}
+     \item Supporto attraverso:
+      \begin{itemize}
+       \item \textbf{JFlex}
+       \item \textbf{JavaCUP}
+      \end{itemize}
+     \item Realizzazione di un analizzatore sintattico/lessicale
+     \item Ideazione di un linguaggio ad-hoc per la descrizione di reti neurali
+    \end{itemize}
+    \vskip16pt
+    \onslide<3>
+    \begin{itemize}
+     \item Implementazione di un modello distribuito client-server
+     \item Uso della tecnologia \textbf{RMI} (Remote Method Invocation)
+     \item Comunicazione basata su messaggi scambiati fra oggetti
+    \end{itemize}
+    \onslide<4>
+    \begin{itemize}
+     \item Strutture dati e algoritmi provenienti dalla teoria dei sistemi operativi
+     \item Pattern di progettazione presi in prestito dalle tecniche di ingegneria del software
+     \item Uso degli strumenti messi a disposizione dal linguaggio
+    \end{itemize}
+   \end{overprint}
+  \end{block}
+ \end{columns}
+\end{frame}
+
+\subsection{Reti Neurali in NNSec}
+
+%% SLIDE
+
+\begin{frame}
+ \begin{columns}[c]
+  \column{0.60\textwidth}
+   In \texttt{NNSec} le reti neurali sono gestite attraverso generici modelli unici.
+   \begin{block}{Pattern Composite}
+    Espansione e permutazione delle reti neurali:
+    \begin{itemize}
+     \item Espansione durante la fase di composizione
+     \item Permutazione prima di ogni richiesta d'uso
+     \item Interfaccia di base unica per il client
+    \end{itemize}
+   \end{block}
+  \column{0.35\textwidth}
+   \begin{center}\pgfuseimage{composite}\end{center}
+ \end{columns}
+ \begin{block}<2->{Gestore delle Reti Neurali}
+%  Il gestore delle reti neurali:
+  \begin{itemize}
+   \item Inserisce ogni rete neurale in un involucro che la espande
+   \item Associa ad ogni rete neurale un semaforo che ne regola l'accesso concorrente
+   \item Si preoccupa di forzare la permutazione dei neuroni
+   \item Gestisce il recupero delle informazioni e le richieste d'uso
+  \end{itemize}
+ \end{block}
+\end{frame}
+
+\subsection{Modello di Comunicazione}
+
+%% SLIDE
+
+\begin{frame}
+ \begin{overprint}
+   \onslide<1>\begin{center}\pgfuseimage{blank}\end{center}
+   \onslide<2>\begin{center}\pgfuseimage{qm1}\end{center}
+   \onslide<3>\begin{center}\pgfuseimage{qm2}\end{center}
+   \onslide<4>\begin{center}\pgfuseimage{qm3}\end{center}
+   \onslide<5>\begin{center}\pgfuseimage{qm4}\end{center}
+ \end{overprint}
+ \begin{block}{I Quattro Moschettieri}
+  Il cuore di \texttt{NNSec}, oltre che dal gestore delle reti neurali, comprende:
+  \begin{itemize}
+   \item<2-> \alert<2,2>{Factory remota}: Risponde alle necessità di interazione
+   \item<3-> \alert<3,3>{Lavoratori}: Servono richieste diverse in modo indipendente e concorrente
+   \item<4-> \alert<4,4>{Modulo di comunicazione}: Impostazione d'ambiente, inoltro di richieste
+   \item<5-> \alert<5,5>{Calcolatore}: Risolve il problema del riferimento circolare
+  \end{itemize}
+ \end{block}
+\end{frame}
+
+\subsection{Prove Sperimentali}
+
+%% SLIDE
+
+\begin{frame}
+ \begin{columns}[t]
+  \column{0.65\textwidth}
+   \begin{overprint}
+    \onslide<1->\pgfuseimage{allgraph}
+    %\onslide<2>\pgfuseimage{bitot}
+    %\onslide<3>\pgfuseimage{bicli}
+    %\onslide<4>\pgfuseimage{biser}
+    %\onslide<5>\pgfuseimage{allgraph}
+   \end{overprint}
+  \column{0.30\textwidth}
+   \begin{block}{Test}
+    Preparazione:
+    \begin{itemize}
+     \item Rete neurale (overfitting sui dati)
+     \item Numero neuroni intermedi variabile
+     \item Chiave di lunghezza 1024 bit
+     \item Processore Quad Core (2.40GHz) e 4Gb RAM
+    \end{itemize}
+   \end{block}
+ \end{columns}
+ \begin{block}<2->{Risultati}
+  I risultati ottenti determinano:
+  \begin{itemize}
+   \item<3-> Crescita lineare in base al numero di neuroni intermedi
+   \item<4-> Esistenza di un punto di taglio con uguale distribuzione del carico di lavoro
+   \item<5-> Degenerazione più consistente lato client
+  \end{itemize}
+ \end{block}
+\end{frame}
+
+%% SLIDE
+
+\begin{frame}
+ \begin{block}{Approfondimenti}
+  Un aspetto in particolare merita di essere approfondito: la \textbf{degenerazione}
+  \vskip8pt\uncover<2->{Motivazioni possibili della degenerazione:}\vskip4pt
+  \begin{columns}<2->[t]
+   \column{0.475\textwidth}
+    \textbf{Lato Server}
+    \begin{itemize}
+     \item<3-> Costo dovuto ad operazioni di moltiplicazione e potenze
+     \item<4-> Numero di operazioni superiore\ldots
+     \item<5-> \ldots Ma di complessità inferiore
+    \end{itemize}
+   \column{0.475\textwidth}
+    \textbf{Lato Client}
+    \begin{itemize}
+     \item<3-> Costo legato principalmente alle operazioni di decifratura/cifratura
+     \item<4-> Numero di operazioni inferiore\ldots
+     \item<5-> \ldots Ma di complessità superiore
+    \end{itemize}
+  \end{columns}
+ \end{block}
+ \begin{columns}
+  \column{0.60\textwidth}
+   \begin{block}<6->{Fattori}
+    Alcuni dei fattori in gioco sono:
+     \begin{itemize}
+      \item Macchina virtuale (Java Virtual Machine)
+      \item Costo in termini di operazioni macchina
+      \item Architettura degli elaboratori
+      \item Complessità di cifratura/decifratura
+      \item \ldots
+     \end{itemize}
+   \end{block}
+  \column{0.35\textwidth}
+   \begin{overprint}
+    \onslide<6->\pgfuseimage{cmp}
+   \end{overprint}
+ \end{columns}
+\end{frame}
+
+
+\section{Conclusioni}
+
+\subsection{Sommario}
+
+%% SLIDE
+
+{
+\setbeamerfont{block title}{size=\Large}
+\begin{frame}
+ \begin{block}{Riassumendo}
+  \begin{itemize}
+   \item<2-> L'obiettivo è quello di:
+    \begin{itemize}
+     \item Avvicinare strumenti di classificazione e tecniche di crittografia
+     \item Realizzare un classificatore per dati cifrati
+    \end{itemize}
+   \item<3-> La base di partenza:
+    \begin{itemize}
+     \item Interessanti proprietà omomorfiche del cifrario
+     \item Un protocollo che sfrutti tali caratteristiche a suo favore
+    \end{itemize}
+   \item<4-> Il risultato finale:
+    \begin{itemize}
+     \item Un software sviluppato in Java che implementa il protocollo proposto
+     \item Multi-utenza, accesso concorrente alle risorse
+    \end{itemize}
+   \item<5-> Le prove sperimentali hanno rivelato infine:
+    \begin{itemize}
+     \item Prestazioni accettabili in ogni caso su hardware non datato e in genere per reti neurali con un numero di neuroni intermedi contenuto
+     \item Possibile previsione del comportamento in base al numero di neuroni
+     \item Applicabilità possibile (apparentemente) a scenari reali
+    \end{itemize}
+  \end{itemize}
+ \end{block}
+\end{frame}
+}
