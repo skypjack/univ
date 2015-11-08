@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="jar" name="Briscolao">
+	<property name="version" value="1.5.1-rc2"/>
+	
+	<property name="lib" value="lib"/>
+	<property name="src" value="src"/>
+	<property name="bin" value="bin"/>
+	
+	<property name="pirc" value="${lib}/pircbot.jar"/>
+	<property name="getopt" value="${lib}/gnu.getopt.jar"/>
+	
+	<!--property name="jarname" value="briscolao-${version}.jar"/-->
+	<property name="jarname" value="briscolao.jar"/>
+	
+	<path id="classpath">
+		<pathelement location="${src}"/>
+		<pathelement location="${pirc}"/>
+		<pathelement location="${getopt}"/>
+	</path>
+	
+	
+	<!-- initialization section -->
+	<target name="init" description="Create the required output dirs and copy not-java needed files">
+		<mkdir dir="${bin}"/>
+		<copy includeemptydirs="false" todir="${bin}">
+			<fileset dir="${src}" excludes="**/*.launch **/*.java **/*.svg **/*.form"/>
+		</copy>
+	</target>
+	
+	
+	<!-- cleaning section -->
+	<target name="clean" description="Delete every compiled file">
+		<delete dir="${bin}"/>
+		<delete>
+			<fileset dir="." includes="${jarname}"/>
+		</delete>
+	</target>
+	<target depends="clean" name="cleanall" description="same as clean"/>
+	
+	
+	<!-- building section -->
+	<target depends="init" name="build" description="Builds Briscolao">
+		<javac debug="false" destdir="${bin}" target="1.5">
+			<src path="${src}"/>
+			<classpath refid="classpath"/>
+		</javac>
+	</target>
+
+	<target depends="build" name="jar" description="Creates briscolao.jar file">
+		<jar jarfile="${jarname}" basedir="${bin}">
+			<manifest>
+				<attribute name="Main-Class" value="bot.briscolao.Briscolao"/>
+				<attribute name="Class-Path" value="${pirc} ${getopt}"/>
+			</manifest>
+		</jar>
+		<echo message="Completed!"/>
+		<echo message="${ant.project.name} has been compiled and packed into jar file"/>
+		<echo message="Execute 'java -jar ${jarname} --help' for more info"/>
+		<echo message="'${lib}' directory and its content must be present in the same folder of ${jarname} file"/>
+	</target>
+
+</project>
