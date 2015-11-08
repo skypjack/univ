@@ -1,1 +1,1 @@
-Projects from the academic year.
+Projects from the academic years.
