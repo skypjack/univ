@@ -1,0 +1,112 @@
+\documentclass[a4paper,10pt]{article}
+
+\usepackage[italian]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage{listings}
+\lstset{language=C}
+
+\title{Il gioco degli N gettoni}
+\author{Caini Michele, Giuntini Johnny}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\begin{center}
+Minimax (sometimes minmax) is a method in decision theory for minimizing the maximum possible loss. Alternatively, it can be thought of as maximizing the minimum gain (maximin).\newline
+\newline
+[from: wikipedia]
+\end{center}
+\end{abstract}
+
+\section{Introduzione}
+La teoria del MiniMax, attribuita a Von Neuman, è applicabile a tutti i giochi per due persone, dove la vittoria di uno dei due giocatori implichi inevitabilmente la sconfitta dell'altro giocatore (giochi definiti ``a somma zero''), e che risultino essere ad informazione completa, ovvero dove ogni giocatore sia a conoscenza delle mosse possibili proprie e del proprio avversario nonchè delle conseguenze che tali mosse comportano.\newline
+Tale teorema afferma che per un dato giocatore si possa trovare una strategia che sia vincente indipendentemente dalle mosse dell'avversario o che permetta di minimizzare in ogni caso la massima perdita (da cui il nome MiniMax). Questo, ipotizzando che l'avversario stesso operi con l'obiettivo di massimizzare la perdita altrui, ovvero di minimizzare la propria.\newline
+Il gioco degli N gettoni è un esempio dove tale teoria trova applicazione pratica.
+
+\section{Il gioco}
+Il gioco degli N gettoni consiste in poche, semplici regole. Inizialmente, si hanno in gioco N gettoni e ogni giocatore ha la possibilità di prelevarne fino ad un massimo M determinato a priori, con un minimo obbligato di un gettone. Il giocatore che sarà costretto a prendere l'ultimo gettone avrà perso il gioco, mentre l'altro risulterà essere il vincitore.\newline
+Si può dimostrare, ma questo esula dagli obiettivi dell'articolo, che per determinati valori di N ed M, il giocatore che inizia il gioco può costruire una strategia vincente indipendentemente dalle mosse dell'avversario che risulterà essere spettatore passivo della propria sconfitta.\newline
+In questo ambito si applica il teorema del MiniMax, per cui abbiamo sviluppato un semplice algoritmo presentato di seguito, ovvero l'analisi, nodo per nodo, mirata a ridurre le possibilità di perdita del giocatore di turno, cioè a massimizzare la probabilità di sconfitta dell'avversario.
+
+\section{L'algoritmo}
+Il semplice algoritmo, sviluppato in linguaggio C, è riportato al termine dell'articolo.\newline
+Il file header ngame.h, oltre a introdurre il prototipo della funzione usufruibile dall'utente dell'algoritmo, definisce, per facilitare la lettura, due macro che indicano, rispettivamente, \textit{player A} e \textit{player B}, ovvero i due giocatori coinvolti nel gioco, e introduce il tipo di dato \textit{player}, come semplice ridenominazione del tipo primitivo \textit{unsigned short int}.\newline
+Questo, ovviamente, lo si poteva evitare utilizzando esclusivamente i tipi primitivi forniti dal linguaggio, senza intaccare il corretto funzionamento dell'algoritmo stesso, ma rende di più facile lettura e comprensione il tutto.\newline
+Il file ngame.c sviluppa il prototipo di funzione visto in precedenza e si appoggia ad un altra funzione, per poter svolgere correttamente il suo compito.\newline
+In particolare, la funzione \textit{checkfor} è una funzione ``fantoccio'' che, di fatto, conoscendo il numero di gettoni presenti, il massimo numero prelevabili e il giocatore di turno, non fa altro che testare se, dato un certo numero di gettoni presi, esista una strategia vincente lungo quel cammino, in modo iterativo su tutti i cammini possibili e fermandosi quando detta strategia sia individuata.\newline
+La funzione di supporto \textit{checkby}, invece, si limita, in modo ricorsivo, a controllare se un dato cammino indicato conduca o no ad una strategia vincente, esaurendo tutte le possibili alternative prima di decretare un fallimento o restituendo una conferma in caso di successo. Di fatto, il valore restituito equivale all'indicazione del giocatore per il quale quel cammino risulta essere vincente.\newline
+E' evidente che, così facendo, tramite l'uso della funzione \textit{checkfor}, si avrà restituita l'indicazione del numero di gettoni da prelevare per seguire un cammino vincente, se esso esiste, o un valore (in questo caso -1) che indichi la non presenza di una strategia vincente sotto le condizioni proposte. Con poca fatica, si potrà estendere la funzione \textit{checkfor} per fare in modo che, dove non esista una strategia vincente sotto determinate condizioni, venga restituita l'indicazione del cammino a minima perdita per il giocatore di turno, lasciando immutata la funzione \textit{checkby} che sarà sfruttata per perseguire l'obiettivo di cui sopra.\newline
+Inutile dire che l'algoritmo proposto da se non è utilizzabile, ma va inquadrato in un contesto più ampio dove un programma utente (ovvero un ipotetica funzione ``main'') sfrutti tale algoritmo per implementare effettivamente il gioco degli N gettoni, facendo competere l'uomo e la macchina, magari leggendo il numero di gettoni e il numero massimo prelevabile direttamente da riga di comando.\newline
+In tale ottica si è proceduto per testare la correttezza del codice proposto e va detto che, nonostante tutti i nostri sforzi, la macchina è risultata sempre imbattibile!!
+
+\section{Conclusioni}
+L'articolo presentato, per quanto semplice e di facile comprensione, ha voluto rappresentare una introduzione alla teoria del MiniMax e al problema del gioco degli N gettoni, con esempi in codice che potessero rendere idea pratica di tali argomenti.\newline
+Ovviamente, non avrebbe senso e non sarebbe forse utile portare avanti studi matematici e/o statistici approfonditi sull'argomento, ma può essere un utile nota per chi si avvicina al problema e vuole approfondirlo in modo pratico.
+
+\appendix
+
+\newpage
+
+\section{Appendice: il Codice}
+
+\subsection{ngame.h}
+\begin{lstlisting}[frame=trBL,title=ngame.h]
+#ifndef NGAME_H_
+#define NGAME_H_
+
+typedef unsigned short int player;
+
+/* player A */
+#define A 1
+/* player B */
+#define B 0
+
+int
+checkfor(player, int, int);
+
+#endif /* NGAME_H_ */
+\end{lstlisting}
+
+\newpage
+
+\subsection{ngame.c}
+\begin{lstlisting}[frame=trBL,keepspaces=true,fontadjust=true,title=ngame.c]
+#include "ngame.h"
+
+player
+checkby(player pl, int tk, int sp)
+{
+  int cnt;
+  if(tk == 0) return pl;
+  else {
+    cnt = 1;
+    while((cnt <= sp) && (tk - cnt > 0)) {
+      if(checkby(!pl, tk - cnt, sp) == pl)
+        return pl;
+      else cnt++;
+    }
+  }
+  return !pl;
+}
+
+int
+checkfor(player pl, int tk, int sp)
+{
+  int mm;
+  int cnt;
+  if((tk != 0) && (sp != 0)) {
+    mm = -1;
+    cnt = 1;
+    while((cnt <= sp) && (tk - cnt > 0) && (mm == -1)) {
+      if(checkby(!pl, tk - cnt, sp) == pl)
+        mm = cnt;
+      else cnt++;
+    }
+  } else return mm = -1;
+  return mm;
+}
+\end{lstlisting}
+
+\end{document}
